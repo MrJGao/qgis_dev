@@ -1,0 +1,33 @@
+﻿生成启动时间为 2015/12/29 星期二 15:52:00。
+     1>项目“C:\Users\Jacory\Documents\Visual Studio 2010\Projects\qgis_dev\qgis_dev\qgis_dev.vcxproj”在节点 2 上(build 个目标)。
+     1>InitializeBuildStatus:
+         正在创建“Debug\qgis_dev.unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+       CustomBuild:
+         Moc'ing qgis_dev.h...
+       ClCompile:
+         d:\Program Files\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /I.\GeneratedFiles /I. /ID:\Qt\4.8.4\include /I.\GeneratedFiles\Debug /ID:\Qt\4.8.4\include\QtCore /ID:\Qt\4.8.4\include\QtGui /ID:\Qt\4.8.4\include\QtXml /I"C:\Program Files\qgis2.9.0\include" /Zi /nologo /W1 /WX- /Od /Oy- /D UNICODE /D WIN32 /D QT_LARGEFILE_SUPPORT /D QT_DLL /D QT_CORE_LIB /D QT_GUI_LIB /D QT_XML_LIB /D "GUI_EXPORT=__declspec(dllimport)" /D "ANALYSIS_EXPORT=__declspec(dllimport)" /D "CORE_EXPORT=__declspec(dllimport)" /Gm- /EHsc /MDd /GS /fp:precise /Zc:wchar_t- /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt GeneratedFiles\Debug\moc_qgis_dev.cpp main.cpp qgis_dev.cpp
+         moc_qgis_dev.cpp
+         main.cpp
+     1>C:\Program Files\qgis2.9.0\include\qgsvectorlayer.h : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+         qgis_dev.cpp
+     1>C:\Program Files\qgis2.9.0\include\qgsvectorlayer.h : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+         正在生成代码...
+         d:\Program Files\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /I.\GeneratedFiles /I. /ID:\Qt\4.8.4\include /I.\GeneratedFiles\Debug /ID:\Qt\4.8.4\include\QtCore /ID:\Qt\4.8.4\include\QtGui /ID:\Qt\4.8.4\include\QtXml /I"C:\Program Files\qgis2.9.0\include" /Zi /nologo /W1 /WX- /Od /Oy- /D UNICODE /D WIN32 /D QT_LARGEFILE_SUPPORT /D QT_DLL /D QT_CORE_LIB /D QT_GUI_LIB /D QT_XML_LIB /D "GUI_EXPORT=__declspec(dllimport)" /D "ANALYSIS_EXPORT=__declspec(dllimport)" /D "CORE_EXPORT=__declspec(dllimport)" /Gm- /EHsc /MDd /GS /fp:precise /Zc:wchar_t- /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt GeneratedFiles\qrc_qgis_dev.cpp
+         qrc_qgis_dev.cpp
+       Link:
+         d:\Program Files\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Jacory\Documents\Visual Studio 2010\Projects\qgis_dev\Win32\Debug\\qgis_dev.exe" /NOLOGO /LIBPATH:D:\Qt\4.8.4\lib /LIBPATH:"C:\Program Files\qgis2.9.0\lib" qtmaind.lib QtCored4.lib QtGuid4.lib QtXmld4.lib qgis_core.lib qgis_analysis.lib qgis_gui.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\qgis_dev.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:\Users\Jacory\Documents\Visual Studio 2010\Projects\qgis_dev\Win32\Debug\qgis_dev.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Jacory\Documents\Visual Studio 2010\Projects\qgis_dev\Win32\Debug\qgis_dev.lib" /MACHINE:X86 Debug\moc_qgis_dev.obj
+         Debug\qrc_qgis_dev.obj
+         Debug\main.obj
+         Debug\qgis_dev.obj
+         LINK : 没有找到 C:\Users\Jacory\Documents\Visual Studio 2010\Projects\qgis_dev\Win32\Debug\\qgis_dev.exe 或上一个增量链接没有生成它；正在执行完全链接
+         qgis_dev.vcxproj -> C:\Users\Jacory\Documents\Visual Studio 2010\Projects\qgis_dev\Win32\Debug\qgis_dev.exe
+       Manifest:
+         C:\Program Files\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /outputresource:"C:\Users\Jacory\Documents\Visual Studio 2010\Projects\qgis_dev\Win32\Debug\\qgis_dev.exe;#1" /manifest Debug\qgis_dev.exe.intermediate.manifest
+       FinalizeBuildStatus:
+         正在删除文件“Debug\qgis_dev.unsuccessfulbuild”。
+         正在对“Debug\qgis_dev.lastbuildstate”执行 Touch 任务。
+     1>已完成生成项目“C:\Users\Jacory\Documents\Visual Studio 2010\Projects\qgis_dev\qgis_dev\qgis_dev.vcxproj”(build 个目标)的操作。
+
+生成成功。
+
+已用时间 00:00:08.04
