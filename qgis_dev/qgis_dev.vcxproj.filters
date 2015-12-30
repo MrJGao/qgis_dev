@@ -59,6 +59,15 @@
     <ClCompile Include="GeneratedFiles\Release\moc_qgis_devlayertreeviewmenuprovider.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="qgis_devattrtabledialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_qgis_devattrtabledialog.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_qgis_devattrtabledialog.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="qgis_dev.h">
@@ -73,9 +82,18 @@
     <CustomBuild Include="qgis_devlayertreeviewmenuprovider.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="qgis_devattrtabledialog.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="qgis_devattrtabledialog.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GeneratedFiles\ui_qgis_dev.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_qgis_devattrtabledialog.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
   </ItemGroup>

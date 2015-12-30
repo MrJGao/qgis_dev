@@ -24,6 +24,8 @@
 #include <qgslayertreegroup.h>
 #include <qgslayertreeregistrybridge.h>
 #include <qgslayertreeviewdefaultactions.h>
+#include <qgsattributedialog.h>
+
 #include "qgis_devlayertreeviewmenuprovider.h"
 
 
