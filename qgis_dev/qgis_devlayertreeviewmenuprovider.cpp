@@ -4,6 +4,8 @@
 #include <QMenu>
 #include <QModelIndex>
 #include <QIcon>
+#include <QAction>
+#include <QMap>
 
 // QGis include
 #include <qgslayertreeviewdefaultactions.h>
@@ -82,16 +84,37 @@ QMenu* qgis_devLayerTreeViewMenuProvider::createContextMenu()
 
 void qgis_devLayerTreeViewMenuProvider::addLegendLayerAction( QAction * action, QString menu, QString id, QgsMapLayer::LayerType type, bool allLayers )
 {
-
+    mLegendLayerActionMap[type].append( LegendLayerAction( action, menu, id, allLayers ) );
 }
 
 void qgis_devLayerTreeViewMenuProvider::addLegendLayerActionForLayer( QAction * action, QgsMapLayer * layer )
 {
+    if ( !action || !layer ) { return; }
 
+    legendLayerActions( layer->type() );
+    if ( !mLegendLayerActionMap.contains( layer->type() ) ) {return;}
+
+    QMap<QgsMapLayer::LayerType, QList<LegendLayerAction>>::iterator it = mLegendLayerActionMap.find( layer->type() );
+    for ( int i = 0; i < it->count(); i++ )
+    {
+        if ( ( *it )[i].action == action )
+        {
+            ( ( *it )[i] ).layers.append( layer );
+            return;
+        }
+    }
 }
 
 void qgis_devLayerTreeViewMenuProvider::removeLegendLayerActionsForLayer( QgsMapLayer * layer )
 {
+    if ( !layer || !mLegendLayerActionMap.contains( layer->type() ) ) {return;}
+
+    QMap<QgsMapLayer::LayerType, QList<LegendLayerAction>>::iterator it = mLegendLayerActionMap.find( layer->type() );
+    for ( int i = 0; i < it->count(); i++ )
+    {
+        ( *it )[i].layers.removeAll( layer );
+    }
+
 
 }
 

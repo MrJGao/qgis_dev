@@ -5,6 +5,7 @@
 
 #include <qgslayertreeview.h>
 #include <qgsmaplayer.h>
+#include <QList>
 
 class QAction;
 
