@@ -1,23 +1,25 @@
-<UI version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>qgis_devattrtableDialog</class>
- <widget class="QDialog" name="qgis_devattrtableDialog" >
-  <property name="objectName" >
-   <string notr="true">qgis_devattrtableDialog</string>
-  </property>
-  <property name="geometry" >
+ <widget class="QDialog" name="qgis_devattrtableDialog">
+  <property name="geometry">
    <rect>
-	<x>0</x>
-	<y>0</y>
-	<width>400</width>
-	<height>300</height>
+    <x>0</x>
+    <y>0</y>
+    <width>524</width>
+    <height>397</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>qgis_devattrtableDialog</string>
-  </property>  
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <widget class="QWidget" name="mainWidget" native="true"/>
+   </item>
+  </layout>
  </widget>
- <layoutDefault spacing="6" margin="11" />
- <pixmapfunction></pixmapfunction>
+ <layoutdefault spacing="6" margin="11"/>
  <resources/>
  <connections/>
-</UI>
+</ui>

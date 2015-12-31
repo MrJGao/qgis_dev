@@ -27,6 +27,7 @@
 #include <qgsattributedialog.h>
 
 #include "qgis_devlayertreeviewmenuprovider.h"
+#include "qgis_devattrtabledialog.h"
 
 
 qgis_dev* qgis_dev::sm_instance = 0;
@@ -87,6 +88,8 @@ void qgis_dev::addVectorLayers()
     m_mapCanvas->freeze( false );
     m_mapCanvas->refresh();
 
+    qgis_devattrtableDialog* d = new qgis_devattrtableDialog( vecLayer );
+    d->open();
 }
 
 void qgis_dev::addRasterLayers()

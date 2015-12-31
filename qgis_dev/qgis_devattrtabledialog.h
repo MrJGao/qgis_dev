@@ -7,7 +7,6 @@
 #include <QDockWidget>
 #include <QSignalMapper>
 
-#include <qgsattibutedialog.h>
 #include <qgsvectorlayer.h>
 #include <qgsfieldmodel.h>
 #include <qgsrubberband.h>
@@ -24,7 +23,6 @@ public:
 private:
     Ui::qgis_devattrtableDialog ui;
 
-    // 弄明白这些成员是干啥的
     QMenu* mMenuActions;
     QAction* mActionToggleEditing;
     QDockWidget* mDock;
