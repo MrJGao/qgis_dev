@@ -9,6 +9,7 @@
 #include <QProgressBar>
 #include <QLabel>
 #include <QDockWidget>
+#include <QIcon>
 
 // QGis include
 #include <qgsmapcanvas.h>
@@ -22,13 +23,17 @@ class qgis_dev : public QMainWindow
     Q_OBJECT
 
 public:
-    qgis_dev( QWidget *parent = 0, Qt::WFlags flags = 0 );
+    qgis_dev( QWidget *parent = 0, Qt::WindowFlags flags = Qt::Window );
     ~qgis_dev();
 
     void addDockWidget( Qt::DockWidgetArea area, QDockWidget* dockwidget );
 
     //! 保持单一实例
-    static inline qgis_dev *instance() { return sm_instance; };
+    static qgis_dev* instance() { return sm_instance; }
+
+    static QIcon getThemeIcon( const QString &theName );
+
+    QgsMapCanvas* mapCanvas() {return m_mapCanvas; }
 public slots:
     //! 添加矢量图层
     void addVectorLayers();
@@ -36,6 +41,11 @@ public slots:
     void addRasterLayers();
 
     void autoSelectAddedLayer( QList<QgsMapLayer*> layers );
+    //! 打开属性表
+    void openAttributeTableDialog();
+    //! 移除图层
+    void removeLayer();
+
 private:
     Ui::qgis_devClass ui;
     static qgis_dev* sm_instance;
@@ -61,11 +71,17 @@ private:
 
     QList<QgsMapCanvasLayer> mapCanvasLayerSet; // 地图画布所用的图层集合
 
-
+//=== Private Member Functions ===
 
     void initLayerTreeView();
     void createStatusBar();
 
+    //! 获取当前选中图层
+    QgsMapLayer* activeLayer();
+
+    //! 用于获取images资源库当中的Icon路径
+    static const QString activeThemePath();
+    static const QString defaultThemePath();
 };
 
 #endif // QGIS_DEV_H

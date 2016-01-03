@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>qgis_devClass</class>
  <widget class="QMainWindow" name="qgis_devClass">
+  <property name="windowModality">
+   <enum>Qt::NonModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -10,8 +13,27 @@
     <height>580</height>
    </rect>
   </property>
+  <property name="mouseTracking">
+   <bool>true</bool>
+  </property>
   <property name="windowTitle">
    <string>qgis_dev</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="Resources/images/images.qrc">
+    <normaloff>:/images/icons/qgis-icon-60x60.png</normaloff>:/images/icons/qgis-icon-60x60.png</iconset>
+  </property>
+  <property name="autoFillBackground">
+   <bool>true</bool>
+  </property>
+  <property name="toolButtonStyle">
+   <enum>Qt::ToolButtonIconOnly</enum>
+  </property>
+  <property name="animated">
+   <bool>true</bool>
+  </property>
+  <property name="documentMode">
+   <bool>false</bool>
   </property>
   <widget class="QWidget" name="centralWidget"/>
   <widget class="QMenuBar" name="menuBar">
@@ -27,6 +49,7 @@
     <property name="title">
      <string>File</string>
     </property>
+    <addaction name="actionNew_Project"/>
     <addaction name="actionOpen_Project"/>
     <addaction name="actionSave_Project"/>
     <addaction name="separator"/>
@@ -55,37 +78,72 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionNew_Project"/>
+   <addaction name="actionOpen_Project"/>
+   <addaction name="actionSave_Project"/>
+   <addaction name="actionAdd_Vector"/>
+   <addaction name="actionAdd_Raster"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionOpen_Project">
+   <property name="icon">
+    <iconset resource="Resources/images/images.qrc">
+     <normaloff>:/images/themes/default/mActionFileOpen.svg</normaloff>:/images/themes/default/mActionFileOpen.svg</iconset>
+   </property>
    <property name="text">
     <string>Open Project</string>
    </property>
   </action>
   <action name="actionSave_Project">
+   <property name="icon">
+    <iconset resource="Resources/images/images.qrc">
+     <normaloff>:/images/themes/default/mActionFileSave.svg</normaloff>:/images/themes/default/mActionFileSave.svg</iconset>
+   </property>
    <property name="text">
     <string>Save Project</string>
    </property>
   </action>
   <action name="actionExit">
+   <property name="icon">
+    <iconset resource="Resources/images/images.qrc">
+     <normaloff>:/images/themes/default/mActionFileExit.png</normaloff>:/images/themes/default/mActionFileExit.png</iconset>
+   </property>
    <property name="text">
     <string>Exit</string>
    </property>
   </action>
   <action name="actionAdd_Vector">
+   <property name="icon">
+    <iconset resource="Resources/images/images.qrc">
+     <normaloff>:/images/themes/default/mActionAddOgrLayer.svg</normaloff>:/images/themes/default/mActionAddOgrLayer.svg</iconset>
+   </property>
    <property name="text">
     <string>Add Vector</string>
    </property>
   </action>
   <action name="actionAdd_Raster">
+   <property name="icon">
+    <iconset resource="Resources/images/images.qrc">
+     <normaloff>:/images/themes/default/mActionAddRasterLayer.svg</normaloff>:/images/themes/default/mActionAddRasterLayer.svg</iconset>
+   </property>
    <property name="text">
     <string>Add Raster</string>
+   </property>
+  </action>
+  <action name="actionNew_Project">
+   <property name="icon">
+    <iconset resource="Resources/images/images.qrc">
+     <normaloff>:/images/themes/default/mActionNewComposer.svg</normaloff>:/images/themes/default/mActionNewComposer.svg</iconset>
+   </property>
+   <property name="text">
+    <string>New Project</string>
    </property>
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
   <include location="qgis_dev.qrc"/>
+  <include location="Resources/images/images.qrc"/>
  </resources>
  <connections/>
 </ui>

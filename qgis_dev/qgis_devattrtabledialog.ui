@@ -20,6 +20,8 @@
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="C:/Program Files/qgis2.9.0/images/images.qrc"/>
+ </resources>
  <connections/>
 </ui>

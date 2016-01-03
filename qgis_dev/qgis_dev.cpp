@@ -12,6 +12,8 @@
 #include <QLineEdit>
 #include <QToolButton>
 #include <QMargins>
+#include <QFile>
+#include <QDir>
 
 // QGis include
 #include <qgsvectorlayer.h>
@@ -30,16 +32,27 @@
 #include "qgis_devattrtabledialog.h"
 
 
+#include <qgsfeaturelistview.h>
+#include <qgsattributetableview.h>
+#include <qgsattributetablemodel.h>
+#include <qgsfeaturelistmodel.h>
+#include <qgsvectorlayercache.h>
+
+
 qgis_dev* qgis_dev::sm_instance = 0;
 
-qgis_dev::qgis_dev( QWidget *parent, Qt::WFlags flags )
+qgis_dev::qgis_dev( QWidget *parent, Qt::WindowFlags flags )
     : QMainWindow( parent, flags )
 {
-    /*if ( sm_instance )
+    if ( sm_instance )
     {
-        sm_instance->show();
+        QMessageBox::critical(
+            this,
+            tr( "Multiple Instances of QgisApp" ),
+            tr( "Multiple instances of QGIS application object detected.\nPlease contact the developers.\n" ) );
+        // abort();
     }
-    sm_instance = this;*/
+    sm_instance = this;
 
     ui.setupUi( this );
 
@@ -56,7 +69,6 @@ qgis_dev::qgis_dev( QWidget *parent, Qt::WFlags flags )
     QWidget* centralWidget = this->centralWidget();
     QGridLayout* centralLayout = new QGridLayout( centralWidget );
     centralLayout->addWidget( m_mapCanvas, 0, 0, 1, 1 );
-    //centralLayout->addWidget( m_layerTreeView, 0, 1, 1, 1 );
 
     // connections
     connect( ui.actionAdd_Vector, SIGNAL( triggered() ), this, SLOT( addVectorLayers() ) );
@@ -65,12 +77,17 @@ qgis_dev::qgis_dev( QWidget *parent, Qt::WFlags flags )
 
 qgis_dev::~qgis_dev()
 {
-
+    delete sm_instance;
 }
 
 void qgis_dev::addVectorLayers()
 {
-    QString filename = QFileDialog::getOpenFileName( this, tr( "open vector" ), "", "*.shp" );
+    /* QString filename = QFileDialog::getOpenFileName( this, tr( "open vector" ), "", "*.shp" );
+     if ( filename == QString::null ) { return;}*/
+
+    // test attribute table
+    QString filename = "D:\\Data\\qgis_sample_data\\shapefiles\\airports.shp" ;
+
     QStringList temp = filename.split( QDir::separator() );
     QString basename = temp.at( temp.size() - 1 );
     QgsVectorLayer* vecLayer = new QgsVectorLayer( filename, basename, "ogr", false );
@@ -87,9 +104,6 @@ void qgis_dev::addVectorLayers()
     m_mapCanvas->setVisible( true );
     m_mapCanvas->freeze( false );
     m_mapCanvas->refresh();
-
-    qgis_devattrtableDialog* d = new qgis_devattrtableDialog( vecLayer );
-    d->open();
 }
 
 void qgis_dev::addRasterLayers()
@@ -130,13 +144,10 @@ void qgis_dev::initLayerTreeView()
     connect( QgsProject::instance()->layerTreeRegistryBridge(), SIGNAL( addedLayersToLayerTree( QList<QgsMapLayer*> ) ),
              this, SLOT( autoSelectAddedLayer( QList<QgsMapLayer*> ) ) );
 
-    // 设置这个路径是为了获取图标文件
-    QString iconDir = "../images/themes/default/";
-
     // add group tool button
     QToolButton * btnAddGroup = new QToolButton();
     btnAddGroup->setAutoRaise( true );
-    btnAddGroup->setIcon( QIcon( iconDir + "mActionAdd.png" ) );
+    btnAddGroup->setIcon( qgis_dev::getThemeIcon( "mActionAdd.png" ) );
 
     btnAddGroup->setToolTip( tr( "Add Group" ) );
     connect( btnAddGroup, SIGNAL( clicked() ), m_layerTreeView->defaultActions(), SLOT( addGroup() ) );
@@ -144,13 +155,13 @@ void qgis_dev::initLayerTreeView()
     // expand / collapse tool buttons
     QToolButton* btnExpandAll = new QToolButton();
     btnExpandAll->setAutoRaise( true );
-    btnExpandAll->setIcon( QIcon( iconDir + "mActionExpandTree.png" ) );
+    btnExpandAll->setIcon( qgis_dev::getThemeIcon( "mActionExpandTree.png" ) );
     btnExpandAll->setToolTip( tr( "Expand All" ) );
     connect( btnExpandAll, SIGNAL( clicked() ), m_layerTreeView, SLOT( expandAll() ) );
 
     QToolButton* btnCollapseAll = new QToolButton();
     btnCollapseAll->setAutoRaise( true );
-    btnCollapseAll->setIcon( QIcon( iconDir + "mActionCollapseTree.png" ) );
+    btnCollapseAll->setIcon( qgis_dev::getThemeIcon( "mActionCollapseTree.png" ) );
     btnCollapseAll->setToolTip( tr( "Collapse All" ) );
     connect( btnCollapseAll, SIGNAL( clicked() ), m_layerTreeView, SLOT( collapseAll() ) );
 
@@ -285,3 +296,67 @@ void qgis_dev::addDockWidget( Qt::DockWidgetArea area, QDockWidget* dockwidget )
     dockwidget->show();
     m_mapCanvas->refresh();
 }
+
+void qgis_dev::openAttributeTableDialog()
+{
+    QgsVectorLayer* mylayer = qobject_cast<QgsVectorLayer*>( activeLayer() );
+    if ( !mylayer ) { return; }
+    //qgis_devattrtableDialog* d = new qgis_devattrtableDialog( mylayer, this );
+    //d->show();
+
+
+    QgsVectorLayerCache* lc = new QgsVectorLayerCache( mylayer, mylayer->featureCount() );
+    QgsAttributeTableView* tv = new QgsAttributeTableView();
+
+    QgsAttributeTableModel* tm = new QgsAttributeTableModel( lc, this );
+
+    QgsAttributeTableFilterModel* tfm = new QgsAttributeTableFilterModel( QgisApp::instance(), tm, tm );
+
+    tfm->setFilterMode( QgsAttributeTableFilterModel::ShowAll );
+    tm->loadLayer();
+    tv->setModel( tfm );
+    tv->show();
+
+}
+
+QgsMapLayer* qgis_dev::activeLayer()
+{
+    return m_layerTreeView ? m_layerTreeView->currentLayer() : 0;
+}
+
+void qgis_dev::removeLayer()
+{
+    m_layerTreeView->defaultActions()->actionRemoveGroupOrLayer();
+}
+
+QIcon qgis_dev::getThemeIcon( const QString &theName )
+{
+    QString myPreferredPath = activeThemePath() + QDir::separator() + theName;
+    QString myDefaultPath = defaultThemePath() + QDir::separator() + theName;
+
+    if ( QFile::exists( myPreferredPath ) )
+    {
+        return QIcon( myPreferredPath );
+    }
+    else if ( QFile::exists( myDefaultPath ) )
+    {
+        //could still return an empty icon if it
+        //doesnt exist in the default theme either!
+        return QIcon( myDefaultPath );
+    }
+    else
+    {
+        return QIcon();
+    }
+}
+
+const QString qgis_dev::activeThemePath()
+{
+    return "";
+}
+
+const QString qgis_dev::defaultThemePath()
+{
+    return ":/images/themes/default/";
+}
+

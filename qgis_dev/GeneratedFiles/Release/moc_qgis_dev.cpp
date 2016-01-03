@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'qgis_dev.h'
 **
-** Created: Wed Dec 30 23:50:05 2015
+** Created: Sat Jan 2 20:58:33 2016
 **      by: The Qt Meta Object Compiler version 63 (Qt 4.8.4)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,7 +23,7 @@ static const uint qt_meta_data_qgis_dev[] = {
        6,       // revision
        0,       // classname
        0,    0, // classinfo
-       3,   14, // methods
+       5,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -34,6 +34,8 @@ static const uint qt_meta_data_qgis_dev[] = {
       10,    9,    9,    9, 0x0a,
       28,    9,    9,    9, 0x0a,
       53,   46,    9,    9, 0x0a,
+      95,    9,    9,    9, 0x0a,
+     122,    9,    9,    9, 0x0a,
 
        0        // eod
 };
@@ -42,6 +44,7 @@ static const char qt_meta_stringdata_qgis_dev[] = {
     "qgis_dev\0\0addVectorLayers()\0"
     "addRasterLayers()\0layers\0"
     "autoSelectAddedLayer(QList<QgsMapLayer*>)\0"
+    "openAttributeTableDialog()\0removeLayer()\0"
 };
 
 void qgis_dev::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -53,6 +56,8 @@ void qgis_dev::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, vo
         case 0: _t->addVectorLayers(); break;
         case 1: _t->addRasterLayers(); break;
         case 2: _t->autoSelectAddedLayer((*reinterpret_cast< QList<QgsMapLayer*>(*)>(_a[1]))); break;
+        case 3: _t->openAttributeTableDialog(); break;
+        case 4: _t->removeLayer(); break;
         default: ;
         }
     }
@@ -90,9 +95,9 @@ int qgis_dev::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 3)
+        if (_id < 5)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 3;
+        _id -= 5;
     }
     return _id;
 }

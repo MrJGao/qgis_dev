@@ -22,6 +22,7 @@ struct LegendLayerAction
 
 class QgsMapCanvas;
 
+//! 为图层管理器提供右键菜单
 class qgis_devLayerTreeViewMenuProvider : public QObject, public QgsLayerTreeViewMenuProvider
 {
     Q_OBJECT

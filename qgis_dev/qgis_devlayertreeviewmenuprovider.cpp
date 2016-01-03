@@ -27,9 +27,6 @@ qgis_devLayerTreeViewMenuProvider::~qgis_devLayerTreeViewMenuProvider()
 
 QMenu* qgis_devLayerTreeViewMenuProvider::createContextMenu()
 {
-    // 设置这个路径是为了获取图标文件
-    QString iconDir = "../images/themes/default/";
-
     QMenu* menu = new QMenu;
 
     QgsLayerTreeViewDefaultActions* actions = mView->defaultActions();
@@ -40,8 +37,8 @@ QMenu* qgis_devLayerTreeViewMenuProvider::createContextMenu()
     if ( !idx.isValid() )
     {
         menu->addAction( actions->actionAddGroup( menu ) );
-        menu->addAction( QIcon( iconDir + "mActionExpandTree.png" ), tr( "&Expand All" ), mView, SLOT( expandAll() ) );
-        menu->addAction( QIcon( iconDir + "mActionCollapseTree.png" ), tr( "&Collapse All" ), mView, SLOT( collapseAll() ) );
+        menu->addAction( qgis_dev::getThemeIcon( "mActionExpandTree.png" ), tr( "&Expand All" ), mView, SLOT( expandAll() ) );
+        menu->addAction( qgis_dev::getThemeIcon( "mActionCollapseTree.png" ), tr( "&Collapse All" ), mView, SLOT( collapseAll() ) );
     }
     else if ( QgsLayerTreeNode* node = mView->layerTreeModel()->index2node( idx ) )
     {
@@ -49,7 +46,7 @@ QMenu* qgis_devLayerTreeViewMenuProvider::createContextMenu()
         if ( QgsLayerTree::isGroup( node ) )
         {
             menu->addAction( actions->actionZoomToGroup( mCanvas, menu ) );
-            menu->addAction( QIcon( iconDir + "mActionRemoveLayer.svg" ), tr( "&Remove" ), qgis_dev::instance(), SLOT( removeLayer() ) );
+            menu->addAction( qgis_dev::getThemeIcon( "mActionRemoveLayer.svg" ), tr( "&Remove" ), qgis_dev::instance(), SLOT( removeLayer() ) );
             menu->addAction( actions->actionRenameGroupOrLayer( menu ) );
             if ( mView->selectedNodes( true ).count() >= 2 )
             {
@@ -63,6 +60,9 @@ QMenu* qgis_devLayerTreeViewMenuProvider::createContextMenu()
             menu->addAction( actions->actionZoomToLayer( mCanvas, menu ) );
             menu->addAction( actions->actionShowInOverview( menu ) );
 
+            // 属性表菜单
+            menu->addAction( qgis_dev::getThemeIcon( "mActionOpenTable.png" ), tr( "&Open Attribute Table" ), qgis_dev::instance(), SLOT( openAttributeTableDialog() ) );
+
             // 如果选择的是栅格图层
             if ( layer && layer->type() == QgsMapLayer::RasterLayer )
             {
@@ -75,7 +75,7 @@ QMenu* qgis_devLayerTreeViewMenuProvider::createContextMenu()
                 }
             }
 
-            menu->addAction( QIcon( "mActionRemoveLayer.svg" ), tr( "&Remove" ), qgis_dev::instance(), SLOT( removeLayer() ) );
+            menu->addAction( qgis_dev::getThemeIcon( "mActionRemoveLayer.svg" ), tr( "&Remove" ), qgis_dev::instance(), SLOT( removeLayer() ) );
         }
     }
 

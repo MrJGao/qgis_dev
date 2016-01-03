@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'qgis_dev.ui'
 **
-** Created: Wed Dec 30 13:02:19 2015
+** Created: Sat Jan 2 15:22:01 2016
 **      by: Qt User Interface Compiler version 4.8.4
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -32,6 +32,7 @@ public:
     QAction *actionExit;
     QAction *actionAdd_Vector;
     QAction *actionAdd_Raster;
+    QAction *actionNew_Project;
     QWidget *centralWidget;
     QMenuBar *menuBar;
     QMenu *menuFile;
@@ -44,17 +45,46 @@ public:
     {
         if (qgis_devClass->objectName().isEmpty())
             qgis_devClass->setObjectName(QString::fromUtf8("qgis_devClass"));
+        qgis_devClass->setWindowModality(Qt::NonModal);
         qgis_devClass->resize(926, 580);
+        qgis_devClass->setMouseTracking(true);
+        QIcon icon;
+        icon.addFile(QString::fromUtf8(":/images/icons/qgis-icon-60x60.png"), QSize(), QIcon::Normal, QIcon::Off);
+        qgis_devClass->setWindowIcon(icon);
+        qgis_devClass->setAutoFillBackground(true);
+        qgis_devClass->setToolButtonStyle(Qt::ToolButtonIconOnly);
+        qgis_devClass->setAnimated(true);
+        qgis_devClass->setDocumentMode(false);
         actionOpen_Project = new QAction(qgis_devClass);
         actionOpen_Project->setObjectName(QString::fromUtf8("actionOpen_Project"));
+        QIcon icon1;
+        icon1.addFile(QString::fromUtf8(":/images/themes/default/mActionFileOpen.svg"), QSize(), QIcon::Normal, QIcon::Off);
+        actionOpen_Project->setIcon(icon1);
         actionSave_Project = new QAction(qgis_devClass);
         actionSave_Project->setObjectName(QString::fromUtf8("actionSave_Project"));
+        QIcon icon2;
+        icon2.addFile(QString::fromUtf8(":/images/themes/default/mActionFileSave.svg"), QSize(), QIcon::Normal, QIcon::Off);
+        actionSave_Project->setIcon(icon2);
         actionExit = new QAction(qgis_devClass);
         actionExit->setObjectName(QString::fromUtf8("actionExit"));
+        QIcon icon3;
+        icon3.addFile(QString::fromUtf8(":/images/themes/default/mActionFileExit.png"), QSize(), QIcon::Normal, QIcon::Off);
+        actionExit->setIcon(icon3);
         actionAdd_Vector = new QAction(qgis_devClass);
         actionAdd_Vector->setObjectName(QString::fromUtf8("actionAdd_Vector"));
+        QIcon icon4;
+        icon4.addFile(QString::fromUtf8(":/images/themes/default/mActionAddOgrLayer.svg"), QSize(), QIcon::Normal, QIcon::Off);
+        actionAdd_Vector->setIcon(icon4);
         actionAdd_Raster = new QAction(qgis_devClass);
         actionAdd_Raster->setObjectName(QString::fromUtf8("actionAdd_Raster"));
+        QIcon icon5;
+        icon5.addFile(QString::fromUtf8(":/images/themes/default/mActionAddRasterLayer.svg"), QSize(), QIcon::Normal, QIcon::Off);
+        actionAdd_Raster->setIcon(icon5);
+        actionNew_Project = new QAction(qgis_devClass);
+        actionNew_Project->setObjectName(QString::fromUtf8("actionNew_Project"));
+        QIcon icon6;
+        icon6.addFile(QString::fromUtf8(":/images/themes/default/mActionNewComposer.svg"), QSize(), QIcon::Normal, QIcon::Off);
+        actionNew_Project->setIcon(icon6);
         centralWidget = new QWidget(qgis_devClass);
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
         qgis_devClass->setCentralWidget(centralWidget);
@@ -78,12 +108,18 @@ public:
         menuBar->addAction(menuFile->menuAction());
         menuBar->addAction(menuVector->menuAction());
         menuBar->addAction(menuRaster->menuAction());
+        menuFile->addAction(actionNew_Project);
         menuFile->addAction(actionOpen_Project);
         menuFile->addAction(actionSave_Project);
         menuFile->addSeparator();
         menuFile->addAction(actionExit);
         menuVector->addAction(actionAdd_Vector);
         menuRaster->addAction(actionAdd_Raster);
+        mainToolBar->addAction(actionNew_Project);
+        mainToolBar->addAction(actionOpen_Project);
+        mainToolBar->addAction(actionSave_Project);
+        mainToolBar->addAction(actionAdd_Vector);
+        mainToolBar->addAction(actionAdd_Raster);
 
         retranslateUi(qgis_devClass);
 
@@ -98,6 +134,7 @@ public:
         actionExit->setText(QApplication::translate("qgis_devClass", "Exit", 0, QApplication::UnicodeUTF8));
         actionAdd_Vector->setText(QApplication::translate("qgis_devClass", "Add Vector", 0, QApplication::UnicodeUTF8));
         actionAdd_Raster->setText(QApplication::translate("qgis_devClass", "Add Raster", 0, QApplication::UnicodeUTF8));
+        actionNew_Project->setText(QApplication::translate("qgis_devClass", "New Project", 0, QApplication::UnicodeUTF8));
         menuFile->setTitle(QApplication::translate("qgis_devClass", "File", 0, QApplication::UnicodeUTF8));
         menuVector->setTitle(QApplication::translate("qgis_devClass", "Vector", 0, QApplication::UnicodeUTF8));
         menuRaster->setTitle(QApplication::translate("qgis_devClass", "Raster", 0, QApplication::UnicodeUTF8));
