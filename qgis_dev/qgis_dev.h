@@ -46,6 +46,8 @@ public slots:
     //! ÒÆ³ýÍ¼²ã
     void removeLayer();
 
+
+    void layerSymbolTest();
 private:
     Ui::qgis_devClass ui;
     static qgis_dev* sm_instance;

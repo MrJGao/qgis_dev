@@ -8,13 +8,18 @@ int main( int argc, char *argv[] )
     QgsApplication::setPrefixPath( "C:/Program Files/qgis2.9.0", true );
     QgsApplication::initQgis();
 
+    myApp.setDefaultSvgPaths( QStringList( "../images/svg" ) );
+
     qgis_dev* myQgis = new qgis_dev();
     myQgis->setWindowState( Qt::WindowMaximized );
     myQgis->show();
 
     //test attribute table
     myQgis->addVectorLayers();
-    myQgis->openAttributeTableDialog();
+    //myQgis->openAttributeTableDialog();
+    myQgis->layerSymbolTest();
+
+
 
     return myApp.exec();
 
