@@ -32,13 +32,14 @@
 #include "qgis_devlayertreeviewmenuprovider.h"
 #include "qgis_devattrtabledialog.h"
 
-
+// for attribute table
 #include <qgsfeaturelistview.h>
 #include <qgsattributetableview.h>
 #include <qgsattributetablemodel.h>
 #include <qgsfeaturelistmodel.h>
 #include <qgsvectorlayercache.h>
-
+#include <qgsattributedialog.h>
+#include <qgseditorwidgetfactory.h>
 
 // for layer symbol
 #include <qgssymbollayerv2.h>
@@ -314,7 +315,6 @@ void qgis_dev::openAttributeTableDialog()
     //qgis_devattrtableDialog* d = new qgis_devattrtableDialog( mylayer, this );
     //d->show();
 
-
     QgsVectorLayerCache* lc = new QgsVectorLayerCache( mylayer, mylayer->featureCount() );
     QgsAttributeTableView* tv = new QgsAttributeTableView();
 
@@ -326,7 +326,6 @@ void qgis_dev::openAttributeTableDialog()
     tm->loadLayer();
     tv->setModel( tfm );
     tv->show();
-
 }
 
 QgsMapLayer* qgis_dev::activeLayer()
@@ -372,26 +371,23 @@ const QString qgis_dev::defaultThemePath()
 
 void qgis_dev::layerSymbolTest()
 {
+    // 获取当前选中的图层
     QgsVectorLayer* veclayer = qobject_cast<QgsVectorLayer*>( this->activeLayer() );
     if( !veclayer->isValid() ) { return; }
 
     if ( veclayer->geometryType() == QGis::Point )
     {
         // 创建 svgMarkerSymbolLayer
-        QgsSvgMarkerSymbolLayerV2* svgMarker = new QgsSvgMarkerSymbolLayerV2( /* "money/money_bank2.svg" */ );
+        QgsSvgMarkerSymbolLayerV2* svgMarker = new QgsSvgMarkerSymbolLayerV2( "money/money_bank2.svg" );
 
         QgsSymbolLayerV2List symList;
         symList.append( svgMarker );
 
-        // QgsSymbolV2* pointSymbol = new QgsMarkerSymbolV2();
-        //pointSymbol->appendSymbolLayer( svgMarker );
-        //pointSymbol->setColor( QColor( 255, 0, 0 ) );
         QgsMarkerSymbolV2* markSym = new QgsMarkerSymbolV2( symList );
 
         QgsSingleSymbolRendererV2* symRenderer = new QgsSingleSymbolRendererV2( markSym );
 
         svgMarker->setSize( 10 );
-        svgMarker->setPath( "C:/Program Files/qgis2.9.0/images/svg/money/money_bank2.svg" );
         veclayer->setRendererV2( symRenderer );
     }
 

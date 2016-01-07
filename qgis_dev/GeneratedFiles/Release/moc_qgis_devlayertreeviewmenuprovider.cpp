@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'qgis_devlayertreeviewmenuprovider.h'
 **
-** Created: Tue Jan 5 16:26:51 2016
+** Created: Wed Jan 6 11:24:49 2016
 **      by: The Qt Meta Object Compiler version 63 (Qt 4.8.4)
 **
 ** WARNING! All changes made in this file will be lost!
