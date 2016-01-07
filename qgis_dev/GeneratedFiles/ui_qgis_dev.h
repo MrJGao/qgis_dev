@@ -1,7 +1,11 @@
 /********************************************************************************
 ** Form generated from reading UI file 'qgis_dev.ui'
 **
+<<<<<<< HEAD
 ** Created: Mon Jan 4 17:22:54 2016
+=======
+** Created: Tue Jan 5 16:26:50 2016
+>>>>>>> origin/master
 **      by: Qt User Interface Compiler version 4.8.4
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!

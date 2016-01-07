@@ -48,6 +48,9 @@ public slots:
     void removeLayer();
     //! 改变矢量图层的显示样式
     void changeSymbol( QgsVectorLayer* layer, QgsFeatureRendererV2* featureRenderer );
+    //! 演示如何使用矢量图层显示样式
+    void layerSymbolTest();
+
 private:
     Ui::qgis_devClass ui;
     static qgis_dev* sm_instance;

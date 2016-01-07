@@ -14,6 +14,7 @@
 #include <QMargins>
 #include <QFile>
 #include <QDir>
+#include <Qt>
 
 // QGis include
 #include <qgsvectorlayer.h>
@@ -31,16 +32,29 @@
 #include "qgis_devlayertreeviewmenuprovider.h"
 #include "qgis_devattrtabledialog.h"
 
-
+// for attribute table
 #include <qgsfeaturelistview.h>
 #include <qgsattributetableview.h>
 #include <qgsattributetablemodel.h>
 #include <qgsfeaturelistmodel.h>
 #include <qgsvectorlayercache.h>
+
 #include <qgsvectorlayerrenderer.h>
 #include <qgssymbolv2.h>
 #include <qgssinglesymbolrendererv2.h>
 
+#include <qgsattributedialog.h>
+#include <qgseditorwidgetfactory.h>
+
+
+// for layer symbol
+#include <qgssymbollayerv2.h>
+#include <qgssymbolv2.h>
+#include <qgsmarkersymbollayerv2.h>
+#include <qgsvectorlayerrenderer.h>
+#include <qgsrendercontext.h>
+#include <qgssinglesymbolrendererv2.h>
+#include <qgssymbollayerv2.h>
 
 qgis_dev* qgis_dev::sm_instance = 0;
 
@@ -85,11 +99,11 @@ qgis_dev::~qgis_dev()
 
 void qgis_dev::addVectorLayers()
 {
-    /* QString filename = QFileDialog::getOpenFileName( this, tr( "open vector" ), "", "*.shp" );
-     if ( filename == QString::null ) { return;}*/
+    QString filename = QFileDialog::getOpenFileName( this, tr( "open vector" ), "", "*.shp" );
+    if ( filename == QString::null ) { return;}
 
     // test attribute table
-    QString filename = "D:\\Data\\qgis_sample_data\\shapefiles\\airports.shp" ;
+    // QString filename = "D:\\Data\\qgis_sample_data\\shapefiles\\airports.shp" ;
 
     QStringList temp = filename.split( QDir::separator() );
     QString basename = temp.at( temp.size() - 1 );
@@ -306,6 +320,18 @@ void qgis_dev::openAttributeTableDialog()
     if ( !mylayer ) { return; }
     qgis_devattrtableDialog* d = new qgis_devattrtableDialog( mylayer, this );
     d->show();
+
+    QgsVectorLayerCache * lc = new QgsVectorLayerCache( mylayer, mylayer->featureCount() );
+    QgsAttributeTableView* tv = new QgsAttributeTableView();
+
+    QgsAttributeTableModel* tm = new QgsAttributeTableModel( lc, this );
+
+    QgsAttributeTableFilterModel* tfm = new QgsAttributeTableFilterModel( m_mapCanvas, tm, tm );
+
+    tfm->setFilterMode( QgsAttributeTableFilterModel::ShowAll );
+    tm->loadLayer();
+    tv->setModel( tfm );
+    tv->show();
 }
 
 QgsMapLayer* qgis_dev::activeLayer()
@@ -349,9 +375,32 @@ const QString qgis_dev::defaultThemePath()
     return ":/images/themes/default/";
 }
 
-
 void qgis_dev::changeSymbol( QgsVectorLayer* layer, QgsFeatureRendererV2* featureRenderer )
 {
     if ( !layer->isValid() ) {return;}
+}
+
+void qgis_dev::layerSymbolTest()
+{
+    // 获取当前选中的图层
+    QgsVectorLayer* veclayer = qobject_cast<QgsVectorLayer*>( this->activeLayer() );
+    if( !veclayer->isValid() ) { return; }
+
+    if ( veclayer->geometryType() == QGis::Point )
+    {
+        // 创建 svgMarkerSymbolLayer
+        QgsSvgMarkerSymbolLayerV2* svgMarker = new QgsSvgMarkerSymbolLayerV2( "money/money_bank2.svg" );
+
+        QgsSymbolLayerV2List symList;
+        symList.append( svgMarker );
+
+        QgsMarkerSymbolV2* markSym = new QgsMarkerSymbolV2( symList );
+
+        QgsSingleSymbolRendererV2* symRenderer = new QgsSingleSymbolRendererV2( markSym );
+
+        svgMarker->setSize( 10 );
+        veclayer->setRendererV2( symRenderer );
+    }
+
 }
 

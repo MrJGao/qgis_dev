@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'qgis_dev.h'
 **
-** Created: Wed Jan 6 22:02:10 2016
+** Created: Thu Jan 7 10:00:05 2016
 **      by: The Qt Meta Object Compiler version 63 (Qt 4.8.4)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,7 +23,7 @@ static const uint qt_meta_data_qgis_dev[] = {
        6,       // revision
        0,       // classname
        0,    0, // classinfo
-       6,   14, // methods
+       7,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -37,6 +37,7 @@ static const uint qt_meta_data_qgis_dev[] = {
       95,    9,    9,    9, 0x0a,
      122,    9,    9,    9, 0x0a,
      158,  136,    9,    9, 0x0a,
+     210,    9,    9,    9, 0x0a,
 
        0        // eod
 };
@@ -48,6 +49,7 @@ static const char qt_meta_stringdata_qgis_dev[] = {
     "openAttributeTableDialog()\0removeLayer()\0"
     "layer,featureRenderer\0"
     "changeSymbol(QgsVectorLayer*,QgsFeatureRendererV2*)\0"
+    "layerSymbolTest()\0"
 };
 
 void qgis_dev::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -62,6 +64,7 @@ void qgis_dev::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, vo
         case 3: _t->openAttributeTableDialog(); break;
         case 4: _t->removeLayer(); break;
         case 5: _t->changeSymbol((*reinterpret_cast< QgsVectorLayer*(*)>(_a[1])),(*reinterpret_cast< QgsFeatureRendererV2*(*)>(_a[2]))); break;
+        case 6: _t->layerSymbolTest(); break;
         default: ;
         }
     }
@@ -99,9 +102,9 @@ int qgis_dev::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 6)
+        if (_id < 7)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 6;
+        _id -= 7;
     }
     return _id;
 }
