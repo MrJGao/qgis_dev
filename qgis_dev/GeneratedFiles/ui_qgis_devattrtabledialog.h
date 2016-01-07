@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'qgis_devattrtabledialog.ui'
 **
-** Created: Sat Jan 2 15:22:07 2016
+** Created: Tue Jan 5 16:26:51 2016
 **      by: Qt User Interface Compiler version 4.8.4
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!

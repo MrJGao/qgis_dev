@@ -1,13 +1,26 @@
-﻿生成启动时间为 2016/1/2 星期六 20:58:31。
-     1>项目“E:\Jacory\Code\Github\qgis_dev\qgis_dev\qgis_dev.vcxproj”在节点 2 上(build 个目标)。
+﻿生成启动时间为 2016/1/6 星期三 11:24:46。
+     1>项目“Y:\Documents\Git\qgis_dev\qgis_dev\qgis_dev.vcxproj”在节点 2 上(build 个目标)。
      1>InitializeBuildStatus:
-         正在对“Release\qgis_dev.unsuccessfulbuild”执行 Touch 任务。
+         正在创建“Release\qgis_dev.unsuccessfulbuild”，因为已指定“AlwaysCreate”。
        CustomBuild:
          Moc'ing qgis_dev.h...
+         Moc'ing qgis_devattrtabledialog.h...
+         Moc'ing qgis_devlayertreeviewmenuprovider.h...
        ClCompile:
          所有输出均为最新。
-         d:\Program Files\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /I.\GeneratedFiles /I. /ID:\Qt\4.8.4\include /I.\GeneratedFiles\Release /ID:\Qt\4.8.4\include\QtCore /ID:\Qt\4.8.4\include\QtGui /ID:\Qt\4.8.4\include\QtXml /IC:\OSGeo4W\include /ID:\Qt\4.8.4\plugins\imageformats /I"C:\Program Files\qgis2.9.0\include" /Zi /nologo /W1 /WX- /Od /Oy- /D UNICODE /D WIN32 /D QT_LARGEFILE_SUPPORT /D QT_DLL /D QT_NO_DEBUG /D NDEBUG /D QT_CORE_LIB /D QT_GUI_LIB /D QT_XML_LIB /D "GUI_EXPORT=__declspec(dllimport)" /D "ANALYSIS_EXPORT=__declspec(dllimport)" /D "CORE_EXPORT=__declspec(dllimport)" /Gm- /EHsc /MD /GS /fp:precise /Zc:wchar_t- /Zc:forScope /Fo"Release\\" /Fd"Release\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt GeneratedFiles\Release\moc_qgis_dev.cpp main.cpp qgis_dev.cpp qgis_devattrtabledialog.cpp qgis_devlayertreeviewmenuprovider.cpp
+         c:\Program Files\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /I.\GeneratedFiles /I. /IC:\Qt\4.8.4\include /I.\GeneratedFiles\Release /IC:\Qt\4.8.4\include\QtCore /IC:\Qt\4.8.4\include\QtGui /IC:\Qt\4.8.4\include\QtXml /IC:\OSGeo4W\include /ID:\Qt\4.8.4\plugins\imageformats /IC:\Qt\4.8.4\include\QtXmlPatterns /I"C:\Program Files\qgis2.9.0\include" /Zi /nologo /W1 /WX- /Od /Oy- /D UNICODE /D WIN32 /D QT_LARGEFILE_SUPPORT /D QT_DLL /D QT_NO_DEBUG /D NDEBUG /D QT_CORE_LIB /D QT_GUI_LIB /D QT_XML_LIB /D QT_XMLPATTERNS_LIB /D "GUI_EXPORT=__declspec(dllimport)" /D "ANALYSIS_EXPORT=__declspec(dllimport)" /D "CORE_EXPORT=__declspec(dllimport)" /Gm- /EHsc /MD /GS /fp:precise /Zc:wchar_t- /Zc:forScope /Fo"Release\\" /Fd"Release\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt GeneratedFiles\qrc_images.cpp
+         qrc_images.cpp
+         c:\Program Files\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /I.\GeneratedFiles /I. /IC:\Qt\4.8.4\include /I.\GeneratedFiles\Release /IC:\Qt\4.8.4\include\QtCore /IC:\Qt\4.8.4\include\QtGui /IC:\Qt\4.8.4\include\QtXml /IC:\OSGeo4W\include /ID:\Qt\4.8.4\plugins\imageformats /IC:\Qt\4.8.4\include\QtXmlPatterns /I"C:\Program Files\qgis2.9.0\include" /Zi /nologo /W1 /WX- /Od /Oy- /D UNICODE /D WIN32 /D QT_LARGEFILE_SUPPORT /D QT_DLL /D QT_NO_DEBUG /D NDEBUG /D QT_CORE_LIB /D QT_GUI_LIB /D QT_XML_LIB /D QT_XMLPATTERNS_LIB /D "GUI_EXPORT=__declspec(dllimport)" /D "ANALYSIS_EXPORT=__declspec(dllimport)" /D "CORE_EXPORT=__declspec(dllimport)" /Gm- /EHsc /MD /GS /fp:precise /Zc:wchar_t- /Zc:forScope /Fo"Release\\" /Fd"Release\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt GeneratedFiles\Release\moc_qgis_dev.cpp GeneratedFiles\Release\moc_qgis_devattrtabledialog.cpp GeneratedFiles\Release\moc_qgis_devlayertreeviewmenuprovider.cpp main.cpp qgis_dev.cpp qgis_devattrtabledialog.cpp qgis_devlayertreeviewmenuprovider.cpp
          moc_qgis_dev.cpp
+         moc_qgis_devattrtabledialog.cpp
+     1>C:\Program Files\qgis2.9.0\include\qgsvectorlayer.h : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+     1>c:\program files\qgis2.9.0\include\qgsvectorlayer.h : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+     1>c:\program files\qgis2.9.0\include\qgsvectorlayer.h : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+     1>c:\program files\qgis2.9.0\include\qgsvectorlayer.h : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+     1>c:\program files\qgis2.9.0\include\qgsvectorlayer.h : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+     1>C:\Program Files\qgis2.9.0\include\qgsvectorlayer.h : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+     1>C:\Program Files\qgis2.9.0\include\qgsrubberband.h : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+         moc_qgis_devlayertreeviewmenuprovider.cpp
          main.cpp
          qgis_dev.cpp
      1>C:\Program Files\qgis2.9.0\include\qgsvectorlayer.h : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
@@ -19,6 +32,7 @@
      1>c:\program files\qgis2.9.0\include\qgsvectorlayer.h : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
      1>C:\Program Files\qgis2.9.0\include\qgsvectorlayer.h : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
      1>C:\Program Files\qgis2.9.0\include\qgsrubberband.h : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+     1>c:\program files\qgis2.9.0\include\qgsvectorlayer.h : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
          qgis_devattrtabledialog.cpp
      1>C:\Program Files\qgis2.9.0\include\qgsvectorlayer.h : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
      1>c:\program files\qgis2.9.0\include\qgsvectorlayer.h : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
@@ -30,7 +44,7 @@
          qgis_devlayertreeviewmenuprovider.cpp
          正在生成代码...
        Link:
-         d:\Program Files\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"E:\Jacory\Code\Github\qgis_dev\Win32\Release\\qgis_dev.exe" /NOLOGO /LIBPATH:D:\Qt\4.8.4\lib /LIBPATH:C:\OSGeo4W\lib /LIBPATH:"C:\Program Files\qgis2.9.0\lib" qtmain.lib QtCore4.lib QtGui4.lib QtXml4.lib geos_c.lib qgis_core.lib qgis_analysis.lib qgis_gui.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Release\qgis_dev.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"E:\Jacory\Code\Github\qgis_dev\Win32\Release\qgis_dev.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"E:\Jacory\Code\Github\qgis_dev\Win32\Release\qgis_dev.lib" /MACHINE:X86 Release\qrc_images.obj
+         c:\Program Files\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"Y:\Documents\Git\qgis_dev\Win32\Release\\qgis_dev.exe" /NOLOGO /LIBPATH:C:\Qt\4.8.4\lib /LIBPATH:C:\OSGeo4W\lib /LIBPATH:"C:\Program Files\qgis2.9.0\lib" qtmain.lib QtCore4.lib QtGui4.lib QtXml4.lib geos_c.lib QtXmlPatternsd4.lib qgis_core.lib qgis_analysis.lib qgis_gui.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Release\qgis_dev.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"Y:\Documents\Git\qgis_dev\Win32\Release\qgis_dev.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"Y:\Documents\Git\qgis_dev\Win32\Release\qgis_dev.lib" /MACHINE:X86 Release\qrc_images.obj
          Release\moc_qgis_dev.obj
          Release\moc_qgis_devattrtabledialog.obj
          Release\moc_qgis_devlayertreeviewmenuprovider.obj
@@ -38,15 +52,15 @@
          Release\qgis_dev.obj
          Release\qgis_devattrtabledialog.obj
          Release\qgis_devlayertreeviewmenuprovider.obj
-         LINK : 没有找到 E:\Jacory\Code\Github\qgis_dev\Win32\Release\\qgis_dev.exe 或上一个增量链接没有生成它；正在执行完全链接
-         qgis_dev.vcxproj -> E:\Jacory\Code\Github\qgis_dev\Win32\Release\qgis_dev.exe
+         LINK : 没有找到 Y:\Documents\Git\qgis_dev\Win32\Release\\qgis_dev.exe 或上一个增量链接没有生成它；正在执行完全链接
+         qgis_dev.vcxproj -> Y:\Documents\Git\qgis_dev\Win32\Release\qgis_dev.exe
        Manifest:
-         C:\Program Files\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /outputresource:"E:\Jacory\Code\Github\qgis_dev\Win32\Release\\qgis_dev.exe;#1" /manifest Release\qgis_dev.exe.intermediate.manifest
+         C:\Program Files\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /outputresource:"Y:\Documents\Git\qgis_dev\Win32\Release\\qgis_dev.exe;#1" /manifest Release\qgis_dev.exe.intermediate.manifest
        FinalizeBuildStatus:
          正在删除文件“Release\qgis_dev.unsuccessfulbuild”。
          正在对“Release\qgis_dev.lastbuildstate”执行 Touch 任务。
-     1>已完成生成项目“E:\Jacory\Code\Github\qgis_dev\qgis_dev\qgis_dev.vcxproj”(build 个目标)的操作。
+     1>已完成生成项目“Y:\Documents\Git\qgis_dev\qgis_dev\qgis_dev.vcxproj”(build 个目标)的操作。
 
 生成成功。
 
-已用时间 00:00:13.77
+已用时间 00:00:31.20

@@ -46,6 +46,8 @@ public slots:
     //! 移除图层
     void removeLayer();
 
+    //! 演示如何使用矢量图层显示样式
+    void layerSymbolTest();
 private:
     Ui::qgis_devClass ui;
     static qgis_dev* sm_instance;
