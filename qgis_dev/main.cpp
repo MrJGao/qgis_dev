@@ -1,4 +1,5 @@
 #include<qgsapplication.h>
+#include <qgseditorwidgetregistry.h>
 
 #include "qgis_dev.h"
 
@@ -9,6 +10,7 @@ int main( int argc, char *argv[] )
     QgsApplication::initQgis();
 
     qgis_dev* myQgis = new qgis_dev();
+    QgsEditorWidgetRegistry::initEditors( myQgis->mapCanvas() );
     myQgis->setWindowState( Qt::WindowMaximized );
     myQgis->show();
 

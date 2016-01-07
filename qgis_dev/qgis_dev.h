@@ -17,6 +17,7 @@
 #include <qgslayertreeview.h>
 #include <qgslayertreemapcanvasbridge.h>
 #include <qgsscalecombobox.h>
+#include <qgsrendererv2.h>
 
 class qgis_dev : public QMainWindow
 {
@@ -45,7 +46,8 @@ public slots:
     void openAttributeTableDialog();
     //! 移除图层
     void removeLayer();
-
+    //! 改变矢量图层的显示样式
+    void changeSymbol( QgsVectorLayer* layer, QgsFeatureRendererV2* featureRenderer );
 private:
     Ui::qgis_devClass ui;
     static qgis_dev* sm_instance;

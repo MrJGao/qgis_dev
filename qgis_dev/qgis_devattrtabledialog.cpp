@@ -34,171 +34,153 @@ public:
     }
 };
 
-//qgis_devattrtableDialog::qgis_devattrtableDialog( QgsVectorLayer* theVecLayer, QWidget *parent, Qt::WindowFlags flags )
-//    : QDialog( parent, flags )
-//    , mLayer( theVecLayer )
-//    , mDock( 0 )
-//    , mRubberBand( 0 )
-//{
-//    setupUi( this );
-//    setAttribute( Qt::WA_DeleteOnClose );
-//
-//    // DistanceArea 初始化
-//    myDa = new QgsDistanceArea;
-//    myDa->setSourceCrs( mLayer->crs() );
-//    myDa->setEllipsoidalMode( qgis_dev::instance()->mapCanvas()->mapSettings().hasCrsTransformEnabled() );
-//    //myDa->setEllipsoid( qgis_dev::instance()->readEntry( "Measure", "/Ellipsoid", GEO_NONE ) );
-//
-//    // 属性编辑器右键菜单
-//    QgsAttributeEditorContext context;
-//    context.setDistanceArea( *myDa );
-//    //context.setVectorLayerTools( qgis_dev::instance()->vectorLayerTools );
-//
-//    //// 属性feature请求
-//    QgsFeatureRequest r;
-//    if ( mLayer->geometryType() != QGis::NoGeometry
-//            //&& settings.value( "/qgis/attributeTableBehaviour", QgsAttributeTableFilterModel::ShowAll ).toInt() == QgsAttributeTableFilterModel::ShowVisible
-//       )
-//    {
-//        QgsMapCanvas *mc = qgis_dev::instance()->mapCanvas();
-//        QgsRectangle extent( mc->mapSettings().mapToLayerCoordinates( theVecLayer, mc->extent() ) );
-//        r.setFilterRect( extent );
-//
-//        QgsGeometry *g = QgsGeometry::fromRect( extent );
-//        mRubberBand = new QgsRubberBand( mc, true );
-//        mRubberBand->setToGeometry( g, theVecLayer );
-//        delete g;
-//
-//        mActionShowAllFilter->setText( tr( "Show All Features In Initial Canvas Extent" ) );
-//    }
-//
-//    // 初始化DualView
-//    mMainView->init( mLayer, qgis_dev::instance()->mapCanvas(), r, context );
-//
-//
-//    // 初始化界面filter的元素
-//    mFilterActionMapper = new QSignalMapper( this );
-//    mFilterColumnsMenu = new QMenu( this );
-//    mActionFilterColumnsMenu->setMenu( mFilterColumnsMenu );
-//    mApplyFilterButton->setDefaultAction( mActionApplyFilter );
-//
-//    // 设置filter的显示图标
-//    QIcon filterIcon = qgis_dev::getThemeIcon( "mActionFilter.svg" );
-//    mActionShowAllFilter->setIcon( filterIcon );
-//    mActionAdvancedFilter->setIcon( filterIcon );
-//    mActionSelectedFilter->setIcon( filterIcon );
-//    mActionVisibleFilter->setIcon( filterIcon );
-//    mActionEditedFilter->setIcon( filterIcon );
-//
-//    // connections
-//    connect( mActionAdvancedFilter, SIGNAL( triggered() ), SLOT( filterExpressionBuilder() ) );
-//    connect( mActionShowAllFilter, SIGNAL( triggered() ), SLOT( filterShowAll() ) );
-//    connect( mActionSelectedFilter, SIGNAL( triggered() ), SLOT( filterSelected() ) );
-//    connect( mActionVisibleFilter, SIGNAL( triggered() ), SLOT( filterVisible() ) );
-//    connect( mActionEditedFilter, SIGNAL( triggered() ), SLOT( filterEdited() ) );
-//    connect( mFilterActionMapper, SIGNAL( mapped( QObject* ) ), SLOT( filterColumnChanged( QObject* ) ) );
-//    connect( mFilterQuery, SIGNAL( returnPressed() ), SLOT( filterQueryAccepted() ) );
-//    connect( mActionApplyFilter, SIGNAL( triggered() ), SLOT( filterQueryAccepted() ) );
-//
-//    // 将图层和属性表的动作关联起来
-//    connect( mLayer, SIGNAL( editingStarted() ), this, SLOT( editingToggled() ) );
-//    connect( mLayer, SIGNAL( editingStopped() ), this, SLOT( editingToggled() ) );
-//    connect( mLayer, SIGNAL( layerDeleted() ), this, SLOT( close() ) );
-//    connect( mLayer, SIGNAL( selectionChanged() ), this, SLOT( updateTitle() ) );
-//    connect( mLayer, SIGNAL( attributeAdded( int ) ), this, SLOT( columnBoxInit() ) );
-//    connect( mLayer, SIGNAL( attributeDeleted( int ) ), this, SLOT( columnBoxInit() ) );
-//
-//    // 关联DualView和对话框窗口
-//    connect( mMainView, SIGNAL( filterChanged() ), this, SLOT( updateTitle() ) );
-//
-//    // info from table to application
-//    //connect( this, SIGNAL( saveEdits( QgsMapLayer * ) ), qgis_dev::instance(), SLOT( saveEdits( QgsMapLayer * ) ) );
-//    //
-//
-//    // 将组织好的属性表装入到DockWidget当中
-//    mDock = new qgis_devAttributeTableDock( tr( "Attribute table - %1 (%n Feature(s))",
-//                                            "feature count", mMainView->featureCount() ) );
-//    mDock->setAllowedAreas( Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea );
-//    mDock->setWidget( this );
-//    connect( this, SIGNAL( destroyed() ), mDock, SLOT( close ) );
-//    qgis_dev::instance()->addDockWidget( Qt::BottomDockWidgetArea, mDock );
-//
-//    columnBoxInit();
-//    updateTitle();
-//
-//    // 下面就是设置所有Action的显示Icon的操作
-//    mRemoveSelectionButton->setIcon( qgis_dev::getThemeIcon( "/mActionUnselectAttributes.png" ) );
-//    mSelectedToTopButton->setIcon( qgis_dev::getThemeIcon( "/mActionSelectedToTop.png" ) );
-//    mCopySelectedRowsButton->setIcon( qgis_dev::getThemeIcon( "/mActionCopySelected.png" ) );
-//    mZoomMapToSelectedRowsButton->setIcon( qgis_dev::getThemeIcon( "/mActionZoomToSelected.svg" ) );
-//    mPanMapToSelectedRowsButton->setIcon( qgis_dev::getThemeIcon( "/mActionPanToSelected.svg" ) );
-//    mInvertSelectionButton->setIcon( qgis_dev::getThemeIcon( "/mActionInvertSelection.png" ) );
-//    mToggleEditingButton->setIcon( qgis_dev::getThemeIcon( "/mActionToggleEditing.svg" ) );
-//    mSaveEditsButton->setIcon( qgis_dev::getThemeIcon( "/mActionSaveEdits.svg" ) );
-//    mDeleteSelectedButton->setIcon( qgis_dev::getThemeIcon( "/mActionDeleteSelected.svg" ) );
-//    mOpenFieldCalculator->setIcon( qgis_dev::getThemeIcon( "/mActionCalculateField.png" ) );
-//    mAddAttribute->setIcon( qgis_dev::getThemeIcon( "/mActionNewAttribute.png" ) );
-//    mRemoveAttribute->setIcon( qgis_dev::getThemeIcon( "/mActionDeleteAttribute.png" ) );
-//    mTableViewButton->setIcon( qgis_dev::getThemeIcon( "/mActionOpenTable.png" ) );
-//    mAttributeViewButton->setIcon( qgis_dev::getThemeIcon( "/mActionPropertyItem.png" ) );
-//    mExpressionSelectButton->setIcon( qgis_dev::getThemeIcon( "/mIconExpressionSelect.svg" ) );
-//    mAddFeature->setIcon( qgis_dev::getThemeIcon( "/mActionNewTableRow.png" ) );
-//
-//    // Toggle Editing
-//    bool canChangeAttributes = mLayer->dataProvider()->capabilities() & QgsVectorDataProvider::ChangeAttributeValues;
-//    bool canDeleteFeatures = mLayer->dataProvider()->capabilities() & QgsVectorDataProvider::DeleteFeatures;
-//    bool canAddAttributes = mLayer->dataProvider()->capabilities() & QgsVectorDataProvider::AddAttributes;
-//    bool canDeleteAttributes = mLayer->dataProvider()->capabilities() & QgsVectorDataProvider::DeleteAttributes;
-//    bool canAddFeatures = mLayer->dataProvider()->capabilities() & QgsVectorDataProvider::AddFeatures;
-//
-//    mToggleEditingButton->blockSignals( true );
-//    mToggleEditingButton->setCheckable( true );
-//    mToggleEditingButton->setChecked( mLayer->isEditable() );
-//    mToggleEditingButton->setEnabled( ( canChangeAttributes || canDeleteFeatures || canAddAttributes || canDeleteAttributes || canAddFeatures ) && !mLayer->isReadOnly() );
-//    mToggleEditingButton->blockSignals( false );
-//
-//    mSaveEditsButton->setEnabled( mToggleEditingButton->isEnabled() && mLayer->isEditable() );
-//    mAddAttribute->setEnabled( ( canChangeAttributes || canAddAttributes ) && mLayer->isEditable() );
-//    mDeleteSelectedButton->setEnabled( canDeleteFeatures && mLayer->isEditable() );
-//    mAddFeature->setEnabled( canAddFeatures && mLayer->isEditable() && mLayer->geometryType() == QGis::NoGeometry );
-//    mAddFeature->setHidden( !canAddFeatures || mLayer->geometryType() != QGis::NoGeometry );
-//
-//
-//    mMainViewButtonGroup->setId( mTableViewButton, QgsDualView::AttributeTable );
-//    mMainViewButtonGroup->setId( mAttributeViewButton, QgsDualView::AttributeEditor );
-//
-//    // 默认显示图层的全部属性
-//    filterShowAll();
-//
-//    mFieldModel = new QgsFieldModel;
-//    mFieldModel->setLayer( theVecLayer );
-//    mFieldCombo->setModel( mFieldModel );
-//    connect( mRunFieldCalc, SIGNAL( clicked() ), SLOT( updateFieldFromExpression() ) );
-//    connect( mRunFieldCalcSelected, SIGNAL( clicked() ), SLOT( updateFieldFromExpressionSelected() ) );
-//    connect( mUpdateExpressionText, SIGNAL( fieldChanged( QString, bool ) ), SLOT( updateButtonStatus( QString, bool ) ) );
-//    mUpdateExpressionText->setLayer( mLayer );
-//    mUpdateExpressionText->setLeftHandButtonStyle( true );
-//    editingToggled();
-//}
-
-
 qgis_devattrtableDialog::qgis_devattrtableDialog( QgsVectorLayer* theVecLayer, QWidget *parent, Qt::WindowFlags flags )
     : QDialog( parent, flags )
     , mLayer( theVecLayer )
     , mDock( 0 )
     , mRubberBand( 0 )
 {
-    QgsVectorLayerCache* lc = new QgsVectorLayerCache( theVecLayer, theVecLayer->featureCount() );
-    QgsAttributeTableView* tv = new QgsAttributeTableView();
-    QgsAttributeTableModel* tm = new QgsAttributeTableModel( lc, this );
+    setupUi( this );
+    setAttribute( Qt::WA_DeleteOnClose );
 
-    QgsAttributeTableFilterModel* tfm = new QgsAttributeTableFilterModel( new QgsMapCanvas(), tm, tm );
+    // DistanceArea 初始化
+    myDa = new QgsDistanceArea;
+    myDa->setSourceCrs( mLayer->crs() );
+    myDa->setEllipsoidalMode( qgis_dev::instance()->mapCanvas()->mapSettings().hasCrsTransformEnabled() );
+    //myDa->setEllipsoid( qgis_dev::instance()->readEntry( "Measure", "/Ellipsoid", GEO_NONE ) );
 
-    tfm->setFilterMode( QgsAttributeTableFilterModel::ShowAll );
-    tm->loadLayer();
-    tv->setModel( tfm );
-    tv->show();
+    // 属性编辑器右键菜单
+    QgsAttributeEditorContext context;
+    context.setDistanceArea( *myDa );
+    //context.setVectorLayerTools( qgis_dev::instance()->vectorLayerTools );
+
+    //// 属性feature请求
+    QgsFeatureRequest r;
+    if ( mLayer->geometryType() != QGis::NoGeometry
+            //&& settings.value( "/qgis/attributeTableBehaviour", QgsAttributeTableFilterModel::ShowAll ).toInt() == QgsAttributeTableFilterModel::ShowVisible
+       )
+    {
+        QgsMapCanvas *mc = qgis_dev::instance()->mapCanvas();
+        QgsRectangle extent( mc->mapSettings().mapToLayerCoordinates( theVecLayer, mc->extent() ) );
+        r.setFilterRect( extent );
+
+        QgsGeometry *g = QgsGeometry::fromRect( extent );
+        mRubberBand = new QgsRubberBand( mc, true );
+        mRubberBand->setToGeometry( g, theVecLayer );
+        delete g;
+
+        mActionShowAllFilter->setText( tr( "Show All Features In Initial Canvas Extent" ) );
+    }
+
+    // 初始化DualView
+    mMainView->init( mLayer, qgis_dev::instance()->mapCanvas(), r, context );
+
+
+    // 初始化界面filter的元素
+    mFilterActionMapper = new QSignalMapper( this );
+    mFilterColumnsMenu = new QMenu( this );
+    mActionFilterColumnsMenu->setMenu( mFilterColumnsMenu );
+    mApplyFilterButton->setDefaultAction( mActionApplyFilter );
+
+    // 设置filter的显示图标
+    QIcon filterIcon = qgis_dev::getThemeIcon( "mActionFilter.svg" );
+    mActionShowAllFilter->setIcon( filterIcon );
+    mActionAdvancedFilter->setIcon( filterIcon );
+    mActionSelectedFilter->setIcon( filterIcon );
+    mActionVisibleFilter->setIcon( filterIcon );
+    mActionEditedFilter->setIcon( filterIcon );
+
+    // connections
+    connect( mActionAdvancedFilter, SIGNAL( triggered() ), SLOT( filterExpressionBuilder() ) );
+    connect( mActionShowAllFilter, SIGNAL( triggered() ), SLOT( filterShowAll() ) );
+    connect( mActionSelectedFilter, SIGNAL( triggered() ), SLOT( filterSelected() ) );
+    connect( mActionVisibleFilter, SIGNAL( triggered() ), SLOT( filterVisible() ) );
+    connect( mActionEditedFilter, SIGNAL( triggered() ), SLOT( filterEdited() ) );
+    connect( mFilterActionMapper, SIGNAL( mapped( QObject* ) ), SLOT( filterColumnChanged( QObject* ) ) );
+    connect( mFilterQuery, SIGNAL( returnPressed() ), SLOT( filterQueryAccepted() ) );
+    connect( mActionApplyFilter, SIGNAL( triggered() ), SLOT( filterQueryAccepted() ) );
+
+    // 将图层和属性表的动作关联起来
+    connect( mLayer, SIGNAL( editingStarted() ), this, SLOT( editingToggled() ) );
+    connect( mLayer, SIGNAL( editingStopped() ), this, SLOT( editingToggled() ) );
+    connect( mLayer, SIGNAL( layerDeleted() ), this, SLOT( close() ) );
+    connect( mLayer, SIGNAL( selectionChanged() ), this, SLOT( updateTitle() ) );
+    connect( mLayer, SIGNAL( attributeAdded( int ) ), this, SLOT( columnBoxInit() ) );
+    connect( mLayer, SIGNAL( attributeDeleted( int ) ), this, SLOT( columnBoxInit() ) );
+
+    // 关联DualView和对话框窗口
+    connect( mMainView, SIGNAL( filterChanged() ), this, SLOT( updateTitle() ) );
+
+    // info from table to application
+    //connect( this, SIGNAL( saveEdits( QgsMapLayer * ) ), qgis_dev::instance(), SLOT( saveEdits( QgsMapLayer * ) ) );
+    //
+
+    // 将组织好的属性表装入到DockWidget当中
+    mDock = new qgis_devAttributeTableDock( tr( "Attribute table - %1 (%n Feature(s))",
+                                            "feature count", mMainView->featureCount() ) );
+    mDock->setAllowedAreas( Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea );
+    mDock->setWidget( this );
+    connect( this, SIGNAL( destroyed() ), mDock, SLOT( close ) );
+    qgis_dev::instance()->addDockWidget( Qt::BottomDockWidgetArea, mDock );
+
+    columnBoxInit();
+    updateTitle();
+
+    // 下面就是设置所有Action的显示Icon的操作
+    mRemoveSelectionButton->setIcon( qgis_dev::getThemeIcon( "/mActionUnselectAttributes.png" ) );
+    mSelectedToTopButton->setIcon( qgis_dev::getThemeIcon( "/mActionSelectedToTop.png" ) );
+    mCopySelectedRowsButton->setIcon( qgis_dev::getThemeIcon( "/mActionCopySelected.png" ) );
+    mZoomMapToSelectedRowsButton->setIcon( qgis_dev::getThemeIcon( "/mActionZoomToSelected.svg" ) );
+    mPanMapToSelectedRowsButton->setIcon( qgis_dev::getThemeIcon( "/mActionPanToSelected.svg" ) );
+    mInvertSelectionButton->setIcon( qgis_dev::getThemeIcon( "/mActionInvertSelection.png" ) );
+    mToggleEditingButton->setIcon( qgis_dev::getThemeIcon( "/mActionToggleEditing.svg" ) );
+    mSaveEditsButton->setIcon( qgis_dev::getThemeIcon( "/mActionSaveEdits.svg" ) );
+    mDeleteSelectedButton->setIcon( qgis_dev::getThemeIcon( "/mActionDeleteSelected.svg" ) );
+    mOpenFieldCalculator->setIcon( qgis_dev::getThemeIcon( "/mActionCalculateField.png" ) );
+    mAddAttribute->setIcon( qgis_dev::getThemeIcon( "/mActionNewAttribute.png" ) );
+    mRemoveAttribute->setIcon( qgis_dev::getThemeIcon( "/mActionDeleteAttribute.png" ) );
+    mTableViewButton->setIcon( qgis_dev::getThemeIcon( "/mActionOpenTable.png" ) );
+    mAttributeViewButton->setIcon( qgis_dev::getThemeIcon( "/mActionPropertyItem.png" ) );
+    mExpressionSelectButton->setIcon( qgis_dev::getThemeIcon( "/mIconExpressionSelect.svg" ) );
+    mAddFeature->setIcon( qgis_dev::getThemeIcon( "/mActionNewTableRow.png" ) );
+
+    // Toggle Editing
+    bool canChangeAttributes = mLayer->dataProvider()->capabilities() & QgsVectorDataProvider::ChangeAttributeValues;
+    bool canDeleteFeatures = mLayer->dataProvider()->capabilities() & QgsVectorDataProvider::DeleteFeatures;
+    bool canAddAttributes = mLayer->dataProvider()->capabilities() & QgsVectorDataProvider::AddAttributes;
+    bool canDeleteAttributes = mLayer->dataProvider()->capabilities() & QgsVectorDataProvider::DeleteAttributes;
+    bool canAddFeatures = mLayer->dataProvider()->capabilities() & QgsVectorDataProvider::AddFeatures;
+
+    mToggleEditingButton->blockSignals( true );
+    mToggleEditingButton->setCheckable( true );
+    mToggleEditingButton->setChecked( mLayer->isEditable() );
+    mToggleEditingButton->setEnabled( ( canChangeAttributes || canDeleteFeatures || canAddAttributes || canDeleteAttributes || canAddFeatures ) && !mLayer->isReadOnly() );
+    mToggleEditingButton->blockSignals( false );
+
+    mSaveEditsButton->setEnabled( mToggleEditingButton->isEnabled() && mLayer->isEditable() );
+    mAddAttribute->setEnabled( ( canChangeAttributes || canAddAttributes ) && mLayer->isEditable() );
+    mDeleteSelectedButton->setEnabled( canDeleteFeatures && mLayer->isEditable() );
+    mAddFeature->setEnabled( canAddFeatures && mLayer->isEditable() && mLayer->geometryType() == QGis::NoGeometry );
+    mAddFeature->setHidden( !canAddFeatures || mLayer->geometryType() != QGis::NoGeometry );
+
+
+    mMainViewButtonGroup->setId( mTableViewButton, QgsDualView::AttributeTable );
+    mMainViewButtonGroup->setId( mAttributeViewButton, QgsDualView::AttributeEditor );
+
+    // 默认显示图层的全部属性
+    filterShowAll();
+
+    mFieldModel = new QgsFieldModel;
+    mFieldModel->setLayer( theVecLayer );
+    mFieldCombo->setModel( mFieldModel );
+    connect( mRunFieldCalc, SIGNAL( clicked() ), SLOT( updateFieldFromExpression() ) );
+    connect( mRunFieldCalcSelected, SIGNAL( clicked() ), SLOT( updateFieldFromExpressionSelected() ) );
+    connect( mUpdateExpressionText, SIGNAL( fieldChanged( QString, bool ) ), SLOT( updateButtonStatus( QString, bool ) ) );
+    mUpdateExpressionText->setLayer( mLayer );
+    mUpdateExpressionText->setLeftHandButtonStyle( true );
+    editingToggled();
 }
+
 qgis_devattrtableDialog::~qgis_devattrtableDialog()
 {
     delete myDa;

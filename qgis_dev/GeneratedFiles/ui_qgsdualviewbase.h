@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'qgsdualviewbase.ui'
 **
-** Created: Sat Jan 2 15:22:07 2016
+** Created: Mon Jan 4 17:22:56 2016
 **      by: Qt User Interface Compiler version 4.8.4
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
