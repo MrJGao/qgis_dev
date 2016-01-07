@@ -37,6 +37,9 @@
 #include <qgsattributetablemodel.h>
 #include <qgsfeaturelistmodel.h>
 #include <qgsvectorlayercache.h>
+#include <qgsvectorlayerrenderer.h>
+#include <qgssymbolv2.h>
+#include <qgssinglesymbolrendererv2.h>
 
 
 qgis_dev* qgis_dev::sm_instance = 0;
@@ -301,22 +304,8 @@ void qgis_dev::openAttributeTableDialog()
 {
     QgsVectorLayer* mylayer = qobject_cast<QgsVectorLayer*>( activeLayer() );
     if ( !mylayer ) { return; }
-    //qgis_devattrtableDialog* d = new qgis_devattrtableDialog( mylayer, this );
-    //d->show();
-
-
-    QgsVectorLayerCache* lc = new QgsVectorLayerCache( mylayer, mylayer->featureCount() );
-    QgsAttributeTableView* tv = new QgsAttributeTableView();
-
-    QgsAttributeTableModel* tm = new QgsAttributeTableModel( lc, this );
-
-    QgsAttributeTableFilterModel* tfm = new QgsAttributeTableFilterModel( QgisApp::instance(), tm, tm );
-
-    tfm->setFilterMode( QgsAttributeTableFilterModel::ShowAll );
-    tm->loadLayer();
-    tv->setModel( tfm );
-    tv->show();
-
+    qgis_devattrtableDialog* d = new qgis_devattrtableDialog( mylayer, this );
+    d->show();
 }
 
 QgsMapLayer* qgis_dev::activeLayer()
@@ -358,5 +347,11 @@ const QString qgis_dev::activeThemePath()
 const QString qgis_dev::defaultThemePath()
 {
     return ":/images/themes/default/";
+}
+
+
+void qgis_dev::changeSymbol( QgsVectorLayer* layer, QgsFeatureRendererV2* featureRenderer )
+{
+    if ( !layer->isValid() ) {return;}
 }
 

@@ -10,5 +10,6 @@
     <QTDIR>D:\Qt\4.8.4</QTDIR>
     <LocalDebuggerEnvironment>PATH=$(QTDIR)\bin%3b$(PATH)</LocalDebuggerEnvironment>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerWorkingDirectory>C:\Program Files\qgis2.9.0\bin</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
 </Project>
