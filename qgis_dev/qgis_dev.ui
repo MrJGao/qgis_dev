@@ -67,9 +67,16 @@
     </property>
     <addaction name="actionAdd_Raster"/>
    </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>View</string>
+    </property>
+    <addaction name="actionToggle_Overview"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuVector"/>
    <addaction name="menuRaster"/>
+   <addaction name="menuView"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -133,10 +140,19 @@
   <action name="actionNew_Project">
    <property name="icon">
     <iconset resource="Resources/images/images.qrc">
-     <normaloff>:/images/themes/default/mActionNewComposer.svg</normaloff>:/images/themes/default/mActionNewComposer.svg</iconset>
+     <normaloff>:/images/themes/default/mActionFileNew.svg</normaloff>:/images/themes/default/mActionFileNew.svg</iconset>
    </property>
    <property name="text">
     <string>New Project</string>
+   </property>
+  </action>
+  <action name="actionToggle_Overview">
+   <property name="icon">
+    <iconset resource="Resources/images/images.qrc">
+     <normaloff>:/images/themes/default/mActionInOverview.svg</normaloff>:/images/themes/default/mActionInOverview.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Toggle Overview</string>
    </property>
   </action>
  </widget>

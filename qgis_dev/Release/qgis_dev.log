@@ -1,7 +1,7 @@
-﻿生成启动时间为 2016/1/7 星期四 10:01:06。
+﻿生成启动时间为 2016/1/14 星期四 20:13:47。
      1>项目“E:\Jacory\Code\Github\qgis_dev\qgis_dev\qgis_dev.vcxproj”在节点 2 上(build 个目标)。
      1>InitializeBuildStatus:
-         正在对“Release\qgis_dev.unsuccessfulbuild”执行 Touch 任务。
+         正在创建“Release\qgis_dev.unsuccessfulbuild”，因为已指定“AlwaysCreate”。
        CustomBuild:
          所有输出均为最新。
        ClCompile:
@@ -38,4 +38,4 @@
 
 生成成功。
 
-已用时间 00:00:05.52
+已用时间 00:00:03.72

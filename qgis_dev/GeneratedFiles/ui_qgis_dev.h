@@ -1,11 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'qgis_dev.ui'
 **
-<<<<<<< HEAD
-** Created: Mon Jan 4 17:22:54 2016
-=======
-** Created: Tue Jan 5 16:26:50 2016
->>>>>>> origin/master
+** Created: Thu Jan 14 19:25:29 2016
 **      by: Qt User Interface Compiler version 4.8.4
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -37,11 +33,13 @@ public:
     QAction *actionAdd_Vector;
     QAction *actionAdd_Raster;
     QAction *actionNew_Project;
+    QAction *actionToggle_Overview;
     QWidget *centralWidget;
     QMenuBar *menuBar;
     QMenu *menuFile;
     QMenu *menuVector;
     QMenu *menuRaster;
+    QMenu *menuView;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
 
@@ -87,8 +85,13 @@ public:
         actionNew_Project = new QAction(qgis_devClass);
         actionNew_Project->setObjectName(QString::fromUtf8("actionNew_Project"));
         QIcon icon6;
-        icon6.addFile(QString::fromUtf8(":/images/themes/default/mActionNewComposer.svg"), QSize(), QIcon::Normal, QIcon::Off);
+        icon6.addFile(QString::fromUtf8(":/images/themes/default/mActionFileNew.svg"), QSize(), QIcon::Normal, QIcon::Off);
         actionNew_Project->setIcon(icon6);
+        actionToggle_Overview = new QAction(qgis_devClass);
+        actionToggle_Overview->setObjectName(QString::fromUtf8("actionToggle_Overview"));
+        QIcon icon7;
+        icon7.addFile(QString::fromUtf8(":/images/themes/default/mActionInOverview.svg"), QSize(), QIcon::Normal, QIcon::Off);
+        actionToggle_Overview->setIcon(icon7);
         centralWidget = new QWidget(qgis_devClass);
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
         qgis_devClass->setCentralWidget(centralWidget);
@@ -101,6 +104,8 @@ public:
         menuVector->setObjectName(QString::fromUtf8("menuVector"));
         menuRaster = new QMenu(menuBar);
         menuRaster->setObjectName(QString::fromUtf8("menuRaster"));
+        menuView = new QMenu(menuBar);
+        menuView->setObjectName(QString::fromUtf8("menuView"));
         qgis_devClass->setMenuBar(menuBar);
         mainToolBar = new QToolBar(qgis_devClass);
         mainToolBar->setObjectName(QString::fromUtf8("mainToolBar"));
@@ -112,6 +117,7 @@ public:
         menuBar->addAction(menuFile->menuAction());
         menuBar->addAction(menuVector->menuAction());
         menuBar->addAction(menuRaster->menuAction());
+        menuBar->addAction(menuView->menuAction());
         menuFile->addAction(actionNew_Project);
         menuFile->addAction(actionOpen_Project);
         menuFile->addAction(actionSave_Project);
@@ -119,6 +125,7 @@ public:
         menuFile->addAction(actionExit);
         menuVector->addAction(actionAdd_Vector);
         menuRaster->addAction(actionAdd_Raster);
+        menuView->addAction(actionToggle_Overview);
         mainToolBar->addAction(actionNew_Project);
         mainToolBar->addAction(actionOpen_Project);
         mainToolBar->addAction(actionSave_Project);
@@ -139,9 +146,11 @@ public:
         actionAdd_Vector->setText(QApplication::translate("qgis_devClass", "Add Vector", 0, QApplication::UnicodeUTF8));
         actionAdd_Raster->setText(QApplication::translate("qgis_devClass", "Add Raster", 0, QApplication::UnicodeUTF8));
         actionNew_Project->setText(QApplication::translate("qgis_devClass", "New Project", 0, QApplication::UnicodeUTF8));
+        actionToggle_Overview->setText(QApplication::translate("qgis_devClass", "Toggle Overview", 0, QApplication::UnicodeUTF8));
         menuFile->setTitle(QApplication::translate("qgis_devClass", "File", 0, QApplication::UnicodeUTF8));
         menuVector->setTitle(QApplication::translate("qgis_devClass", "Vector", 0, QApplication::UnicodeUTF8));
         menuRaster->setTitle(QApplication::translate("qgis_devClass", "Raster", 0, QApplication::UnicodeUTF8));
+        menuView->setTitle(QApplication::translate("qgis_devClass", "View", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };
