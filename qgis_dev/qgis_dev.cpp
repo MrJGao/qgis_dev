@@ -60,8 +60,7 @@ qgis_dev* qgis_dev::sm_instance = 0;
 
 qgis_dev::qgis_dev( QWidget *parent, Qt::WindowFlags flags )
     : QMainWindow( parent, flags ),
-      m_MousePrecisionDecimalPlaces( 0 ),
-      m_toggleOverview( false )
+      m_MousePrecisionDecimalPlaces( 0 )
 {
     if ( sm_instance )
     {
@@ -75,22 +74,32 @@ qgis_dev::qgis_dev( QWidget *parent, Qt::WindowFlags flags )
 
     ui.setupUi( this );
 
-    //! 初始化map canvas, 并装入layout中
+    //! 初始化map canvas
     m_mapCanvas = new QgsMapCanvas();
     m_mapCanvas->enableAntiAliasing( true );
     m_mapCanvas->setCanvasColor( QColor( 255, 255, 255 ) );
+
+    //! 构建打印出图视图
+    m_composer = new qgis_devComposer( this );
+    createComposer();
 
     //! 初始化图层管理器
     m_layerTreeView = new QgsLayerTreeView( this );
     initLayerTreeView();
 
-    //! 初始化status bar
-    createStatusBar();
-
     //! 布局
     QWidget* centralWidget = this->centralWidget();
     QGridLayout* centralLayout = new QGridLayout( centralWidget );
-    centralLayout->addWidget( m_mapCanvas, 0, 0, 1, 1 );
+
+    m_stackedWidget = new QStackedWidget( this );
+    m_stackedWidget->setLayout( new QHBoxLayout() );
+    m_stackedWidget->addWidget( m_mapCanvas );
+    m_stackedWidget->addWidget( m_composer );
+
+    centralLayout->addWidget( m_stackedWidget, 0, 0, 1, 1 );
+
+    //! 初始化status bar
+    createStatusBar();
 
     // connections
     connect( ui.actionAdd_Vector, SIGNAL( triggered() ), this, SLOT( addVectorLayers() ) );
@@ -232,6 +241,13 @@ void qgis_dev::initLayerTreeView()
 void qgis_dev::createStatusBar()
 {
     statusBar()->setStyleSheet( "QStatusBar::item {border: none;}" );
+
+    //! 添加地图和打印视图切换的ComboBox
+    pageViewComboBox = new QComboBox( statusBar() );
+    pageViewComboBox->addItem( tr( "Map" ) );
+    pageViewComboBox->addItem( tr( "Composer" ) );
+    connect( pageViewComboBox, SIGNAL( activated( int ) ), m_stackedWidget, SLOT( setCurrentIndex( int ) ) );
+    statusBar()->addPermanentWidget( pageViewComboBox );
 
     //! 添加进度条
     m_progressBar = new QProgressBar( statusBar() );
@@ -477,6 +493,11 @@ void qgis_dev::createOverview()
             nodeLayer->setCustomProperty( "overview", 1 );
         }
     }
+
+}
+
+void qgis_dev::createComposer()
+{
 
 }
 

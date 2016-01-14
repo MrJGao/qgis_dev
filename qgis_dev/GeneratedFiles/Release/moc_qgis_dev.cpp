@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'qgis_dev.h'
 **
-** Created: Thu Jan 14 19:59:22 2016
+** Created: Thu Jan 14 21:41:14 2016
 **      by: The Qt Meta Object Compiler version 63 (Qt 4.8.4)
 **
 ** WARNING! All changes made in this file will be lost!
