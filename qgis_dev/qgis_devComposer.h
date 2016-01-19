@@ -21,6 +21,13 @@ class qgis_devComposer : public QMainWindow , public Ui_composerBase
 {
     Q_OBJECT
 public:
+    //! 用于控制输出模式
+    enum OutputMode
+    {
+        Single = 0, // 只输出单个feature
+        Atlas // 输出整个合成
+    };
+
     qgis_devComposer( QWidget *parent = 0 );
     ~qgis_devComposer();
 
@@ -38,23 +45,30 @@ signals:
     void zoomLevelChanged();
 
 public slots:
-    void toggleRulers( bool );
-
+    //! 合成视图浏览工具
+    void on_actionPanComposer_triggered();
     void on_actionZoomAll_triggered();
     void on_actionZoomActual_triggered();
     void on_actionZoomIn_triggered();
     void on_actionZoomOut_triggered();
-
-    void on_actionShowGrid_triggered( bool checked );
     void on_actionShowFullScreen_triggered( bool checked );
 
-    void on_actionAddArrow_triggered();
-    void on_actionPanComposer_triggered();
+    //! 合成视图辅助工具
+    void on_actionShowGrid_triggered( bool checked );
+    void on_actionToggleRulers_triggered( bool );
+
+
+    //! 地图元素工具
     void on_actionSelectTool_triggered();
     void on_actionAddShape_triggered();
     void on_actionAddMap_triggered();
+    void on_actionAddArrow_triggered();
     void on_actionAddHtml_triggered();
 
+    //! 导出当前合成
+    void on_actionExportAsImage_triggered();
+    void on_actionExportAsSvg_triggered();
+    void on_actionExportAsPDF_triggered();
 
 protected:
     virtual void moveEvent( QMoveEvent* ) override;
@@ -64,6 +78,10 @@ private slots:
     void setComposition( QgsComposition* composition );
 
 private:
+
+    void exportCompositionAsImage( qgis_devComposer::OutputMode mode );
+
+
     QString m_title; //! 合成标题
 
     QgsComposerView* m_composerView;

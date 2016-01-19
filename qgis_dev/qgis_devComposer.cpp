@@ -3,6 +3,11 @@
 
 #include <QPalette>
 #include <QGridLayout>
+#include <QPair>
+#include <QFileInfo>
+#include <QMessageBox>
+
+#include <qgisgui.h>
 
 qgis_devComposer::qgis_devComposer( QWidget *parent )
     : QMainWindow( parent ),
@@ -55,11 +60,11 @@ qgis_devComposer::qgis_devComposer( QWidget *parent )
 
 
     // connections
-    connect( actionShow_Rulers, SIGNAL( triggered( bool ) ), this, SLOT( toggleRulers( bool ) ) );
     connect( m_composerView, SIGNAL( compositionSet( QgsComposition* ) ), this, SLOT( setComposition( QgsComposition* ) ) );
 
 
-    actionShow_Rulers->setChecked( true ); //! 默认显示标尺
+    actionToggleRulers->setChecked( true ); // 默认显示标尺
+    on_actionZoomAll_triggered(); // 默认显示全图范围
 
 }
 
@@ -78,7 +83,7 @@ void qgis_devComposer::moveEvent( QMoveEvent* )
 
 }
 
-void qgis_devComposer::toggleRulers( bool showRuler )
+void qgis_devComposer::on_actionToggleRulers_triggered( bool showRuler )
 {
     m_horizontalRuler->setVisible( showRuler );
     m_verticalRuler->setVisible( showRuler );
@@ -185,5 +190,97 @@ void qgis_devComposer::on_actionAddShape_triggered()
     {
         m_composerView->setCurrentTool( QgsComposerView::AddRectangle );
     }
+}
+
+void qgis_devComposer::on_actionExportAsImage_triggered()
+{
+    exportCompositionAsImage( qgis_devComposer::Single );
+}
+
+void qgis_devComposer::exportCompositionAsImage( OutputMode mode )
+{
+    if ( !m_composition || !m_composerView ) {return;}
+
+    // 输出图像的长宽
+    int width = ( int )( m_composition->printResolution() * m_composition->paperWidth() / 25.4 );
+    int height = ( int )( m_composition->printResolution() * m_composition->paperHeight() / 25.4 );
+    int dpi = ( int )( m_composition->printResolution() );
+
+    int memuse = width * height * 3 / 100000; // 需要占用的内存
+    if ( memuse > 200 )   // about 4500x4500
+    {
+        int answer = QMessageBox::warning( 0, tr( "Big image" ),
+                                           tr( "To create image %1x%2 requires about %3 MB of memory. Proceed?" )
+                                           .arg( width ).arg( height ).arg( memuse ),
+                                           QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Ok );
+
+        raise();
+        if ( answer == QMessageBox::Cancel )
+        {
+            return;
+        }
+    }
+
+    QgsAtlasComposition* atlasMap = &m_composition->atlasComposition();
+    if ( mode == qgis_devComposer::Single )
+    {
+        QString outputFileName = QString::null;
+        QPair<QString, QString> fileNExt = QgisGui::getSaveAsImageName( this, tr( "Choose a file name to save the map image as" ), outputFileName );
+        if ( fileNExt.first.isEmpty() ) {return;}
+
+        m_composerView->setPaintingEnabled( false );
+
+        for ( int i = 0; i < m_composition->numPages(); ++i )
+        {
+            if ( !m_composition->shouldExportPage( i + 1 ) )
+            {
+                continue;
+            }
+            QImage image = m_composition->printPageAsRaster( i );
+            if ( image.isNull() )
+            {
+                QMessageBox::warning( 0, tr( "Memory Allocation Error" ),
+                                      tr( "Trying to create image #%1( %2x%3 @ %4dpi ) "
+                                          "may result in a memory overflow.\n"
+                                          "Please try a lower resolution or a smaller papersize" )
+                                      .arg( i + 1 ).arg( width ).arg( height ).arg( dpi ),
+                                      QMessageBox::Ok, QMessageBox::Ok );
+                m_composerView->setPaintingEnabled( true );
+                return;
+            }
+
+            bool saveOk;
+            if ( i == 0 )
+            {
+                saveOk = image.save( fileNExt.first, fileNExt.second.toLocal8Bit().constData() );
+            }
+            else
+            {
+                QFileInfo fi( fileNExt.first );
+                QString outputFilePath = fi.absolutePath() + "/" + fi.baseName() + "_" + QString::number( i + i ) + "." + fi.suffix();
+                saveOk = image.save( outputFilePath, fileNExt.second.toLocal8Bit().constData() );
+            }
+            if ( !saveOk )
+            {
+                QMessageBox::warning( this, tr( "Image export error" ),
+                                      QString( tr( "Error creating %1." ) ).arg( fileNExt.first ),
+                                      QMessageBox::Ok,
+                                      QMessageBox::Ok );
+                m_composerView->setPaintingEnabled( true );
+                return;
+            }
+
+        }
+    }
+}
+
+void qgis_devComposer::on_actionExportAsSvg_triggered()
+{
+
+}
+
+void qgis_devComposer::on_actionExportAsPDF_triggered()
+{
+
 }
 

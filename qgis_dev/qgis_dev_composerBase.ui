@@ -77,7 +77,7 @@
     <property name="title">
      <string>View</string>
     </property>
-    <addaction name="actionShow_Rulers"/>
+    <addaction name="actionToggleRulers"/>
     <addaction name="actionShowFullScreen"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
@@ -92,7 +92,7 @@
    <addaction name="menuView"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <widget class="QToolBar" name="mProjectToolBar">
+  <widget class="QToolBar" name="m_project_toolBar">
    <property name="windowTitle">
     <string>toolBar</string>
    </property>
@@ -107,7 +107,7 @@
    <addaction name="actionUndo"/>
    <addaction name="actionRedo"/>
   </widget>
-  <widget class="QToolBar" name="toolBar">
+  <widget class="QToolBar" name="m_viewTool_toolBar">
    <property name="windowTitle">
     <string>toolBar</string>
    </property>
@@ -123,7 +123,7 @@
    <addaction name="actionZoomIn"/>
    <addaction name="actionZoomOut"/>
   </widget>
-  <widget class="QToolBar" name="toolBar_2">
+  <widget class="QToolBar" name="m_print_toolBar">
    <property name="windowTitle">
     <string>toolBar_2</string>
    </property>
@@ -136,20 +136,21 @@
    <addaction name="actionPrint"/>
    <addaction name="actionExportAsImage"/>
    <addaction name="actionExportAsSvg"/>
+   <addaction name="actionExportAsPDF"/>
   </widget>
   <widget class="QToolBar" name="toolBar_3">
    <property name="windowTitle">
     <string>toolBar_3</string>
    </property>
    <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
+    <enum>LeftToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
    <addaction name="actionShowGrid"/>
   </widget>
-  <widget class="QToolBar" name="tools_toolBar">
+  <widget class="QToolBar" name="m_ItemTools_toolBar">
    <property name="windowTitle">
     <string>toolBar_4</string>
    </property>
@@ -267,7 +268,7 @@
     <string>Export As Svg</string>
    </property>
   </action>
-  <action name="actionShow_Rulers">
+  <action name="actionToggleRulers">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -413,6 +414,18 @@
    </property>
    <property name="toolTip">
     <string>Add html</string>
+   </property>
+  </action>
+  <action name="actionExportAsPDF">
+   <property name="icon">
+    <iconset resource="Resources/images/images.qrc">
+     <normaloff>:/images/themes/default/mActionSaveAsPDF.png</normaloff>:/images/themes/default/mActionSaveAsPDF.png</iconset>
+   </property>
+   <property name="text">
+    <string>Export as PDF</string>
+   </property>
+   <property name="toolTip">
+    <string>Export as PDF</string>
    </property>
   </action>
  </widget>

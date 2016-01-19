@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'qgis_dev_composerBase.ui'
 **
-** Created: Sun Jan 17 23:18:56 2016
+** Created: Tue Jan 19 20:08:45 2016
 **      by: Qt User Interface Compiler version 4.8.4
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -36,7 +36,7 @@ public:
     QAction *actionPrint;
     QAction *actionExportAsImage;
     QAction *actionExportAsSvg;
-    QAction *actionShow_Rulers;
+    QAction *actionToggleRulers;
     QAction *actionUndo;
     QAction *actionRedo;
     QAction *actionShowGrid;
@@ -47,17 +47,18 @@ public:
     QAction *actionAddShape;
     QAction *actionAddMap;
     QAction *actionAddHtml;
+    QAction *actionExportAsPDF;
     QWidget *centralwidget;
     QMenuBar *menubar;
     QMenu *menuProject;
     QMenu *menuView;
     QMenu *menuEdit;
     QStatusBar *statusbar;
-    QToolBar *mProjectToolBar;
-    QToolBar *toolBar;
-    QToolBar *toolBar_2;
+    QToolBar *m_project_toolBar;
+    QToolBar *m_viewTool_toolBar;
+    QToolBar *m_print_toolBar;
     QToolBar *toolBar_3;
-    QToolBar *tools_toolBar;
+    QToolBar *m_ItemTools_toolBar;
 
     void setupUi(QMainWindow *composerBase)
     {
@@ -109,9 +110,9 @@ public:
         QIcon icon8;
         icon8.addFile(QString::fromUtf8(":/images/themes/default/mActionSaveAsSVG.png"), QSize(), QIcon::Normal, QIcon::Off);
         actionExportAsSvg->setIcon(icon8);
-        actionShow_Rulers = new QAction(composerBase);
-        actionShow_Rulers->setObjectName(QString::fromUtf8("actionShow_Rulers"));
-        actionShow_Rulers->setCheckable(true);
+        actionToggleRulers = new QAction(composerBase);
+        actionToggleRulers->setObjectName(QString::fromUtf8("actionToggleRulers"));
+        actionToggleRulers->setCheckable(true);
         actionUndo = new QAction(composerBase);
         actionUndo->setObjectName(QString::fromUtf8("actionUndo"));
         QIcon icon9;
@@ -161,6 +162,11 @@ public:
         QIcon icon17;
         icon17.addFile(QString::fromUtf8(":/images/themes/default/mActionAddHtml.png"), QSize(), QIcon::Normal, QIcon::Off);
         actionAddHtml->setIcon(icon17);
+        actionExportAsPDF = new QAction(composerBase);
+        actionExportAsPDF->setObjectName(QString::fromUtf8("actionExportAsPDF"));
+        QIcon icon18;
+        icon18.addFile(QString::fromUtf8(":/images/themes/default/mActionSaveAsPDF.png"), QSize(), QIcon::Normal, QIcon::Off);
+        actionExportAsPDF->setIcon(icon18);
         centralwidget = new QWidget(composerBase);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         composerBase->setCentralWidget(centralwidget);
@@ -186,49 +192,50 @@ public:
         statusbar = new QStatusBar(composerBase);
         statusbar->setObjectName(QString::fromUtf8("statusbar"));
         composerBase->setStatusBar(statusbar);
-        mProjectToolBar = new QToolBar(composerBase);
-        mProjectToolBar->setObjectName(QString::fromUtf8("mProjectToolBar"));
-        composerBase->addToolBar(Qt::TopToolBarArea, mProjectToolBar);
-        toolBar = new QToolBar(composerBase);
-        toolBar->setObjectName(QString::fromUtf8("toolBar"));
-        composerBase->addToolBar(Qt::LeftToolBarArea, toolBar);
-        toolBar_2 = new QToolBar(composerBase);
-        toolBar_2->setObjectName(QString::fromUtf8("toolBar_2"));
-        composerBase->addToolBar(Qt::TopToolBarArea, toolBar_2);
+        m_project_toolBar = new QToolBar(composerBase);
+        m_project_toolBar->setObjectName(QString::fromUtf8("m_project_toolBar"));
+        composerBase->addToolBar(Qt::TopToolBarArea, m_project_toolBar);
+        m_viewTool_toolBar = new QToolBar(composerBase);
+        m_viewTool_toolBar->setObjectName(QString::fromUtf8("m_viewTool_toolBar"));
+        composerBase->addToolBar(Qt::LeftToolBarArea, m_viewTool_toolBar);
+        m_print_toolBar = new QToolBar(composerBase);
+        m_print_toolBar->setObjectName(QString::fromUtf8("m_print_toolBar"));
+        composerBase->addToolBar(Qt::TopToolBarArea, m_print_toolBar);
         toolBar_3 = new QToolBar(composerBase);
         toolBar_3->setObjectName(QString::fromUtf8("toolBar_3"));
-        composerBase->addToolBar(Qt::TopToolBarArea, toolBar_3);
-        tools_toolBar = new QToolBar(composerBase);
-        tools_toolBar->setObjectName(QString::fromUtf8("tools_toolBar"));
-        composerBase->addToolBar(Qt::TopToolBarArea, tools_toolBar);
+        composerBase->addToolBar(Qt::LeftToolBarArea, toolBar_3);
+        m_ItemTools_toolBar = new QToolBar(composerBase);
+        m_ItemTools_toolBar->setObjectName(QString::fromUtf8("m_ItemTools_toolBar"));
+        composerBase->addToolBar(Qt::TopToolBarArea, m_ItemTools_toolBar);
 
         menubar->addAction(menuProject->menuAction());
         menubar->addAction(menuEdit->menuAction());
         menubar->addAction(menuView->menuAction());
         menuProject->addAction(actionNew_Project);
         menuProject->addAction(actionSave_Project);
-        menuView->addAction(actionShow_Rulers);
+        menuView->addAction(actionToggleRulers);
         menuView->addAction(actionShowFullScreen);
         menuEdit->addAction(actionUndo);
         menuEdit->addAction(actionRedo);
-        mProjectToolBar->addAction(actionNew_Project);
-        mProjectToolBar->addAction(actionSave_Project);
-        mProjectToolBar->addAction(actionUndo);
-        mProjectToolBar->addAction(actionRedo);
-        toolBar->addAction(actionPanComposer);
-        toolBar->addAction(actionZoomAll);
-        toolBar->addAction(actionZoomActual);
-        toolBar->addAction(actionZoomIn);
-        toolBar->addAction(actionZoomOut);
-        toolBar_2->addAction(actionPrint);
-        toolBar_2->addAction(actionExportAsImage);
-        toolBar_2->addAction(actionExportAsSvg);
+        m_project_toolBar->addAction(actionNew_Project);
+        m_project_toolBar->addAction(actionSave_Project);
+        m_project_toolBar->addAction(actionUndo);
+        m_project_toolBar->addAction(actionRedo);
+        m_viewTool_toolBar->addAction(actionPanComposer);
+        m_viewTool_toolBar->addAction(actionZoomAll);
+        m_viewTool_toolBar->addAction(actionZoomActual);
+        m_viewTool_toolBar->addAction(actionZoomIn);
+        m_viewTool_toolBar->addAction(actionZoomOut);
+        m_print_toolBar->addAction(actionPrint);
+        m_print_toolBar->addAction(actionExportAsImage);
+        m_print_toolBar->addAction(actionExportAsSvg);
+        m_print_toolBar->addAction(actionExportAsPDF);
         toolBar_3->addAction(actionShowGrid);
-        tools_toolBar->addAction(actionSelectTool);
-        tools_toolBar->addAction(actionAddArrow);
-        tools_toolBar->addAction(actionAddShape);
-        tools_toolBar->addAction(actionAddMap);
-        tools_toolBar->addAction(actionAddHtml);
+        m_ItemTools_toolBar->addAction(actionSelectTool);
+        m_ItemTools_toolBar->addAction(actionAddArrow);
+        m_ItemTools_toolBar->addAction(actionAddShape);
+        m_ItemTools_toolBar->addAction(actionAddMap);
+        m_ItemTools_toolBar->addAction(actionAddHtml);
 
         retranslateUi(composerBase);
 
@@ -268,11 +275,11 @@ public:
 #ifndef QT_NO_TOOLTIP
         actionExportAsSvg->setToolTip(QApplication::translate("composerBase", "Export As Svg", 0, QApplication::UnicodeUTF8));
 #endif // QT_NO_TOOLTIP
-        actionShow_Rulers->setText(QApplication::translate("composerBase", "Show Rulers", 0, QApplication::UnicodeUTF8));
+        actionToggleRulers->setText(QApplication::translate("composerBase", "Show Rulers", 0, QApplication::UnicodeUTF8));
 #ifndef QT_NO_TOOLTIP
-        actionShow_Rulers->setToolTip(QApplication::translate("composerBase", "Show rulers", 0, QApplication::UnicodeUTF8));
+        actionToggleRulers->setToolTip(QApplication::translate("composerBase", "Show rulers", 0, QApplication::UnicodeUTF8));
 #endif // QT_NO_TOOLTIP
-        actionShow_Rulers->setShortcut(QApplication::translate("composerBase", "Ctrl+R", 0, QApplication::UnicodeUTF8));
+        actionToggleRulers->setShortcut(QApplication::translate("composerBase", "Ctrl+R", 0, QApplication::UnicodeUTF8));
         actionUndo->setText(QApplication::translate("composerBase", "Undo", 0, QApplication::UnicodeUTF8));
 #ifndef QT_NO_TOOLTIP
         actionUndo->setToolTip(QApplication::translate("composerBase", "Revert last change", 0, QApplication::UnicodeUTF8));
@@ -315,14 +322,18 @@ public:
 #ifndef QT_NO_TOOLTIP
         actionAddHtml->setToolTip(QApplication::translate("composerBase", "Add html", 0, QApplication::UnicodeUTF8));
 #endif // QT_NO_TOOLTIP
+        actionExportAsPDF->setText(QApplication::translate("composerBase", "Export as PDF", 0, QApplication::UnicodeUTF8));
+#ifndef QT_NO_TOOLTIP
+        actionExportAsPDF->setToolTip(QApplication::translate("composerBase", "Export as PDF", 0, QApplication::UnicodeUTF8));
+#endif // QT_NO_TOOLTIP
         menuProject->setTitle(QApplication::translate("composerBase", "Project", 0, QApplication::UnicodeUTF8));
         menuView->setTitle(QApplication::translate("composerBase", "View", 0, QApplication::UnicodeUTF8));
         menuEdit->setTitle(QApplication::translate("composerBase", "Edit", 0, QApplication::UnicodeUTF8));
-        mProjectToolBar->setWindowTitle(QApplication::translate("composerBase", "toolBar", 0, QApplication::UnicodeUTF8));
-        toolBar->setWindowTitle(QApplication::translate("composerBase", "toolBar", 0, QApplication::UnicodeUTF8));
-        toolBar_2->setWindowTitle(QApplication::translate("composerBase", "toolBar_2", 0, QApplication::UnicodeUTF8));
+        m_project_toolBar->setWindowTitle(QApplication::translate("composerBase", "toolBar", 0, QApplication::UnicodeUTF8));
+        m_viewTool_toolBar->setWindowTitle(QApplication::translate("composerBase", "toolBar", 0, QApplication::UnicodeUTF8));
+        m_print_toolBar->setWindowTitle(QApplication::translate("composerBase", "toolBar_2", 0, QApplication::UnicodeUTF8));
         toolBar_3->setWindowTitle(QApplication::translate("composerBase", "toolBar_3", 0, QApplication::UnicodeUTF8));
-        tools_toolBar->setWindowTitle(QApplication::translate("composerBase", "toolBar_4", 0, QApplication::UnicodeUTF8));
+        m_ItemTools_toolBar->setWindowTitle(QApplication::translate("composerBase", "toolBar_4", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };

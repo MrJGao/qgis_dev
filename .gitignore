@@ -14,8 +14,8 @@ $RECYCLE.BIN/
 *.msm
 *.msp
 
-# visual studio files
-*.tlog
+# visual studio generate files
+qgis_dev/Release/*
 
 # Windows shortcuts
 *.lnk
