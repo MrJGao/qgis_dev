@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'qgis_devComposer.h'
 **
-** Created: Tue Jan 19 20:08:42 2016
+** Created: Tue Jan 19 20:52:14 2016
 **      by: The Qt Meta Object Compiler version 63 (Qt 4.8.4)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -40,8 +40,8 @@ static const uint qt_meta_data_qgis_devComposer[] = {
      131,   17,   17,   17, 0x0a,
      159,   17,   17,   17, 0x0a,
      196,  188,   17,   17, 0x0a,
-     230,   17,   17,   17, 0x0a,
-     268,  188,   17,   17, 0x0a,
+     236,  188,   17,   17, 0x0a,
+     270,   17,   17,   17, 0x0a,
      308,   17,   17,   17, 0x0a,
      340,   17,   17,   17, 0x0a,
      370,   17,   17,   17, 0x0a,
@@ -62,9 +62,9 @@ static const char qt_meta_stringdata_qgis_devComposer[] = {
     "on_actionZoomActual_triggered()\0"
     "on_actionZoomIn_triggered()\0"
     "on_actionZoomOut_triggered()\0checked\0"
+    "on_actionShowFullScreen_triggered(bool)\0"
     "on_actionShowGrid_triggered(bool)\0"
     "on_actionToggleRulers_triggered(bool)\0"
-    "on_actionShowFullScreen_triggered(bool)\0"
     "on_actionSelectTool_triggered()\0"
     "on_actionAddShape_triggered()\0"
     "on_actionAddMap_triggered()\0"
@@ -88,9 +88,9 @@ void qgis_devComposer::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int
         case 3: _t->on_actionZoomActual_triggered(); break;
         case 4: _t->on_actionZoomIn_triggered(); break;
         case 5: _t->on_actionZoomOut_triggered(); break;
-        case 6: _t->on_actionShowGrid_triggered((*reinterpret_cast< bool(*)>(_a[1]))); break;
-        case 7: _t->on_actionToggleRulers_triggered((*reinterpret_cast< bool(*)>(_a[1]))); break;
-        case 8: _t->on_actionShowFullScreen_triggered((*reinterpret_cast< bool(*)>(_a[1]))); break;
+        case 6: _t->on_actionShowFullScreen_triggered((*reinterpret_cast< bool(*)>(_a[1]))); break;
+        case 7: _t->on_actionShowGrid_triggered((*reinterpret_cast< bool(*)>(_a[1]))); break;
+        case 8: _t->on_actionToggleRulers_triggered((*reinterpret_cast< bool(*)>(_a[1]))); break;
         case 9: _t->on_actionSelectTool_triggered(); break;
         case 10: _t->on_actionAddShape_triggered(); break;
         case 11: _t->on_actionAddMap_triggered(); break;

@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'qgsattributetabledialog.ui'
 **
-** Created: Tue Jan 19 20:08:44 2016
+** Created: Tue Jan 19 20:52:22 2016
 **      by: Qt User Interface Compiler version 4.8.4
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
