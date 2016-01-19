@@ -16,8 +16,8 @@ int main( int argc, char *argv[] )
     myQgis->show();
 
     //test attribute table
-    myQgis->addVectorLayers();
-    myQgis->openAttributeTableDialog();
+    /* myQgis->addVectorLayers();
+    myQgis->openAttributeTableDialog();*/
 
     // test vector layer symbol
     /*myQgis->layerSymbolTest();*/

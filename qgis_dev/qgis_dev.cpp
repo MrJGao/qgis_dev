@@ -15,6 +15,7 @@
 #include <QFile>
 #include <QDir>
 #include <Qt>
+#include <QBitmap>
 
 // QGis include
 #include <qgsvectorlayer.h>
@@ -28,6 +29,7 @@
 #include <qgslayertreeregistrybridge.h>
 #include <qgslayertreeviewdefaultactions.h>
 #include <qgsattributedialog.h>
+#include <qgscursors.h>
 
 #include "qgis_devlayertreeviewmenuprovider.h"
 #include "qgis_devattrtabledialog.h"
@@ -38,10 +40,6 @@
 #include <qgsattributetablemodel.h>
 #include <qgsfeaturelistmodel.h>
 #include <qgsvectorlayercache.h>
-
-#include <qgsvectorlayerrenderer.h>
-#include <qgssymbolv2.h>
-#include <qgssinglesymbolrendererv2.h>
 
 #include <qgsattributedialog.h>
 #include <qgseditorwidgetfactory.h>
@@ -55,11 +53,14 @@
 #include <qgsrendercontext.h>
 #include <qgssinglesymbolrendererv2.h>
 #include <qgssymbollayerv2.h>
+#include <qgsmapcanvas.h>
+#include <qgsmapoverviewcanvas.h>
 
 qgis_dev* qgis_dev::sm_instance = 0;
 
 qgis_dev::qgis_dev( QWidget *parent, Qt::WindowFlags flags )
-    : QMainWindow( parent, flags )
+    : QMainWindow( parent, flags ),
+      m_MousePrecisionDecimalPlaces( 0 )
 {
     if ( sm_instance )
     {
@@ -73,10 +74,14 @@ qgis_dev::qgis_dev( QWidget *parent, Qt::WindowFlags flags )
 
     ui.setupUi( this );
 
-    //! 初始化map canvas, 并装入layout中
+    //! 初始化map canvas
     m_mapCanvas = new QgsMapCanvas();
     m_mapCanvas->enableAntiAliasing( true );
     m_mapCanvas->setCanvasColor( QColor( 255, 255, 255 ) );
+
+    //! 构建打印出图视图
+    m_composer = new qgis_devComposer( this );
+    createComposer();
 
     //! 初始化图层管理器
     m_layerTreeView = new QgsLayerTreeView( this );
@@ -85,11 +90,21 @@ qgis_dev::qgis_dev( QWidget *parent, Qt::WindowFlags flags )
     //! 布局
     QWidget* centralWidget = this->centralWidget();
     QGridLayout* centralLayout = new QGridLayout( centralWidget );
-    centralLayout->addWidget( m_mapCanvas, 0, 0, 1, 1 );
+
+    m_stackedWidget = new QStackedWidget( this );
+    m_stackedWidget->setLayout( new QHBoxLayout() );
+    m_stackedWidget->addWidget( m_mapCanvas );
+    m_stackedWidget->addWidget( m_composer );
+
+    centralLayout->addWidget( m_stackedWidget, 0, 0, 1, 1 );
+
+    //! 初始化status bar
+    createStatusBar();
 
     // connections
     connect( ui.actionAdd_Vector, SIGNAL( triggered() ), this, SLOT( addVectorLayers() ) );
     connect( ui.actionAdd_Raster, SIGNAL( triggered() ), this, SLOT( addRasterLayers() ) );
+    connect( ui.actionToggle_Overview, SIGNAL( triggered() ), this, SLOT( createOverview() ) );
 }
 
 qgis_dev::~qgis_dev()
@@ -184,9 +199,9 @@ void qgis_dev::initLayerTreeView()
 
     // remove item button
     QToolButton* btnRemoveItem = new QToolButton();
-    // btnRemoveItem->setDefaultAction( this->m_actionRemoveLayer );
+    btnRemoveItem->setIcon( qgis_dev::getThemeIcon( "mActionRemoveLayer.svg" ) );
     btnRemoveItem->setAutoRaise( true );
-
+    connect( btnRemoveItem, SIGNAL( clicked() ), this, SLOT( removeLayer() ) );
 
     // 按钮布局
     QHBoxLayout* toolbarLayout = new QHBoxLayout();
@@ -219,13 +234,20 @@ void qgis_dev::initLayerTreeView()
     connect( QgsProject::instance(), SIGNAL( readProject( QDomDocument ) ),
              m_layerTreeCanvasBridge, SLOT( readProject( QDomDocument ) ) );
 
-
+    connect( m_mapCanvas, SIGNAL( xyCoordinates( const QgsPoint& ) ), this, SLOT( showMouseCoordinate( const QgsPoint& ) ) );
 
 }
 
 void qgis_dev::createStatusBar()
 {
     statusBar()->setStyleSheet( "QStatusBar::item {border: none;}" );
+
+    //! 添加地图和打印视图切换的ComboBox
+    pageViewComboBox = new QComboBox( statusBar() );
+    pageViewComboBox->addItem( tr( "Map" ) );
+    pageViewComboBox->addItem( tr( "Composer" ) );
+    connect( pageViewComboBox, SIGNAL( activated( int ) ), m_stackedWidget, SLOT( setCurrentIndex( int ) ) );
+    statusBar()->addPermanentWidget( pageViewComboBox );
 
     //! 添加进度条
     m_progressBar = new QProgressBar( statusBar() );
@@ -260,6 +282,7 @@ void qgis_dev::createStatusBar()
     m_coordsEdit->setContentsMargins( 0, 0, 0, 0 );
     m_coordsEdit->setAlignment( Qt::AlignCenter );
     statusBar()->addPermanentWidget( m_coordsEdit, 0 );
+    //m_coordsEdit->setReadOnly( true );
     connect( m_coordsEdit, SIGNAL( returnPressed() ), this, SLOT( userCenter() ) );
 
     //! 比例尺标签
@@ -341,7 +364,34 @@ QgsMapLayer* qgis_dev::activeLayer()
 
 void qgis_dev::removeLayer()
 {
-    m_layerTreeView->defaultActions()->actionRemoveGroupOrLayer();
+    if ( !m_layerTreeView ) {return;}
+    foreach( QgsMapLayer* layer, m_layerTreeView->selectedLayers() )
+    {
+        QgsVectorLayer* veclayer = qobject_cast<QgsVectorLayer*>( layer );
+        if ( veclayer && veclayer->isEditable() ) {return;}
+    }
+
+    QList<QgsLayerTreeNode*> selectedNodes = m_layerTreeView->selectedNodes( true );
+
+    // validate selection
+    if ( selectedNodes.isEmpty() )
+    {
+        QMessageBox::critical(
+            this,
+            tr( "Error" ),
+            tr( "No selection valid" ) );
+        return;
+    }
+
+    foreach ( QgsLayerTreeNode* node, selectedNodes )
+    {
+        QgsLayerTreeGroup* parentGroup = qobject_cast<QgsLayerTreeGroup*>( node->parent() );
+        if ( parentGroup )
+        {
+            parentGroup->removeChildNode( node );
+        }
+    }
+    m_mapCanvas->refresh();
 }
 
 QIcon qgis_dev::getThemeIcon( const QString &theName )
@@ -401,6 +451,53 @@ void qgis_dev::layerSymbolTest()
         svgMarker->setSize( 10 );
         veclayer->setRendererV2( symRenderer );
     }
+
+}
+
+void qgis_dev::showMouseCoordinate( const QgsPoint &p )
+{
+    m_coordsEdit->setText( p.toDegreesMinutes( m_MousePrecisionDecimalPlaces ) );
+}
+
+void qgis_dev::removeAllLayers()
+{
+    QgsMapLayerRegistry::instance()->removeAllMapLayers();
+}
+
+void qgis_dev::createOverview()
+{
+    QgsMapOverviewCanvas* overviewCanvas = new QgsMapOverviewCanvas( NULL, m_mapCanvas );
+    overviewCanvas->setWhatsThis( tr( "Map overview canvas." ) );
+
+    QBitmap overviewPanBmp = QBitmap::fromData( QSize( 16, 16 ), pan_bits ); // 包含在qgscursors.h文件中
+    QBitmap overviewPanBmpMask = QBitmap::fromData( QSize( 16, 16 ), pan_mask_bits );
+    m_overviewMapCursor = new QCursor( overviewPanBmp, overviewPanBmpMask, 0, 0 );
+    overviewCanvas->setCursor( *m_overviewMapCursor );
+
+    // 装进鹰眼图中
+    m_OverviewDock = new QDockWidget( tr( "Overview" ), this );
+    m_OverviewDock->setObjectName( "Overview" );
+    m_OverviewDock->setAllowedAreas( Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea );
+    m_OverviewDock->setWidget( overviewCanvas );
+    addDockWidget( Qt::LeftDockWidgetArea, m_OverviewDock );
+
+    m_OverviewDock->setMinimumSize( 200, 200 );
+
+    m_mapCanvas->enableOverviewMode( overviewCanvas );
+
+    // 将所有图层管理器里面的图层都加入到鹰眼图中
+    if ( m_layerTreeView )
+    {
+        foreach( QgsLayerTreeLayer* nodeLayer, m_layerTreeView->layerTreeModel()->rootGroup()->findLayers() )
+        {
+            nodeLayer->setCustomProperty( "overview", 1 );
+        }
+    }
+
+}
+
+void qgis_dev::createComposer()
+{
 
 }
 
