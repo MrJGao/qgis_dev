@@ -13,6 +13,7 @@
 #include <QDockWidget>
 #include <QIcon>
 #include <QStackedWidget>
+#include <QTimer>
 
 // QGis include
 #include <qgsmapcanvas.h>
@@ -64,10 +65,28 @@ private slots:
     void showMouseCoordinate( const QgsPoint & );
     //! 创建鹰眼图
     void createOverview();
+    //! 显示当前地图比例
+    void showScale( double theScale );
+    //! 根据用户指定比例缩放地图
+    void userScale();
+    //! 居中显示用户在坐标显示栏里输入的坐标
+    void userCenter();
+
+    //! 刷新地图显示
+    void refreshMapCanvas();
+
+    //! 更改地图单位 , 目前仅用在坐标显示的控件上，未来应该会调整接口
+    void mapUnitChange( int i );
+    //! 晕眩效果
+    void dizzy(); // 这个效果是qgis程序员隐藏的娱乐方式吧，just for fun
+
 
 private:
     Ui::qgis_devClass ui;
     static qgis_dev* sm_instance;
+
+    QStackedWidget* m_stackedWidget;
+    QComboBox* pageViewComboBox;
 
     QgsMapCanvas* m_mapCanvas; // 地图画布
 
@@ -91,12 +110,12 @@ private:
 
     QCursor* m_overviewMapCursor; // 鹰眼图用的鼠标指针
 
-    unsigned int m_MousePrecisionDecimalPlaces;
+    unsigned int m_MousePrecisionDecimalPlaces; // 指定鼠标坐标小数点位数
 
-    qgis_devComposer* m_composer;
+    qgis_devComposer* m_composer; // 地图制图模块
 
-    QStackedWidget* m_stackedWidget;
-    QComboBox* pageViewComboBox;
+    //! Helps to make people dizzy
+    QTimer *m_dizzyTimer;
 
 //=== Private Member Functions ===
 
@@ -104,6 +123,8 @@ private:
     void initLayerTreeView();
     //! 构建状态栏
     void createStatusBar();
+
+
     //! 构建打印出图视图
     void createComposer();
     //! 获取当前选中图层

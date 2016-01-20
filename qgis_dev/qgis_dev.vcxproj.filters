@@ -91,9 +91,6 @@
     <CustomBuild Include="qgis_devattrtabledialog.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="qgis_devattrtabledialog.ui">
-      <Filter>Form Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="Resources\images\images.qrc">
       <Filter>Resource Files</Filter>
     </CustomBuild>
@@ -112,12 +109,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GeneratedFiles\ui_qgis_dev.h">
-      <Filter>Generated Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GeneratedFiles\ui_qgis_devattrtabledialog.h">
-      <Filter>Generated Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GeneratedFiles\ui_qgsattributetabledialog.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_qgsdualviewbase.h">

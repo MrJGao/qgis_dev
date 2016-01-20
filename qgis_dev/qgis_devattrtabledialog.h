@@ -2,7 +2,6 @@
 #define QGIS_DEVATTRTABLEDIALOG_H
 
 #include <QDialog>
-#include "ui_qgis_devattrtabledialog.h"
 #include "ui_qgsattributetabledialog.h"
 
 #include <QDockWidget>

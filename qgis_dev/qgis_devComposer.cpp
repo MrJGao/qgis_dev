@@ -64,8 +64,6 @@ qgis_devComposer::qgis_devComposer( QWidget *parent )
 
 
     actionToggleRulers->setChecked( true ); // 默认显示标尺
-    on_actionZoomAll_triggered(); // 默认显示全图范围
-
 }
 
 

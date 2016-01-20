@@ -13,6 +13,7 @@
 #include <QToolButton>
 #include <QMargins>
 #include <QFile>
+#include <QFileInfo>
 #include <QDir>
 #include <Qt>
 #include <QBitmap>
@@ -102,9 +103,11 @@ qgis_dev::qgis_dev( QWidget *parent, Qt::WindowFlags flags )
     createStatusBar();
 
     // connections
+    connect( m_mapCanvas, SIGNAL( xyCoordinates( const QgsPoint& ) ), this, SLOT( showMouseCoordinate( const QgsPoint& ) ) );
     connect( ui.actionAdd_Vector, SIGNAL( triggered() ), this, SLOT( addVectorLayers() ) );
     connect( ui.actionAdd_Raster, SIGNAL( triggered() ), this, SLOT( addRasterLayers() ) );
     connect( ui.actionToggle_Overview, SIGNAL( triggered() ), this, SLOT( createOverview() ) );
+    connect( m_mapCanvas, SIGNAL( scaleChanged( double ) ), this, SLOT( showScale( double ) ) );
 }
 
 qgis_dev::~qgis_dev()
@@ -117,11 +120,8 @@ void qgis_dev::addVectorLayers()
     QString filename = QFileDialog::getOpenFileName( this, tr( "open vector" ), "", "*.shp" );
     if ( filename == QString::null ) { return;}
 
-    // test attribute table
-    // QString filename = "D:\\Data\\qgis_sample_data\\shapefiles\\airports.shp" ;
-
-    QStringList temp = filename.split( QDir::separator() );
-    QString basename = temp.at( temp.size() - 1 );
+    QFileInfo fi( filename );
+    QString basename = fi.baseName();
     QgsVectorLayer* vecLayer = new QgsVectorLayer( filename, basename, "ogr", false );
     if ( !vecLayer->isValid() )
     {
@@ -141,8 +141,9 @@ void qgis_dev::addVectorLayers()
 void qgis_dev::addRasterLayers()
 {
     QString filename = QFileDialog::getOpenFileName( this, tr( "open vector" ), "", "*.tif" );
-    QStringList temp = filename.split( QDir::separator() );
-    QString basename = temp.at( temp.size() - 1 );
+
+    QFileInfo fi( filename );
+    QString basename = fi.baseName();
     QgsRasterLayer* rasterLayer = new QgsRasterLayer( filename, basename, "gdal", false );
     if ( !rasterLayer->isValid() )
     {
@@ -234,7 +235,6 @@ void qgis_dev::initLayerTreeView()
     connect( QgsProject::instance(), SIGNAL( readProject( QDomDocument ) ),
              m_layerTreeCanvasBridge, SLOT( readProject( QDomDocument ) ) );
 
-    connect( m_mapCanvas, SIGNAL( xyCoordinates( const QgsPoint& ) ), this, SLOT( showMouseCoordinate( const QgsPoint& ) ) );
 
 }
 
@@ -247,7 +247,7 @@ void qgis_dev::createStatusBar()
     pageViewComboBox->addItem( tr( "Map" ) );
     pageViewComboBox->addItem( tr( "Composer" ) );
     connect( pageViewComboBox, SIGNAL( activated( int ) ), m_stackedWidget, SLOT( setCurrentIndex( int ) ) );
-    statusBar()->addPermanentWidget( pageViewComboBox );
+    statusBar()->addWidget( pageViewComboBox );
 
     //! 添加进度条
     m_progressBar = new QProgressBar( statusBar() );
@@ -260,6 +260,13 @@ void qgis_dev::createStatusBar()
 
     QFont myFont( "Arial", 9 );
     statusBar()->setFont( myFont );
+
+    //! 添加坐标显示格式选择
+    QComboBox* coordFormatComboBox = new QComboBox( statusBar() );
+    coordFormatComboBox->addItem( tr( "Decimal Degree" ) );
+    coordFormatComboBox->addItem( tr( "Degree" ) );
+    statusBar()->addPermanentWidget( coordFormatComboBox );
+    connect( coordFormatComboBox, SIGNAL( activated( int ) ), this, SLOT( mapUnitChange( int ) ) );
 
     //! 添加坐标显示标签
     m_coordsLabel = new QLabel( QString(), statusBar() );
@@ -284,6 +291,9 @@ void qgis_dev::createStatusBar()
     statusBar()->addPermanentWidget( m_coordsEdit, 0 );
     //m_coordsEdit->setReadOnly( true );
     connect( m_coordsEdit, SIGNAL( returnPressed() ), this, SLOT( userCenter() ) );
+
+    m_dizzyTimer = new QTimer( this );
+    connect( m_dizzyTimer, SIGNAL( timeout() ), this, SLOT( dizzy() ) );
 
     //! 比例尺标签
     m_scaleLabel = new QLabel( QString(), statusBar() );
@@ -342,19 +352,21 @@ void qgis_dev::openAttributeTableDialog()
     QgsVectorLayer* mylayer = qobject_cast<QgsVectorLayer*>( activeLayer() );
     if ( !mylayer ) { return; }
     qgis_devattrtableDialog* d = new qgis_devattrtableDialog( mylayer, this );
+
     d->show();
 
-    QgsVectorLayerCache * lc = new QgsVectorLayerCache( mylayer, mylayer->featureCount() );
-    QgsAttributeTableView* tv = new QgsAttributeTableView();
 
-    QgsAttributeTableModel* tm = new QgsAttributeTableModel( lc, this );
+    /* QgsVectorLayerCache * lc = new QgsVectorLayerCache( mylayer, mylayer->featureCount() );
+     QgsAttributeTableView* tv = new QgsAttributeTableView();
 
-    QgsAttributeTableFilterModel* tfm = new QgsAttributeTableFilterModel( m_mapCanvas, tm, tm );
+     QgsAttributeTableModel* tm = new QgsAttributeTableModel( lc, this );
 
-    tfm->setFilterMode( QgsAttributeTableFilterModel::ShowAll );
-    tm->loadLayer();
-    tv->setModel( tfm );
-    tv->show();
+     QgsAttributeTableFilterModel* tfm = new QgsAttributeTableFilterModel( m_mapCanvas, tm, tm );
+
+     tfm->setFilterMode( QgsAttributeTableFilterModel::ShowAll );
+     tm->loadLayer();
+     tv->setModel( tfm );
+     tv->show();*/
 }
 
 QgsMapLayer* qgis_dev::activeLayer()
@@ -456,7 +468,31 @@ void qgis_dev::layerSymbolTest()
 
 void qgis_dev::showMouseCoordinate( const QgsPoint &p )
 {
-    m_coordsEdit->setText( p.toDegreesMinutes( m_MousePrecisionDecimalPlaces ) );
+    if ( m_mapCanvas->mapUnits() == QGis::Degrees ) // 坐标度分秒的显示方式
+    {
+        QString format = QgsProject::instance()->readEntry( "PositionPrecision", "/DegreeFormat", "D" );
+        if ( format == "DM" ) // 只显示度和分
+        {
+            m_coordsEdit->setText( p.toDegreesMinutes( m_MousePrecisionDecimalPlaces ) );
+        }
+        else if ( format == "DMS" ) // 显示度分秒
+        {
+            m_coordsEdit->setText( p.toDegreesMinutesSeconds( m_MousePrecisionDecimalPlaces ) );
+        }
+        else
+        {
+            m_coordsEdit->setText( p.toString( m_MousePrecisionDecimalPlaces ) );
+        }
+    }
+    else
+    {
+        m_coordsEdit->setText( p.toString( m_MousePrecisionDecimalPlaces ) );
+    }
+
+    if ( m_coordsEdit->width() > m_coordsEdit->minimumWidth() )
+    {
+        m_coordsEdit->setMinimumWidth( m_coordsEdit->width() );
+    }
 }
 
 void qgis_dev::removeAllLayers()
@@ -499,5 +535,96 @@ void qgis_dev::createOverview()
 void qgis_dev::createComposer()
 {
 
+}
+
+void qgis_dev::showScale( double theScale )
+{
+    m_scaleEdit->setScale( 1.0 / theScale );
+    if ( m_scaleEdit->width() > m_scaleEdit->minimumWidth() )
+    {
+        m_scaleEdit->setMinimumWidth( m_scaleEdit->width() );
+    }
+}
+
+void qgis_dev::userScale()
+{
+    m_mapCanvas->zoomScale( 1.0 / m_scaleEdit->scale() );
+}
+
+void qgis_dev::userCenter()
+{
+    // 先检查是不是要打开或关闭晕眩效果
+    if ( m_coordsEdit->text() == "dizzy" )
+    {
+
+        if ( m_dizzyTimer->isActive() )
+        {
+            m_dizzyTimer->stop();
+            m_mapCanvas->setSceneRect( m_mapCanvas->viewport()->rect() );
+            m_mapCanvas->setTransform( QTransform() );
+        }
+        else
+        {
+            m_dizzyTimer->start( 100 );
+        }
+    }
+    // retro是要重新加载地图
+    else if ( m_coordsEdit->text() == "retro" )
+    {
+        m_mapCanvas->setProperty( "retro", !m_mapCanvas->property( "retro" ).toBool() );
+        refreshMapCanvas();
+    }
+
+    QStringList parts = m_coordsEdit->text().split( ',' );
+    if ( parts.size() != 2 ) {return;}
+
+    bool xOk;
+    double x = parts.at( 0 ).toDouble( &xOk );
+    if ( !xOk )	{return;}
+
+    bool yOk;
+    double y = parts.at( 1 ).toDouble( &yOk );
+    if ( !yOk )	{return;}
+
+    // 居中显示 x 和 y 的坐标点
+    m_mapCanvas->setCenter( QgsPoint( x, y ) );
+    m_mapCanvas->refresh();
+}
+
+void qgis_dev::dizzy()
+{
+    int d = 10;
+    int r = 4;
+    QRectF rect = m_mapCanvas->sceneRect();
+    if ( rect.x() < -d || rect.x() > d || rect.y() < -d || rect.y() > d )
+    {
+        return;
+    }
+    rect.moveTo( ( qrand() % ( 2 * d ) ) - d, ( qrand() % ( 2 * d ) ) - d );
+    m_mapCanvas->setSceneRect( rect );
+    QTransform matrix;
+    matrix.rotate( ( qrand() % ( 2 * r ) ) - r );
+    m_mapCanvas->setTransform( matrix );
+}
+
+void qgis_dev::refreshMapCanvas()
+{
+    m_mapCanvas->stopRendering();
+    QgsMapLayerRegistry::instance()->reloadAllLayers();
+    m_mapCanvas->clearCache();
+    m_mapCanvas->refresh();
+}
+
+void qgis_dev::mapUnitChange( int i )
+{
+    switch( i )
+    {
+    case 1: // DecimalDegress
+        m_mapCanvas->setMapUnits( QGis::DecimalDegrees );
+        break;
+    case 2:
+        m_mapCanvas->setMapUnits( QGis::Degrees );
+        break;
+    }
 }
 
