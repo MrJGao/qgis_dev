@@ -16,6 +16,7 @@
 #include <QFileInfo>
 #include <QDir>
 #include <Qt>
+#include <QSizePolicy>
 #include <QBitmap>
 
 // QGis include
@@ -88,6 +89,10 @@ qgis_dev::qgis_dev( QWidget *parent, Qt::WindowFlags flags )
     m_layerTreeView = new QgsLayerTreeView( this );
     initLayerTreeView();
 
+    //! 初始化信息显示条
+    m_infoBar = new QgsMessageBar( this );
+    m_infoBar->setSizePolicy( QSizePolicy::Minimum, QSizePolicy::Fixed );
+
     //! 布局
     QWidget* centralWidget = this->centralWidget();
     QGridLayout* centralLayout = new QGridLayout( centralWidget );
@@ -98,6 +103,7 @@ qgis_dev::qgis_dev( QWidget *parent, Qt::WindowFlags flags )
     m_stackedWidget->addWidget( m_composer );
 
     centralLayout->addWidget( m_stackedWidget, 0, 0, 1, 1 );
+    centralLayout->addWidget( m_infoBar, 1, 0, 1, 1 );
 
     //! 初始化status bar
     createStatusBar();
@@ -108,6 +114,15 @@ qgis_dev::qgis_dev( QWidget *parent, Qt::WindowFlags flags )
     connect( ui.actionAdd_Raster, SIGNAL( triggered() ), this, SLOT( addRasterLayers() ) );
     connect( ui.actionToggle_Overview, SIGNAL( triggered() ), this, SLOT( createOverview() ) );
     connect( m_mapCanvas, SIGNAL( scaleChanged( double ) ), this, SLOT( showScale( double ) ) );
+
+    connect( ui.actionLocalHistogramStretch, SIGNAL( triggered() ), this, SLOT( localHistogramStretch() ) );
+    connect( ui.actionFullHistogramStretch, SIGNAL( triggered() ), this, SLOT( fullHistogramStretch() ) );
+    connect( ui.actionLocalCumulativeCutStretch, SIGNAL( triggered() ), this, SLOT( localCumulativeCutStretch() ) );
+    connect( ui.actionFullCumulativeCutStretch, SIGNAL( triggered() ), this, SLOT( fullCumulativeCutStretch() ) );
+    connect( ui.actionIncreaseBrightness, SIGNAL( triggered() ), this, SLOT( increaseBrightness() ) );
+    connect( ui.actionDecreaseBrightness, SIGNAL( triggered() ), this, SLOT( decreaseBrightness() ) );
+    connect( ui.actionIncreaseContrast, SIGNAL( triggered() ), this, SLOT( increaseContrast() ) );
+    connect( ui.actionDecreaseContrast, SIGNAL( triggered() ), this, SLOT( decreaseContrast() ) );
 }
 
 qgis_dev::~qgis_dev()
@@ -140,7 +155,8 @@ void qgis_dev::addVectorLayers()
 
 void qgis_dev::addRasterLayers()
 {
-    QString filename = QFileDialog::getOpenFileName( this, tr( "open vector" ), "", "*.tif" );
+    QString filename = QFileDialog::getOpenFileName( this, tr( "open vector" ), "",
+                       "image(*.jpg *.png *.bmp);;remote sensing image(*.tif)" );
 
     QFileInfo fi( filename );
     QString basename = fi.baseName();
@@ -625,6 +641,138 @@ void qgis_dev::mapUnitChange( int i )
     case 2:
         m_mapCanvas->setMapUnits( QGis::Degrees );
         break;
+    }
+}
+
+void qgis_dev::localHistogramStretch()
+{
+    histogramStretch( true, QgsRaster::ContrastEnhancementMinMax );
+}
+
+void qgis_dev::fullHistogramStretch()
+{
+    histogramStretch( false, QgsRaster::ContrastEnhancementMinMax );
+}
+
+void qgis_dev::localCumulativeCutStretch()
+{
+    histogramStretch( true, QgsRaster::ContrastEnhancementCumulativeCut );
+}
+
+void qgis_dev::fullCumulativeCutStretch()
+{
+    histogramStretch( false, QgsRaster::ContrastEnhancementCumulativeCut );
+}
+
+void qgis_dev::increaseBrightness()
+{
+    int step = 1;
+    if ( QgsApplication::keyboardModifiers() == Qt::ShiftModifier )
+    {
+        step = 10;
+    }
+    adjustBrightnessContrast( step );
+}
+
+void qgis_dev::decreaseBrightness()
+{
+    int step = -1;
+    if ( QgsApplication::keyboardModifiers() == Qt::ShiftModifier )
+    {
+        step = -10;
+    }
+    adjustBrightnessContrast( step );
+}
+
+void qgis_dev::increaseContrast()
+{
+    int step = 1;
+    if ( QgsApplication::keyboardModifiers() == Qt::ShiftModifier )
+    {
+        step = 10;
+    }
+    adjustBrightnessContrast( step, false );
+}
+
+void qgis_dev::decreaseContrast()
+{
+    int step = -1;
+    if ( QgsApplication::keyboardModifiers() == Qt::ShiftModifier )
+    {
+        step = -10;
+    }
+    adjustBrightnessContrast( step, false );
+}
+
+void qgis_dev::histogramStretch( bool visibleAreaOnly /*= false*/, QgsRaster::ContrastEnhancementLimits theLimits /*= QgsRaster::ContrastEnhancementMinMax */ )
+{
+    QgsMapLayer* myLayer = m_layerTreeView->currentLayer();
+    if ( !myLayer ) // 判断是否为地图图层
+    {
+        messageBar()->pushMessage( tr( "No Layer Selected" ),
+                                   tr( "To perform a full histogram stretch, you need to have a raster layer selected." ),
+                                   QgsMessageBar::INFO, messageTimeout() );
+        return;
+    }
+
+    QgsRasterLayer* myRasterLayer = qobject_cast<QgsRasterLayer*>( myLayer );
+    if ( !myRasterLayer ) // 判断是否为栅格图层
+    {
+        messageBar()->pushMessage( tr( "No Layer Selected" ),
+                                   tr( "To perform a full histogram stretch, you need to have a raster layer selected." ),
+                                   QgsMessageBar::INFO, messageTimeout() );
+        return;
+    }
+
+    QgsRectangle myRectangle;
+    if ( visibleAreaOnly )
+    {
+        myRectangle = m_mapCanvas->mapSettings().outputExtentToLayerExtent( myRasterLayer, m_mapCanvas->extent() );
+    }
+    // 这一句是关键
+    myRasterLayer->setContrastEnhancement( QgsContrastEnhancement::StretchToMinimumMaximum, theLimits, myRectangle );
+    m_mapCanvas->refresh();
+}
+
+int qgis_dev::messageTimeout()
+{
+    return 5; /*这个参数应该让用户自定义*/
+}
+
+void qgis_dev::adjustBrightnessContrast( int delta, bool updateBrightness /*= true */ )
+{
+    foreach( QgsMapLayer* layer, m_layerTreeView->selectedLayers() ) // 遍历所有选择的图层
+    {
+        if ( !layer )
+        {
+            messageBar()->pushMessage( tr( "No Layer Selected" ),
+                                       tr( "To change brightness or contrast, you need to have a raster layer selected." ),
+                                       QgsMessageBar::INFO, messageTimeout() );
+            return;
+        }
+
+        QgsRasterLayer* rasterLayer = qobject_cast<QgsRasterLayer *>( layer );
+        if ( !rasterLayer )
+        {
+            messageBar()->pushMessage( tr( "No Layer Selected" ),
+                                       tr( "To change brightness or contrast, you need to have a raster layer selected." ),
+                                       QgsMessageBar::INFO, messageTimeout() );
+            return;
+        }
+
+        // 这里是关键，用QgsBrightnessFilter类控制亮度与对比度
+        QgsBrightnessContrastFilter* brightnessFilter = rasterLayer->brightnessFilter();
+        if ( updateBrightness )
+        {
+            brightnessFilter->setBrightness( brightnessFilter->brightness() + delta );
+        }
+        else
+        {
+            brightnessFilter->setContrast( brightnessFilter->contrast() + delta );
+        }
+
+        rasterLayer->triggerRepaint(); // 重画栅格图层
+
     }
 }
 
