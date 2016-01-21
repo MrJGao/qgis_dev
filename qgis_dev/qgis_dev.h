@@ -24,6 +24,8 @@
 #include <qgsrendererv2.h>
 #include <qgscomposermap.h>
 #include <qgscomposerview.h>
+#include <qgsraster.h>
+#include <qgsmessagebar.h>
 
 class qgis_dev : public QMainWindow
 {
@@ -41,6 +43,11 @@ public:
     static QIcon getThemeIcon( const QString &theName );
 
     QgsMapCanvas* mapCanvas() {return m_mapCanvas; }
+
+    QgsMessageBar* messageBar() {return m_infoBar;}
+
+    //! 控制信息显示条显示的时间
+    int messageTimeout();
 
 public slots:
     //! 添加矢量图层
@@ -81,6 +88,26 @@ private slots:
     void dizzy(); // 这个效果是qgis程序员隐藏的娱乐方式吧，just for fun
 
 
+/// 显示栅格图像的一些功能
+    //! 局部拉伸显示
+    void localHistogramStretch();
+    //! 全局拉伸显示
+    void fullHistogramStretch();
+    //! 局部累计裁剪拉伸显示
+    void localCumulativeCutStretch();
+    //! 全局累计裁剪拉伸显示
+    void fullCumulativeCutStretch();
+    //! 增加显示亮度
+    void increaseBrightness();
+    //! 减少显示亮度
+    void decreaseBrightness();
+    //! 增加显示对比度
+    void increaseContrast();
+    //! 减少显示对比度
+    void decreaseContrast();
+
+
+
 private:
     Ui::qgis_devClass ui;
     static qgis_dev* sm_instance;
@@ -115,7 +142,9 @@ private:
     qgis_devComposer* m_composer; // 地图制图模块
 
     //! Helps to make people dizzy
-    QTimer *m_dizzyTimer;
+    QTimer* m_dizzyTimer;
+
+    QgsMessageBar* m_infoBar; // 在地图窗口上显示信息
 
 //=== Private Member Functions ===
 
@@ -134,6 +163,11 @@ private:
     static const QString activeThemePath();
     static const QString defaultThemePath();
 
+
+    //! 直方图拉伸
+    void histogramStretch( bool visibleAreaOnly = false, QgsRaster::ContrastEnhancementLimits theLimits = QgsRaster::ContrastEnhancementMinMax );
+    //! 对比度调整, updateBrightness用来控制调整对比度时是否需要同时调整亮度
+    void adjustBrightnessContrast( int delta, bool updateBrightness = true );
 };
 
 #endif // QGIS_DEV_H

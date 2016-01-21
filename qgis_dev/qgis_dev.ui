@@ -78,7 +78,10 @@
    <addaction name="menuRaster"/>
    <addaction name="menuView"/>
   </widget>
-  <widget class="QToolBar" name="mainToolBar">
+  <widget class="QToolBar" name="m_project_toolBar">
+   <property name="windowTitle">
+    <string>project tool bar</string>
+   </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
    </attribute>
@@ -92,6 +95,25 @@
    <addaction name="actionAdd_Raster"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QToolBar" name="m_raster_toolBar">
+   <property name="windowTitle">
+    <string>raster tool bar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionLocalCumulativeCutStretch"/>
+   <addaction name="actionFullCumulativeCutStretch"/>
+   <addaction name="actionLocalHistogramStretch"/>
+   <addaction name="actionFullHistogramStretch"/>
+   <addaction name="actionIncreaseBrightness"/>
+   <addaction name="actionDecreaseBrightness"/>
+   <addaction name="actionIncreaseContrast"/>
+   <addaction name="actionDecreaseContrast"/>
+  </widget>
   <action name="actionOpen_Project">
    <property name="icon">
     <iconset resource="Resources/images/images.qrc">
@@ -153,6 +175,102 @@
    </property>
    <property name="text">
     <string>Toggle Overview</string>
+   </property>
+  </action>
+  <action name="actionLocalHistogramStretch">
+   <property name="icon">
+    <iconset resource="Resources/images/images.qrc">
+     <normaloff>:/images/themes/default/mActionLocalHistogramStretch.png</normaloff>:/images/themes/default/mActionLocalHistogramStretch.png</iconset>
+   </property>
+   <property name="text">
+    <string>Local Histogram Stretch</string>
+   </property>
+   <property name="toolTip">
+    <string>Local Histogram Stretch</string>
+   </property>
+  </action>
+  <action name="actionFullHistogramStretch">
+   <property name="icon">
+    <iconset resource="Resources/images/images.qrc">
+     <normaloff>:/images/themes/default/mActionFullHistogramStretch.png</normaloff>:/images/themes/default/mActionFullHistogramStretch.png</iconset>
+   </property>
+   <property name="text">
+    <string>Full Histogram Stretch</string>
+   </property>
+   <property name="toolTip">
+    <string>Full Histogram Stretch</string>
+   </property>
+  </action>
+  <action name="actionLocalCumulativeCutStretch">
+   <property name="icon">
+    <iconset resource="Resources/images/images.qrc">
+     <normaloff>:/images/themes/default/mActionLocalCumulativeCutStretch.png</normaloff>:/images/themes/default/mActionLocalCumulativeCutStretch.png</iconset>
+   </property>
+   <property name="text">
+    <string>Local Cumulative Cut Stretch</string>
+   </property>
+   <property name="toolTip">
+    <string>Local Cumulative Cut Stretch</string>
+   </property>
+  </action>
+  <action name="actionFullCumulativeCutStretch">
+   <property name="icon">
+    <iconset resource="Resources/images/images.qrc">
+     <normaloff>:/images/themes/default/mActionFullCumulativeCutStretch.png</normaloff>:/images/themes/default/mActionFullCumulativeCutStretch.png</iconset>
+   </property>
+   <property name="text">
+    <string>Full Dataset Cumulative Cut Stretch</string>
+   </property>
+   <property name="toolTip">
+    <string>Full Dataset Cumulative Cut Stretch</string>
+   </property>
+  </action>
+  <action name="actionIncreaseBrightness">
+   <property name="icon">
+    <iconset resource="Resources/images/images.qrc">
+     <normaloff>:/images/themes/default/mActionIncreaseBrightness.svg</normaloff>:/images/themes/default/mActionIncreaseBrightness.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Increase Brightness</string>
+   </property>
+   <property name="toolTip">
+    <string>Increase Brightness</string>
+   </property>
+  </action>
+  <action name="actionIncreaseContrast">
+   <property name="icon">
+    <iconset resource="Resources/images/images.qrc">
+     <normaloff>:/images/themes/default/mActionIncreaseContrast.svg</normaloff>:/images/themes/default/mActionIncreaseContrast.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Increase Contrast</string>
+   </property>
+   <property name="toolTip">
+    <string>Increase Contrast</string>
+   </property>
+  </action>
+  <action name="actionDecreaseBrightness">
+   <property name="icon">
+    <iconset resource="Resources/images/images.qrc">
+     <normaloff>:/images/themes/default/mActionDecreaseBrightness.svg</normaloff>:/images/themes/default/mActionDecreaseBrightness.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Decrease Brightness</string>
+   </property>
+   <property name="toolTip">
+    <string>Decrease Brightness</string>
+   </property>
+  </action>
+  <action name="actionDecreaseContrast">
+   <property name="icon">
+    <iconset resource="Resources/images/images.qrc">
+     <normaloff>:/images/themes/default/mActionDecreaseContrast.svg</normaloff>:/images/themes/default/mActionDecreaseContrast.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Decrease Contrast</string>
+   </property>
+   <property name="toolTip">
+    <string>Decrease Contrast</string>
    </property>
   </action>
  </widget>
