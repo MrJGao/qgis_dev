@@ -27,6 +27,9 @@
 #include <qgsraster.h>
 #include <qgsmessagebar.h>
 
+
+class QgsMapTool;
+
 class qgis_dev : public QMainWindow
 {
     Q_OBJECT
@@ -66,6 +69,11 @@ public slots:
     //! 移除图层
     void removeAllLayers();
     void removeLayer();
+
+
+    void on_actionZoomIn_triggered();
+    void on_actionZoomOut_triggered();
+    void on_actionPan_triggered();
 
 private slots:
     //! 显示鼠标位置地理坐标
@@ -112,6 +120,14 @@ private:
     Ui::qgis_devClass ui;
     static qgis_dev* sm_instance;
 
+    // 地图工具
+    QgsMapTool* m_mapToolZoomIn;
+    QgsMapTool* m_mapToolZoomOut;
+    QgsMapTool* m_mapToolZoomFull;
+    QgsMapTool* m_mapToolPan;
+    QgsMapTool* m_mapToolIdentify;
+
+
     QStackedWidget* m_stackedWidget;
     QComboBox* pageViewComboBox;
 
@@ -152,6 +168,9 @@ private:
     void initLayerTreeView();
     //! 构建状态栏
     void createStatusBar();
+
+    //! 初始化地图工具
+    void createMapTools();
 
 
     //! 构建打印出图视图

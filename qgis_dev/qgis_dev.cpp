@@ -58,6 +58,12 @@
 #include <qgsmapcanvas.h>
 #include <qgsmapoverviewcanvas.h>
 
+
+#include <qgsmaptool.h>
+#include <qgsmaptoolzoom.h>
+#include <qgsmaptoolidentify.h>
+#include <qgsmaptoolpan.h>
+
 qgis_dev* qgis_dev::sm_instance = 0;
 
 qgis_dev::qgis_dev( QWidget *parent, Qt::WindowFlags flags )
@@ -80,6 +86,9 @@ qgis_dev::qgis_dev( QWidget *parent, Qt::WindowFlags flags )
     m_mapCanvas = new QgsMapCanvas();
     m_mapCanvas->enableAntiAliasing( true );
     m_mapCanvas->setCanvasColor( QColor( 255, 255, 255 ) );
+
+    //! 创建地图工具
+    createMapTools();
 
     //! 构建打印出图视图
     m_composer = new qgis_devComposer( this );
@@ -775,4 +784,31 @@ void qgis_dev::adjustBrightnessContrast( int delta, bool updateBrightness /*= tr
 
     }
 }
+
+void qgis_dev::on_actionZoomIn_triggered()
+{
+    m_mapCanvas->setMapTool( m_mapToolZoomIn );
+}
+
+void qgis_dev::on_actionZoomOut_triggered()
+{
+    m_mapCanvas->setMapTool( m_mapToolZoomOut );
+}
+
+void qgis_dev::on_actionPan_triggered()
+{
+    m_mapCanvas->setMapTool( m_mapToolPan );
+}
+
+void qgis_dev::createMapTools()
+{
+    m_mapToolPan = new QgsMapToolPan( m_mapCanvas );
+    m_mapToolZoomIn = new QgsMapToolZoom( m_mapCanvas, false );
+    m_mapToolZoomOut = new QgsMapToolZoom( m_mapCanvas, true );
+    m_mapToolIdentify = new QgsMapToolIdentify( m_mapCanvas );
+}
+
+
+
+
 
