@@ -70,10 +70,11 @@ public slots:
     void removeAllLayers();
     void removeLayer();
 
-
+    //! 地图工具触发事件
     void on_actionZoomIn_triggered();
     void on_actionZoomOut_triggered();
     void on_actionPan_triggered();
+    void on_actionIdentify_triggered();
 
 private slots:
     //! 显示鼠标位置地理坐标

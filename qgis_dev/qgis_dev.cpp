@@ -1,5 +1,9 @@
 #include "qgis_dev.h"
 
+#include "qgis_devlayertreeviewmenuprovider.h"
+#include "qgis_devattrtabledialog.h"
+#include "qgis_devmaptoolidentifyaction.h"
+
 #include <QDialog>
 #include <QFileDialog>
 #include <QMessageBox>
@@ -33,8 +37,6 @@
 #include <qgsattributedialog.h>
 #include <qgscursors.h>
 
-#include "qgis_devlayertreeviewmenuprovider.h"
-#include "qgis_devattrtabledialog.h"
 
 // for attribute table
 #include <qgsfeaturelistview.h>
@@ -62,6 +64,7 @@
 #include <qgsmaptool.h>
 #include <qgsmaptoolzoom.h>
 #include <qgsmaptoolidentify.h>
+
 #include <qgsmaptoolpan.h>
 
 qgis_dev* qgis_dev::sm_instance = 0;
@@ -379,6 +382,7 @@ void qgis_dev::openAttributeTableDialog()
     qgis_devattrtableDialog* d = new qgis_devattrtableDialog( mylayer, this );
 
     d->show();
+
 
 
     /* QgsVectorLayerCache * lc = new QgsVectorLayerCache( mylayer, mylayer->featureCount() );
@@ -805,8 +809,16 @@ void qgis_dev::createMapTools()
     m_mapToolPan = new QgsMapToolPan( m_mapCanvas );
     m_mapToolZoomIn = new QgsMapToolZoom( m_mapCanvas, false );
     m_mapToolZoomOut = new QgsMapToolZoom( m_mapCanvas, true );
-    m_mapToolIdentify = new QgsMapToolIdentify( m_mapCanvas );
+    m_mapToolIdentify = new qgis_devMapToolIdentifyAction( m_mapCanvas );
 }
+
+void qgis_dev::on_actionIdentify_triggered()
+{
+
+    m_mapCanvas->setMapTool( m_mapToolIdentify );
+    m_mapToolIdentify->activate();
+}
+
 
 
 
