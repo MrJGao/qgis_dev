@@ -11,17 +11,9 @@ int main( int argc, char *argv[] )
     myApp.setDefaultSvgPaths( QStringList( "../images/svg" ) ); // svg file path
 
     qgis_dev* myQgis = new qgis_dev();
-    QgsEditorWidgetRegistry::initEditors( myQgis->mapCanvas() );
-    myQgis->setWindowState( Qt::WindowMaximized );
+    QgsEditorWidgetRegistry::initEditors( myQgis->mapCanvas() ); // 初始化所有编辑器控件
+    myQgis->setWindowState( Qt::WindowMaximized ); // 最大化程序窗口
     myQgis->show();
-
-    //test attribute table
-    /* myQgis->addVectorLayers();
-    myQgis->openAttributeTableDialog();*/
-
-    // test vector layer symbol
-    /*myQgis->layerSymbolTest();*/
-
 
     return myApp.exec();
 }

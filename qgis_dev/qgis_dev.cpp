@@ -7,6 +7,8 @@
 #include <QDialog>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QString>
+#include <QStringList>
 #include <QLayout>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -36,7 +38,7 @@
 #include <qgslayertreeviewdefaultactions.h>
 #include <qgsattributedialog.h>
 #include <qgscursors.h>
-
+#include <qgsproviderregistry.h>
 
 // for attribute table
 #include <qgsfeaturelistview.h>
@@ -47,7 +49,6 @@
 
 #include <qgsattributedialog.h>
 #include <qgseditorwidgetfactory.h>
-
 
 // for layer symbol
 #include <qgssymbollayerv2.h>
@@ -60,12 +61,14 @@
 #include <qgsmapcanvas.h>
 #include <qgsmapoverviewcanvas.h>
 
-
+// for map tools
 #include <qgsmaptool.h>
 #include <qgsmaptoolzoom.h>
 #include <qgsmaptoolidentify.h>
-
 #include <qgsmaptoolpan.h>
+
+// for open street map
+#include <qgsowssourceselect.h>
 
 qgis_dev* qgis_dev::sm_instance = 0;
 
@@ -123,6 +126,7 @@ qgis_dev::qgis_dev( QWidget *parent, Qt::WindowFlags flags )
     // connections
     connect( m_mapCanvas, SIGNAL( xyCoordinates( const QgsPoint& ) ), this, SLOT( showMouseCoordinate( const QgsPoint& ) ) );
     connect( ui.actionAdd_Vector, SIGNAL( triggered() ), this, SLOT( addVectorLayers() ) );
+    connect( ui.actionAddWMSlayer, SIGNAL( triggered() ), this, SLOT( addWMSLayers() ) );
     connect( ui.actionAdd_Raster, SIGNAL( triggered() ), this, SLOT( addRasterLayers() ) );
     connect( ui.actionToggle_Overview, SIGNAL( triggered() ), this, SLOT( createOverview() ) );
     connect( m_mapCanvas, SIGNAL( scaleChanged( double ) ), this, SLOT( showScale( double ) ) );
@@ -818,6 +822,62 @@ void qgis_dev::on_actionIdentify_triggered()
     m_mapCanvas->setMapTool( m_mapToolIdentify );
     m_mapToolIdentify->activate();
 }
+
+void qgis_dev::addWMSLayers()
+{
+    QDialog *wms = dynamic_cast<QDialog*>( QgsProviderRegistry::instance()->selectWidget( QString( "wms" ), this ) );
+    if ( !wms )
+    {
+        statusBar()->showMessage( tr( "cannot add wms layer." ), 10 );
+    }
+
+
+    wms->exec();
+
+    // 这句说明添加图层是没有问题的
+    addWMSLayer( "contextualWMSLegend=0&crs=EPSG:4326&dpiMode=all&featureCount=10&format=image/gif&layers=DC&styles=&url=http://wms.lizardtech.com/lizardtech/iserv/ows",
+                 "DC",
+                 "wms" );
+
+    delete wms;
+
+    /*QgsOWSSourceSelect* ows = new QgsOWSSourceSelect( "wms", this );
+
+    connect( ows, SIGNAL( addRasterLayer( const QString&, const QString&, const QString& ) ),
+             this, SLOT( addWMSLayer( const QString&, const QString&, const QString& ) ) );
+    ows->exec();*/
+
+}
+
+void qgis_dev::addWMSLayer( const QString& uri, const QString& baseName, const QString& providerKey )
+{
+    QgsRasterLayer *rasterLayer = 0;
+
+    if ( providerKey.isEmpty() )
+    {
+        rasterLayer = new QgsRasterLayer( uri, baseName );
+    }
+    else
+    {
+        rasterLayer = new QgsRasterLayer( uri, baseName, providerKey );
+    }
+
+    if ( !rasterLayer->isValid() )
+    {
+        QMessageBox::critical( this, "error", "layer is invalid" );
+        return;
+    }
+
+    QgsMapLayerRegistry::instance()->addMapLayer( rasterLayer );
+    mapCanvasLayerSet.append( rasterLayer );
+    m_mapCanvas->setExtent( rasterLayer->extent() );
+    m_mapCanvas->setLayerSet( mapCanvasLayerSet );
+    m_mapCanvas->setVisible( true );
+    m_mapCanvas->freeze( false );
+    m_mapCanvas->refresh();
+}
+
+
 
 
 

@@ -57,8 +57,12 @@ public slots:
     void addVectorLayers();
     //! 添加栅格图层
     void addRasterLayers();
+    //! 添加WMS图层
+    void addWMSLayers();
 
+    //! 自动选择新加入的图层
     void autoSelectAddedLayer( QList<QgsMapLayer*> layers );
+
     //! 打开属性表
     void openAttributeTableDialog();
 
@@ -66,6 +70,7 @@ public slots:
     void changeSymbol( QgsVectorLayer* layer, QgsFeatureRendererV2* featureRenderer );
     //! 演示如何使用矢量图层显示样式
     void layerSymbolTest();
+
     //! 移除图层
     void removeAllLayers();
     void removeLayer();
@@ -96,6 +101,7 @@ private slots:
     //! 晕眩效果
     void dizzy(); // 这个效果是qgis程序员隐藏的娱乐方式吧，just for fun
 
+    void addWMSLayer( const QString& url, const QString& basename, const QString& providerKey );
 
 /// 显示栅格图像的一些功能
     //! 局部拉伸显示
@@ -118,7 +124,7 @@ private slots:
 
 
 private:
-    Ui::qgis_devClass ui;
+    Ui::qgis_devClass ui; // 主程序UI
     static qgis_dev* sm_instance;
 
     // 地图工具
@@ -128,8 +134,7 @@ private:
     QgsMapTool* m_mapToolPan;
     QgsMapTool* m_mapToolIdentify;
 
-
-    QStackedWidget* m_stackedWidget;
+    QStackedWidget* m_stackedWidget; // 用于mapcanvas和mapComposor的切换
     QComboBox* pageViewComboBox;
 
     QgsMapCanvas* m_mapCanvas; // 地图画布
@@ -173,7 +178,6 @@ private:
     //! 初始化地图工具
     void createMapTools();
 
-
     //! 构建打印出图视图
     void createComposer();
     //! 获取当前选中图层
@@ -183,11 +187,11 @@ private:
     static const QString activeThemePath();
     static const QString defaultThemePath();
 
-
     //! 直方图拉伸
     void histogramStretch( bool visibleAreaOnly = false, QgsRaster::ContrastEnhancementLimits theLimits = QgsRaster::ContrastEnhancementMinMax );
     //! 对比度调整, updateBrightness用来控制调整对比度时是否需要同时调整亮度
     void adjustBrightnessContrast( int delta, bool updateBrightness = true );
+
 };
 
 #endif // QGIS_DEV_H
