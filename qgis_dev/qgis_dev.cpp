@@ -24,6 +24,7 @@
 #include <Qt>
 #include <QSizePolicy>
 #include <QBitmap>
+#include <QMap>
 
 // QGis include
 #include <qgsvectorlayer.h>
@@ -46,7 +47,6 @@
 #include <qgsattributetablemodel.h>
 #include <qgsfeaturelistmodel.h>
 #include <qgsvectorlayercache.h>
-
 #include <qgsattributedialog.h>
 #include <qgseditorwidgetfactory.h>
 
@@ -69,6 +69,7 @@
 
 // for open street map
 #include <qgsowssourceselect.h>
+#include "qgis_dev_owssourceselector.h"
 
 qgis_dev* qgis_dev::sm_instance = 0;
 
@@ -831,21 +832,25 @@ void qgis_dev::addWMSLayers()
         statusBar()->showMessage( tr( "cannot add wms layer." ), 10 );
     }
 
+    connect( wms, SIGNAL( addRasterLayer( QString const &, QString const &, QString const & ) ),
+             this, SLOT( addWMSLayer( QString const &, QString const &, QString const & ) ) );
 
     wms->exec();
 
+
+
     // 这句说明添加图层是没有问题的
-    addWMSLayer( "contextualWMSLegend=0&crs=EPSG:4326&dpiMode=all&featureCount=10&format=image/gif&layers=DC&styles=&url=http://wms.lizardtech.com/lizardtech/iserv/ows",
+    /*addWMSLayer( "contextualWMSLegend=0&crs=EPSG:4326&dpiMode=all&featureCount=10&format=image/gif&layers=DC&styles=&url=http://wms.lizardtech.com/lizardtech/iserv/ows",
                  "DC",
                  "wms" );
 
-    delete wms;
+    delete wms;*/
 
-    /*QgsOWSSourceSelect* ows = new QgsOWSSourceSelect( "wms", this );
+    /* qgis_dev_OWSSourceSelector* ows = new qgis_dev_OWSSourceSelector(  "wms", this );
 
-    connect( ows, SIGNAL( addRasterLayer( const QString&, const QString&, const QString& ) ),
-             this, SLOT( addWMSLayer( const QString&, const QString&, const QString& ) ) );
-    ows->exec();*/
+     connect( ows, SIGNAL( addRasterLayer( const QString&, const QString&, const QString& ) ),
+              this, SLOT( addWMSLayer( const QString&, const QString&, const QString& ) ) );
+     ows->exec();*/
 
 }
 
