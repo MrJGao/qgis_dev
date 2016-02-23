@@ -60,6 +60,7 @@
      <string>Vector</string>
     </property>
     <addaction name="actionAdd_Vector"/>
+    <addaction name="actionAddWMSlayer"/>
    </widget>
    <widget class="QMenu" name="menuRaster">
     <property name="title">
@@ -347,6 +348,15 @@
    </property>
    <property name="toolTip">
     <string>Identify</string>
+   </property>
+  </action>
+  <action name="actionAddWMSlayer">
+   <property name="icon">
+    <iconset resource="Resources/images/images.qrc">
+     <normaloff>:/images/themes/default/mActionAddWmsLayer.svg</normaloff>:/images/themes/default/mActionAddWmsLayer.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Add WMS Layer</string>
    </property>
   </action>
  </widget>
