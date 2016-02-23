@@ -60,13 +60,15 @@
      <string>Vector</string>
     </property>
     <addaction name="actionAdd_Vector"/>
-    <addaction name="actionAddWMSlayer"/>
+    <addaction name="actionAdd_WFS_Layer"/>
    </widget>
    <widget class="QMenu" name="menuRaster">
     <property name="title">
      <string>Raster</string>
     </property>
     <addaction name="actionAdd_Raster"/>
+    <addaction name="actionAddWMSlayer"/>
+    <addaction name="actionAdd_WCF_Layer"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -357,6 +359,24 @@
    </property>
    <property name="text">
     <string>Add WMS Layer</string>
+   </property>
+  </action>
+  <action name="actionAdd_WCF_Layer">
+   <property name="icon">
+    <iconset resource="Resources/images/images.qrc">
+     <normaloff>:/images/themes/default/mActionAddWcsLayer.svg</normaloff>:/images/themes/default/mActionAddWcsLayer.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Add WCS Layer</string>
+   </property>
+  </action>
+  <action name="actionAdd_WFS_Layer">
+   <property name="icon">
+    <iconset resource="Resources/images/images.qrc">
+     <normaloff>:/images/themes/default/mActionAddWfsLayer.svg</normaloff>:/images/themes/default/mActionAddWfsLayer.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Add WFS Layer</string>
    </property>
   </action>
  </widget>
