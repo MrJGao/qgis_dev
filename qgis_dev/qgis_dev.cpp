@@ -25,6 +25,7 @@
 #include <QSizePolicy>
 #include <QBitmap>
 #include <QMap>
+#include <QRegExp>
 
 // QGis include
 #include <qgsvectorlayer.h>
@@ -105,6 +106,10 @@ qgis_dev::qgis_dev( QWidget *parent, Qt::WindowFlags flags )
     m_layerTreeView = new QgsLayerTreeView( this );
     initLayerTreeView();
 
+    //! 初始化文件浏览窗口
+    m_browserDockWight = new qgis_dev_browserDockWight( tr( "Browser" ), this );
+    addDockWidget( Qt::LeftDockWidgetArea, m_browserDockWight );
+
     //! 初始化信息显示条
     m_infoBar = new QgsMessageBar( this );
     m_infoBar->setSizePolicy( QSizePolicy::Minimum, QSizePolicy::Fixed );
@@ -117,6 +122,8 @@ qgis_dev::qgis_dev( QWidget *parent, Qt::WindowFlags flags )
     m_stackedWidget->setLayout( new QHBoxLayout() );
     m_stackedWidget->addWidget( m_mapCanvas );
     m_stackedWidget->addWidget( m_composer );
+
+
 
     centralLayout->addWidget( m_stackedWidget, 0, 0, 1, 1 );
     centralLayout->addWidget( m_infoBar, 1, 0, 1, 1 );
@@ -944,6 +951,36 @@ void qgis_dev::addWFSLayer( const QString& url, const QString& typeName )
     m_mapCanvas->freeze( false );
     m_mapCanvas->refresh();
 }
+
+QString qgis_dev::crsAndFormatAdjustedLayerUri( const QString& uri, const QStringList& supportedCrs, const QStringList& supportedFormats )
+{
+    QString newuri = uri;
+
+    // Adjust layer CRS to project CRS
+    QgsCoordinateReferenceSystem testCrs;
+    foreach( QString c, supportedCrs )
+    {
+        testCrs.createFromOgcWmsCrs( c );
+        if ( testCrs == m_mapCanvas->mapSettings().destinationCrs() )
+        {
+            newuri.replace( QRegExp( "crs=[^&]+" ), "crs=" + c );
+            break;
+        }
+    }
+
+    // Use the last used image format
+    QString lastImageEncoding = QSettings().value( "/qgis/lastWmsImageEncoding", "image/png" ).toString();
+    foreach ( QString fmt, supportedFormats )
+    {
+        if ( fmt == lastImageEncoding )
+        {
+            newuri.replace( QRegExp( "format=[^&]+" ), "format=" + fmt );
+            break;
+        }
+    }
+    return newuri;
+}
+
 
 
 

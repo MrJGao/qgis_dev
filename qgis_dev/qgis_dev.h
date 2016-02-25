@@ -4,6 +4,7 @@
 #include <QtGui/QMainWindow>
 #include "ui_qgis_dev.h"
 
+#include "qgis_dev_browserdockwight.h"
 #include "qgis_devComposer.h"
 
 #include <QList>
@@ -26,6 +27,7 @@
 #include <qgscomposerview.h>
 #include <qgsraster.h>
 #include <qgsmessagebar.h>
+#include <qgsbrowsertreeview.h>
 
 
 class QgsMapTool;
@@ -51,6 +53,8 @@ public:
 
     //! 控制信息显示条显示的时间
     int messageTimeout();
+
+    QString crsAndFormatAdjustedLayerUri( const QString& uri, const QStringList& supportedCrs, const QStringList& supportedFormats );
 
 public slots:
     //! 添加矢量图层
@@ -144,6 +148,9 @@ private:
     QComboBox* pageViewComboBox;
 
     QgsMapCanvas* m_mapCanvas; // 地图画布
+
+    //! 文件浏览面板
+    qgis_dev_browserDockWight* m_browserDockWight;
 
     //! 图层管理
     QgsLayerTreeView* m_layerTreeView;
