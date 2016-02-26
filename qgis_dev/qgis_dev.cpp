@@ -107,7 +107,7 @@ qgis_dev::qgis_dev( QWidget *parent, Qt::WindowFlags flags )
     initLayerTreeView();
 
     //! 初始化文件浏览窗口
-    m_browserDockWight = new qgis_dev_browserDockWight( tr( "Browser" ), this );
+    m_browserDockWight = new qgis_dev_browserDockWidget( tr( "Browser" ), this );
     addDockWidget( Qt::LeftDockWidgetArea, m_browserDockWight );
 
     //! 初始化信息显示条
@@ -164,6 +164,24 @@ void qgis_dev::addVectorLayers()
     QFileInfo fi( filename );
     QString basename = fi.baseName();
     QgsVectorLayer* vecLayer = new QgsVectorLayer( filename, basename, "ogr", false );
+    if ( !vecLayer->isValid() )
+    {
+        QMessageBox::critical( this, "error", "layer is invalid" );
+        return;
+    }
+
+    QgsMapLayerRegistry::instance()->addMapLayer( vecLayer );
+    mapCanvasLayerSet.append( vecLayer );
+    m_mapCanvas->setExtent( vecLayer->extent() );
+    m_mapCanvas->setLayerSet( mapCanvasLayerSet );
+    m_mapCanvas->setVisible( true );
+    m_mapCanvas->freeze( false );
+    m_mapCanvas->refresh();
+}
+
+void qgis_dev::addVectorLayer( QString vecLayerPath, QString basename, QString providerKey )
+{
+    QgsVectorLayer* vecLayer = new QgsVectorLayer( vecLayerPath, basename, providerKey, false );
     if ( !vecLayer->isValid() )
     {
         QMessageBox::critical( this, "error", "layer is invalid" );
@@ -980,6 +998,25 @@ QString qgis_dev::crsAndFormatAdjustedLayerUri( const QString& uri, const QStrin
     }
     return newuri;
 }
+
+void qgis_dev::addRasterLayer( QString rasterLayerPath, QString basename, QString providerKey )
+{
+    QgsRasterLayer* rasterLayer = new QgsRasterLayer( rasterLayerPath, basename, providerKey, false );
+    if ( !rasterLayer->isValid() )
+    {
+        QMessageBox::critical( this, "error", "layer is invalid" );
+        return;
+    }
+
+    QgsMapLayerRegistry::instance()->addMapLayer( rasterLayer );
+    mapCanvasLayerSet.append( rasterLayer );
+    m_mapCanvas->setExtent( rasterLayer->extent() );
+    m_mapCanvas->setLayerSet( mapCanvasLayerSet );
+    m_mapCanvas->setVisible( true );
+    m_mapCanvas->freeze( false );
+    m_mapCanvas->refresh();
+}
+
 
 
 
