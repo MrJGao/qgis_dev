@@ -4,6 +4,7 @@
 #include <QtGui/QMainWindow>
 #include "ui_qgis_dev.h"
 
+#include "qgis_dev_browserdockwidget.h"
 #include "qgis_devComposer.h"
 
 #include <QList>
@@ -26,6 +27,7 @@
 #include <qgscomposerview.h>
 #include <qgsraster.h>
 #include <qgsmessagebar.h>
+#include <qgsbrowsertreeview.h>
 
 
 class QgsMapTool;
@@ -52,13 +54,21 @@ public:
     //! 控制信息显示条显示的时间
     int messageTimeout();
 
+    QString crsAndFormatAdjustedLayerUri( const QString& uri, const QStringList& supportedCrs, const QStringList& supportedFormats );
+
 public slots:
     //! 添加矢量图层
     void addVectorLayers();
+    void addVectorLayer( QString vecLayerPath, QString basename, QString providerKey );
     //! 添加栅格图层
     void addRasterLayers();
+    void addRasterLayer( QString rasterLayerPath, QString basename, QString providerKey );
     //! 添加WMS图层
     void addWMSLayers();
+    //! 添加WCS图层
+    void addWCSLayers();
+    //! 添加WFS图层
+    void addWFSLayers();
 
     //! 自动选择新加入的图层
     void autoSelectAddedLayer( QList<QgsMapLayer*> layers );
@@ -101,7 +111,9 @@ private slots:
     //! 晕眩效果
     void dizzy(); // 这个效果是qgis程序员隐藏的娱乐方式吧，just for fun
 
-    void addWMSLayer( const QString& url, const QString& basename, const QString& providerKey );
+    void addOpenSourceRasterLayer( const QString& url, const QString& basename, const QString& providerKey );
+
+    void addWFSLayer( const QString& url, const QString& typeName );
 
 /// 显示栅格图像的一些功能
     //! 局部拉伸显示
@@ -138,6 +150,9 @@ private:
     QComboBox* pageViewComboBox;
 
     QgsMapCanvas* m_mapCanvas; // 地图画布
+
+    //! 文件浏览面板
+    qgis_dev_browserDockWidget* m_browserDockWight;
 
     //! 图层管理
     QgsLayerTreeView* m_layerTreeView;

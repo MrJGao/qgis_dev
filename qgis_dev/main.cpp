@@ -1,10 +1,17 @@
 #include<qgsapplication.h>
 #include <qgseditorwidgetregistry.h>
 
+#include <QSettings>
+
 #include "qgis_dev.h"
 
 int main( int argc, char *argv[] )
 {
+    // 为了使用 QSettings
+    QCoreApplication::setOrganizationName( "Jacory" );
+    QCoreApplication::setOrganizationDomain( "jacory.com" );
+    QCoreApplication::setApplicationName( "QGis_Dev" );
+
     QgsApplication myApp( argc, argv, true );
     QgsApplication::setPrefixPath( "C:/Program Files/qgis2.9.0", true );
     QgsApplication::initQgis();
