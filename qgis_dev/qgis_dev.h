@@ -63,12 +63,18 @@ public slots:
     //! 添加栅格图层
     void addRasterLayers();
     void addRasterLayer( QString rasterLayerPath, QString basename, QString providerKey );
+
     //! 添加WMS图层
     void addWMSLayers();
     //! 添加WCS图层
     void addWCSLayers();
     //! 添加WFS图层
     void addWFSLayers();
+
+    //! 新建矢量图层
+    void newVectorLayer();
+    //! 新建临时图层
+    void newMemoryLayer();
 
     //! 自动选择新加入的图层
     void autoSelectAddedLayer( QList<QgsMapLayer*> layers );
@@ -90,6 +96,9 @@ public slots:
     void on_actionZoomOut_triggered();
     void on_actionPan_triggered();
     void on_actionIdentify_triggered();
+
+    //! 编辑工具触发事件
+    void on_actionAddFeature_triggered();
 
 private slots:
     //! 显示鼠标位置地理坐标

@@ -41,6 +41,9 @@
 #include <qgsattributedialog.h>
 #include <qgscursors.h>
 #include <qgsproviderregistry.h>
+#include <qgsnewvectorlayerdialog.h>
+#include <qgsmessagebaritem.h>
+#include <qgsnewmemorylayerdialog.h>
 
 // for attribute table
 #include <qgsfeaturelistview.h>
@@ -68,7 +71,7 @@
 #include <qgsmaptoolidentify.h>
 #include <qgsmaptoolpan.h>
 
-// for open street map
+// for open source map
 #include <qgsowssourceselect.h>
 #include "qgis_dev_owssourceselector.h"
 
@@ -138,6 +141,9 @@ qgis_dev::qgis_dev( QWidget *parent, Qt::WindowFlags flags )
     connect( ui.actionAdd_WCF_Layer, SIGNAL( triggered() ), this, SLOT( addWCSLayers() ) );
     connect( ui.actionAdd_WFS_Layer, SIGNAL( triggered() ), this, SLOT( addWFSLayers() ) );
     connect( ui.actionAdd_Raster, SIGNAL( triggered() ), this, SLOT( addRasterLayers() ) );
+    connect( ui.actionNew_Vector, SIGNAL( triggered() ), this, SLOT( newVectorLayer() ) );
+    connect( ui.actionNew_Memory_Vector_Layer, SIGNAL( triggered() ), this, SLOT( newMemoryLayer() ) );
+
     connect( ui.actionToggle_Overview, SIGNAL( triggered() ), this, SLOT( createOverview() ) );
     connect( m_mapCanvas, SIGNAL( scaleChanged( double ) ), this, SLOT( showScale( double ) ) );
 
@@ -749,7 +755,8 @@ void qgis_dev::decreaseContrast()
     adjustBrightnessContrast( step, false );
 }
 
-void qgis_dev::histogramStretch( bool visibleAreaOnly /*= false*/, QgsRaster::ContrastEnhancementLimits theLimits /*= QgsRaster::ContrastEnhancementMinMax */ )
+void qgis_dev::histogramStretch( bool visibleAreaOnly /*= false*/,
+                                 QgsRaster::ContrastEnhancementLimits theLimits /*= QgsRaster::ContrastEnhancementMinMax */ )
 {
     QgsMapLayer* myLayer = m_layerTreeView->currentLayer();
     if ( !myLayer ) // 判断是否为地图图层
@@ -866,12 +873,14 @@ void qgis_dev::addWMSLayers()
 
     delete wms;
 
-    // 这句说明添加图层是没有问题的
-    /*addWMSLayer( "contextualWMSLegend=0&crs=EPSG:4326&dpiMode=all&featureCount=10&format=image/gif&layers=DC&styles=&url=http://wms.lizardtech.com/lizardtech/iserv/ows",
-                 "DC",
-                 "wms" );
+    // 这个图层显示有畸变
+    /*addOpenSourceRasterLayer( "contextualWMSLegend=0&crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/jpeg&layers=cartographic:national-boundaries&styles=&url=http://sedac.ciesin.columbia.edu:80/geoserver/wms",
+                              "cartographic:national-boundaries", "wms" );*/
 
-    delete wms;*/
+    // 这句说明添加图层是没有问题的
+    //addOpenSourceRasterLayer( "contextualWMSLegend=0&crs=EPSG:4326&dpiMode=all&featureCount=10&format=image/gif&layers=DC&styles=&url=http://wms.lizardtech.com/lizardtech/iserv/ows",
+    //                          "DC",
+    //                          "wms" );
 
     /* qgis_dev_OWSSourceSelector* ows = new qgis_dev_OWSSourceSelector(  "wms", this );
 
@@ -970,7 +979,8 @@ void qgis_dev::addWFSLayer( const QString& url, const QString& typeName )
     m_mapCanvas->refresh();
 }
 
-QString qgis_dev::crsAndFormatAdjustedLayerUri( const QString& uri, const QStringList& supportedCrs, const QStringList& supportedFormats )
+QString qgis_dev::crsAndFormatAdjustedLayerUri( const QString& uri,
+        const QStringList& supportedCrs, const QStringList& supportedFormats )
 {
     QString newuri = uri;
 
@@ -1016,6 +1026,53 @@ void qgis_dev::addRasterLayer( QString rasterLayerPath, QString basename, QStrin
     m_mapCanvas->freeze( false );
     m_mapCanvas->refresh();
 }
+
+void qgis_dev::newVectorLayer()
+{
+    QString enc;
+    QString fileName = QgsNewVectorLayerDialog::runAndCreateLayer( this, &enc );
+
+    if ( !fileName.isEmpty() )
+    {
+        //then add the layer to the view
+        QStringList fileNames;
+        fileNames.append( fileName );
+        //todo: the last parameter will change accordingly to layer type
+        //addVectorLayers( fileNames, enc, "file" );
+    }
+    else if ( fileName.isNull() )
+    {
+        QLabel *msgLabel = new QLabel( tr( "Layer creation failed. Please check the <a href=\"#messageLog\">message log</a> for further information." ), messageBar() );
+        msgLabel->setWordWrap( true );
+        //connect( msgLabel, SIGNAL( linkActivated( QString ) ), mLogDock, SLOT( show() ) );
+        QgsMessageBarItem *item = new QgsMessageBarItem( msgLabel, QgsMessageBar::WARNING );
+        messageBar()->pushItem( item );
+    }
+}
+
+void qgis_dev::newMemoryLayer()
+{
+    QgsVectorLayer* newLayer = QgsNewMemoryLayerDialog::runAndCreateLayer( this );
+    if ( newLayer )
+    {
+        //then add the layer to the view
+        QList< QgsMapLayer* > layers;
+        layers << newLayer;
+
+        QgsMapLayerRegistry::instance()->addMapLayers( layers );
+        newLayer->startEditing();
+    }
+}
+
+void qgis_dev::on_actionAddFeature_triggered()
+{
+    // QgsMapTool* addFeatureTool = new QgsMapToolAddFeature( m_mapCanvas );
+
+
+}
+
+
+
 
 
 
