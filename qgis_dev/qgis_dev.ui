@@ -60,13 +60,18 @@
      <string>Vector</string>
     </property>
     <addaction name="actionAdd_Vector"/>
-    <addaction name="actionAddWMSlayer"/>
+    <addaction name="actionAdd_WFS_Layer"/>
+    <addaction name="separator"/>
+    <addaction name="actionNew_Vector"/>
+    <addaction name="actionNew_Memory_Vector_Layer"/>
    </widget>
    <widget class="QMenu" name="menuRaster">
     <property name="title">
      <string>Raster</string>
     </property>
     <addaction name="actionAdd_Raster"/>
+    <addaction name="actionAddWMSlayer"/>
+    <addaction name="actionAdd_WCF_Layer"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -81,7 +86,7 @@
   </widget>
   <widget class="QToolBar" name="m_project_toolBar">
    <property name="windowTitle">
-    <string>project tool bar</string>
+    <string>Project Tool Bar</string>
    </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
@@ -98,7 +103,7 @@
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QToolBar" name="m_raster_toolBar">
    <property name="windowTitle">
-    <string>raster tool bar</string>
+    <string>RasterTool Bar</string>
    </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
@@ -117,7 +122,7 @@
   </widget>
   <widget class="QToolBar" name="m_mapTools_toolBar">
    <property name="windowTitle">
-    <string>toolBar</string>
+    <string>Map Tools Tool Bar</string>
    </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
@@ -130,6 +135,45 @@
    <addaction name="actionZoomIn"/>
    <addaction name="actionZoomOut"/>
    <addaction name="actionIdentify"/>
+  </widget>
+  <widget class="QToolBar" name="m_addData_toolBar">
+   <property name="windowTitle">
+    <string>Add Data Tool Bar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>LeftToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionAdd_Vector"/>
+   <addaction name="actionAdd_Raster"/>
+   <addaction name="actionAddWMSlayer"/>
+   <addaction name="actionAdd_WCF_Layer"/>
+   <addaction name="actionAdd_WFS_Layer"/>
+   <addaction name="actionNew_Vector"/>
+   <addaction name="actionNew_Memory_Vector_Layer"/>
+  </widget>
+  <widget class="QToolBar" name="m_editor_toolBar">
+   <property name="windowTitle">
+    <string>Editor Tool Bar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>true</bool>
+   </attribute>
+   <addaction name="actionAll_Edits"/>
+   <addaction name="actionToggle_Editing"/>
+   <addaction name="actionSaveLayer_Edits"/>
+   <addaction name="actionAdd_Feature"/>
+   <addaction name="actionMove_Feature"/>
+   <addaction name="actionNode_Tool"/>
+   <addaction name="actionDelet_Selected"/>
+   <addaction name="actionCut_Features"/>
+   <addaction name="actionCopy_Features"/>
+   <addaction name="actionPaste_Features"/>
   </widget>
   <action name="actionOpen_Project">
    <property name="icon">
@@ -357,6 +401,135 @@
    </property>
    <property name="text">
     <string>Add WMS Layer</string>
+   </property>
+  </action>
+  <action name="actionAdd_WCF_Layer">
+   <property name="icon">
+    <iconset resource="Resources/images/images.qrc">
+     <normaloff>:/images/themes/default/mActionAddWcsLayer.svg</normaloff>:/images/themes/default/mActionAddWcsLayer.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Add WCS Layer</string>
+   </property>
+  </action>
+  <action name="actionAdd_WFS_Layer">
+   <property name="icon">
+    <iconset resource="Resources/images/images.qrc">
+     <normaloff>:/images/themes/default/mActionAddWfsLayer.svg</normaloff>:/images/themes/default/mActionAddWfsLayer.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Add WFS Layer</string>
+   </property>
+  </action>
+  <action name="actionNew_Vector">
+   <property name="icon">
+    <iconset resource="Resources/images/images.qrc">
+     <normaloff>:/images/themes/default/mActionNewVectorLayer.svg</normaloff>:/images/themes/default/mActionNewVectorLayer.svg</iconset>
+   </property>
+   <property name="text">
+    <string>New Vector</string>
+   </property>
+  </action>
+  <action name="actionNew_Memory_Vector_Layer">
+   <property name="icon">
+    <iconset resource="Resources/images/images.qrc">
+     <normaloff>:/images/themes/default/mActionCreateMemory.png</normaloff>:/images/themes/default/mActionCreateMemory.png</iconset>
+   </property>
+   <property name="text">
+    <string>New Memory Vector Layer</string>
+   </property>
+  </action>
+  <action name="actionAll_Edits">
+   <property name="icon">
+    <iconset resource="Resources/images/images.qrc">
+     <normaloff>:/images/themes/default/mActionAllEdits.svg</normaloff>:/images/themes/default/mActionAllEdits.svg</iconset>
+   </property>
+   <property name="text">
+    <string>All Edits</string>
+   </property>
+  </action>
+  <action name="actionToggle_Editing">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="Resources/images/images.qrc">
+     <normaloff>:/images/themes/default/mActionToggleEditing.png</normaloff>:/images/themes/default/mActionToggleEditing.png</iconset>
+   </property>
+   <property name="text">
+    <string>Toggle Editing</string>
+   </property>
+  </action>
+  <action name="actionSaveLayer_Edits">
+   <property name="icon">
+    <iconset resource="Resources/images/images.qrc">
+     <normaloff>:/images/themes/default/mActionSaveAllEdits.svg</normaloff>:/images/themes/default/mActionSaveAllEdits.svg</iconset>
+   </property>
+   <property name="text">
+    <string>SaveLayer Edits</string>
+   </property>
+  </action>
+  <action name="actionAdd_Feature">
+   <property name="icon">
+    <iconset resource="Resources/images/images.qrc">
+     <normaloff>:/images/themes/default/mActionCapturePolygon.png</normaloff>:/images/themes/default/mActionCapturePolygon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Add Feature</string>
+   </property>
+  </action>
+  <action name="actionMove_Feature">
+   <property name="icon">
+    <iconset resource="Resources/images/images.qrc">
+     <normaloff>:/images/themes/default/mActionMoveFeature.png</normaloff>:/images/themes/default/mActionMoveFeature.png</iconset>
+   </property>
+   <property name="text">
+    <string>Move Feature</string>
+   </property>
+  </action>
+  <action name="actionNode_Tool">
+   <property name="icon">
+    <iconset resource="Resources/images/images.qrc">
+     <normaloff>:/images/themes/default/mActionNodeTool.png</normaloff>:/images/themes/default/mActionNodeTool.png</iconset>
+   </property>
+   <property name="text">
+    <string>Node Tool</string>
+   </property>
+  </action>
+  <action name="actionDelet_Selected">
+   <property name="icon">
+    <iconset resource="Resources/images/images.qrc">
+     <normaloff>:/images/themes/default/mActionDeleteSelected.svg</normaloff>:/images/themes/default/mActionDeleteSelected.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Delet Selected</string>
+   </property>
+  </action>
+  <action name="actionCut_Features">
+   <property name="icon">
+    <iconset resource="Resources/images/images.qrc">
+     <normaloff>:/images/themes/default/mActionEditCut.png</normaloff>:/images/themes/default/mActionEditCut.png</iconset>
+   </property>
+   <property name="text">
+    <string>Cut Features</string>
+   </property>
+  </action>
+  <action name="actionCopy_Features">
+   <property name="icon">
+    <iconset resource="Resources/images/images.qrc">
+     <normaloff>:/images/themes/default/mActionEditCopy.png</normaloff>:/images/themes/default/mActionEditCopy.png</iconset>
+   </property>
+   <property name="text">
+    <string>Copy Features</string>
+   </property>
+  </action>
+  <action name="actionPaste_Features">
+   <property name="icon">
+    <iconset resource="Resources/images/images.qrc">
+     <normaloff>:/images/themes/default/mActionEditPaste.png</normaloff>:/images/themes/default/mActionEditPaste.png</iconset>
+   </property>
+   <property name="text">
+    <string>Paste Features</string>
    </property>
   </action>
  </widget>

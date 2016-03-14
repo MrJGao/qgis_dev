@@ -24,6 +24,8 @@
 #include <Qt>
 #include <QSizePolicy>
 #include <QBitmap>
+#include <QMap>
+#include <QRegExp>
 
 // QGis include
 #include <qgsvectorlayer.h>
@@ -39,6 +41,9 @@
 #include <qgsattributedialog.h>
 #include <qgscursors.h>
 #include <qgsproviderregistry.h>
+#include <qgsnewvectorlayerdialog.h>
+#include <qgsmessagebaritem.h>
+#include <qgsnewmemorylayerdialog.h>
 
 // for attribute table
 #include <qgsfeaturelistview.h>
@@ -46,7 +51,6 @@
 #include <qgsattributetablemodel.h>
 #include <qgsfeaturelistmodel.h>
 #include <qgsvectorlayercache.h>
-
 #include <qgsattributedialog.h>
 #include <qgseditorwidgetfactory.h>
 
@@ -67,8 +71,9 @@
 #include <qgsmaptoolidentify.h>
 #include <qgsmaptoolpan.h>
 
-// for open street map
+// for open source map
 #include <qgsowssourceselect.h>
+#include "qgis_dev_owssourceselector.h"
 
 qgis_dev* qgis_dev::sm_instance = 0;
 
@@ -104,6 +109,10 @@ qgis_dev::qgis_dev( QWidget *parent, Qt::WindowFlags flags )
     m_layerTreeView = new QgsLayerTreeView( this );
     initLayerTreeView();
 
+    //! 初始化文件浏览窗口
+    m_browserDockWight = new qgis_dev_browserDockWidget( tr( "Browser" ), this );
+    addDockWidget( Qt::LeftDockWidgetArea, m_browserDockWight );
+
     //! 初始化信息显示条
     m_infoBar = new QgsMessageBar( this );
     m_infoBar->setSizePolicy( QSizePolicy::Minimum, QSizePolicy::Fixed );
@@ -117,6 +126,8 @@ qgis_dev::qgis_dev( QWidget *parent, Qt::WindowFlags flags )
     m_stackedWidget->addWidget( m_mapCanvas );
     m_stackedWidget->addWidget( m_composer );
 
+
+
     centralLayout->addWidget( m_stackedWidget, 0, 0, 1, 1 );
     centralLayout->addWidget( m_infoBar, 1, 0, 1, 1 );
 
@@ -127,7 +138,12 @@ qgis_dev::qgis_dev( QWidget *parent, Qt::WindowFlags flags )
     connect( m_mapCanvas, SIGNAL( xyCoordinates( const QgsPoint& ) ), this, SLOT( showMouseCoordinate( const QgsPoint& ) ) );
     connect( ui.actionAdd_Vector, SIGNAL( triggered() ), this, SLOT( addVectorLayers() ) );
     connect( ui.actionAddWMSlayer, SIGNAL( triggered() ), this, SLOT( addWMSLayers() ) );
+    connect( ui.actionAdd_WCF_Layer, SIGNAL( triggered() ), this, SLOT( addWCSLayers() ) );
+    connect( ui.actionAdd_WFS_Layer, SIGNAL( triggered() ), this, SLOT( addWFSLayers() ) );
     connect( ui.actionAdd_Raster, SIGNAL( triggered() ), this, SLOT( addRasterLayers() ) );
+    connect( ui.actionNew_Vector, SIGNAL( triggered() ), this, SLOT( newVectorLayer() ) );
+    connect( ui.actionNew_Memory_Vector_Layer, SIGNAL( triggered() ), this, SLOT( newMemoryLayer() ) );
+
     connect( ui.actionToggle_Overview, SIGNAL( triggered() ), this, SLOT( createOverview() ) );
     connect( m_mapCanvas, SIGNAL( scaleChanged( double ) ), this, SLOT( showScale( double ) ) );
 
@@ -154,6 +170,24 @@ void qgis_dev::addVectorLayers()
     QFileInfo fi( filename );
     QString basename = fi.baseName();
     QgsVectorLayer* vecLayer = new QgsVectorLayer( filename, basename, "ogr", false );
+    if ( !vecLayer->isValid() )
+    {
+        QMessageBox::critical( this, "error", "layer is invalid" );
+        return;
+    }
+
+    QgsMapLayerRegistry::instance()->addMapLayer( vecLayer );
+    mapCanvasLayerSet.append( vecLayer );
+    m_mapCanvas->setExtent( vecLayer->extent() );
+    m_mapCanvas->setLayerSet( mapCanvasLayerSet );
+    m_mapCanvas->setVisible( true );
+    m_mapCanvas->freeze( false );
+    m_mapCanvas->refresh();
+}
+
+void qgis_dev::addVectorLayer( QString vecLayerPath, QString basename, QString providerKey )
+{
+    QgsVectorLayer* vecLayer = new QgsVectorLayer( vecLayerPath, basename, providerKey, false );
     if ( !vecLayer->isValid() )
     {
         QMessageBox::critical( this, "error", "layer is invalid" );
@@ -721,7 +755,8 @@ void qgis_dev::decreaseContrast()
     adjustBrightnessContrast( step, false );
 }
 
-void qgis_dev::histogramStretch( bool visibleAreaOnly /*= false*/, QgsRaster::ContrastEnhancementLimits theLimits /*= QgsRaster::ContrastEnhancementMinMax */ )
+void qgis_dev::histogramStretch( bool visibleAreaOnly /*= false*/,
+                                 QgsRaster::ContrastEnhancementLimits theLimits /*= QgsRaster::ContrastEnhancementMinMax */ )
 {
     QgsMapLayer* myLayer = m_layerTreeView->currentLayer();
     if ( !myLayer ) // 判断是否为地图图层
@@ -831,35 +866,41 @@ void qgis_dev::addWMSLayers()
         statusBar()->showMessage( tr( "cannot add wms layer." ), 10 );
     }
 
+    connect( wms, SIGNAL( addRasterLayer( QString const &, QString const &, QString const & ) ),
+             this, SLOT( addOpenSourceRasterLayer( QString const &, QString const &, QString const & ) ) );
 
     wms->exec();
 
-    // 这句说明添加图层是没有问题的
-    addWMSLayer( "contextualWMSLegend=0&crs=EPSG:4326&dpiMode=all&featureCount=10&format=image/gif&layers=DC&styles=&url=http://wms.lizardtech.com/lizardtech/iserv/ows",
-                 "DC",
-                 "wms" );
-
     delete wms;
 
-    /*QgsOWSSourceSelect* ows = new QgsOWSSourceSelect( "wms", this );
+    // 这个图层显示有畸变
+    /*addOpenSourceRasterLayer( "contextualWMSLegend=0&crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/jpeg&layers=cartographic:national-boundaries&styles=&url=http://sedac.ciesin.columbia.edu:80/geoserver/wms",
+                              "cartographic:national-boundaries", "wms" );*/
 
-    connect( ows, SIGNAL( addRasterLayer( const QString&, const QString&, const QString& ) ),
-             this, SLOT( addWMSLayer( const QString&, const QString&, const QString& ) ) );
-    ows->exec();*/
+    // 这句说明添加图层是没有问题的
+    //addOpenSourceRasterLayer( "contextualWMSLegend=0&crs=EPSG:4326&dpiMode=all&featureCount=10&format=image/gif&layers=DC&styles=&url=http://wms.lizardtech.com/lizardtech/iserv/ows",
+    //                          "DC",
+    //                          "wms" );
+
+    /* qgis_dev_OWSSourceSelector* ows = new qgis_dev_OWSSourceSelector(  "wms", this );
+
+     connect( ows, SIGNAL( addRasterLayer( const QString&, const QString&, const QString& ) ),
+              this, SLOT( addWMSLayer( const QString&, const QString&, const QString& ) ) );
+     ows->exec();*/
 
 }
 
-void qgis_dev::addWMSLayer( const QString& uri, const QString& baseName, const QString& providerKey )
+void qgis_dev::addOpenSourceRasterLayer( const QString& url, const QString& basename, const QString& providerKey )
 {
     QgsRasterLayer *rasterLayer = 0;
 
     if ( providerKey.isEmpty() )
     {
-        rasterLayer = new QgsRasterLayer( uri, baseName );
+        rasterLayer = new QgsRasterLayer( url, basename );
     }
     else
     {
-        rasterLayer = new QgsRasterLayer( uri, baseName, providerKey );
+        rasterLayer = new QgsRasterLayer( url, basename, providerKey );
     }
 
     if ( !rasterLayer->isValid() )
@@ -876,6 +917,169 @@ void qgis_dev::addWMSLayer( const QString& uri, const QString& baseName, const Q
     m_mapCanvas->freeze( false );
     m_mapCanvas->refresh();
 }
+
+void qgis_dev::addWCSLayers()
+{
+    QDialog *wcs = dynamic_cast<QDialog*>( QgsProviderRegistry::instance()->selectWidget( QString( "wcs" ), this ) );
+    if ( !wcs )
+    {
+        statusBar()->showMessage( tr( "cannot add wcs layer." ), 10 );
+    }
+
+    connect( wcs, SIGNAL( addRasterLayer( QString const &, QString const &, QString const & ) ),
+             this, SLOT( addOpenSourceRasterLayer( QString const &, QString const &, QString const & ) ) );
+
+    wcs->exec();
+    delete wcs;
+}
+
+void qgis_dev::addWFSLayers()
+{
+    if ( !m_mapCanvas ) {return;}
+
+    QDialog *wfs = dynamic_cast<QDialog*>( QgsProviderRegistry::instance()->selectWidget( QString( "WFS" ), this ) );
+    if ( !wfs )
+    {
+        QMessageBox::warning( this, tr( "WFS" ), tr( "Cannot get WFS select dialog from provider." ) );
+        return;
+    }
+    connect( wfs, SIGNAL( addWfsLayer( QString, QString ) ),
+             this, SLOT( addWfsLayer( const QString, const QString ) ) );
+
+    //re-enable wfs with extent setting: pass canvas info to source select
+    wfs->setProperty( "MapExtent", m_mapCanvas->extent().toString() );
+    if ( m_mapCanvas->mapSettings().hasCrsTransformEnabled() )
+    {
+        //if "on the fly" reprojection is active, pass canvas CRS
+        wfs->setProperty( "MapCRS", m_mapCanvas->mapSettings().destinationCrs().authid() );
+    }
+
+    bool bkRenderFlag = m_mapCanvas->renderFlag();
+    m_mapCanvas->setRenderFlag( false );
+    wfs->exec();
+    m_mapCanvas->setRenderFlag( bkRenderFlag );
+    delete wfs;
+}
+
+void qgis_dev::addWFSLayer( const QString& url, const QString& typeName )
+{
+    QgsVectorLayer* vecLayer = new QgsVectorLayer( url, typeName, "WFS", false );
+    if ( !vecLayer->isValid() )
+    {
+        QMessageBox::critical( this, "error", "layer is invalid" );
+        return;
+    }
+
+    QgsMapLayerRegistry::instance()->addMapLayer( vecLayer );
+    mapCanvasLayerSet.append( vecLayer );
+    m_mapCanvas->setExtent( vecLayer->extent() );
+    m_mapCanvas->setLayerSet( mapCanvasLayerSet );
+    m_mapCanvas->setVisible( true );
+    m_mapCanvas->freeze( false );
+    m_mapCanvas->refresh();
+}
+
+QString qgis_dev::crsAndFormatAdjustedLayerUri( const QString& uri,
+        const QStringList& supportedCrs, const QStringList& supportedFormats )
+{
+    QString newuri = uri;
+
+    // Adjust layer CRS to project CRS
+    QgsCoordinateReferenceSystem testCrs;
+    foreach( QString c, supportedCrs )
+    {
+        testCrs.createFromOgcWmsCrs( c );
+        if ( testCrs == m_mapCanvas->mapSettings().destinationCrs() )
+        {
+            newuri.replace( QRegExp( "crs=[^&]+" ), "crs=" + c );
+            break;
+        }
+    }
+
+    // Use the last used image format
+    QString lastImageEncoding = QSettings().value( "/qgis/lastWmsImageEncoding", "image/png" ).toString();
+    foreach ( QString fmt, supportedFormats )
+    {
+        if ( fmt == lastImageEncoding )
+        {
+            newuri.replace( QRegExp( "format=[^&]+" ), "format=" + fmt );
+            break;
+        }
+    }
+    return newuri;
+}
+
+void qgis_dev::addRasterLayer( QString rasterLayerPath, QString basename, QString providerKey )
+{
+    QgsRasterLayer* rasterLayer = new QgsRasterLayer( rasterLayerPath, basename, providerKey, false );
+    if ( !rasterLayer->isValid() )
+    {
+        QMessageBox::critical( this, "error", "layer is invalid" );
+        return;
+    }
+
+    QgsMapLayerRegistry::instance()->addMapLayer( rasterLayer );
+    mapCanvasLayerSet.append( rasterLayer );
+    m_mapCanvas->setExtent( rasterLayer->extent() );
+    m_mapCanvas->setLayerSet( mapCanvasLayerSet );
+    m_mapCanvas->setVisible( true );
+    m_mapCanvas->freeze( false );
+    m_mapCanvas->refresh();
+}
+
+void qgis_dev::newVectorLayer()
+{
+    QString enc;
+    QString fileName = QgsNewVectorLayerDialog::runAndCreateLayer( this, &enc );
+
+    if ( !fileName.isEmpty() )
+    {
+        //then add the layer to the view
+        QStringList fileNames;
+        fileNames.append( fileName );
+        //todo: the last parameter will change accordingly to layer type
+        //addVectorLayers( fileNames, enc, "file" );
+    }
+    else if ( fileName.isNull() )
+    {
+        QLabel *msgLabel = new QLabel( tr( "Layer creation failed. Please check the <a href=\"#messageLog\">message log</a> for further information." ), messageBar() );
+        msgLabel->setWordWrap( true );
+        //connect( msgLabel, SIGNAL( linkActivated( QString ) ), mLogDock, SLOT( show() ) );
+        QgsMessageBarItem *item = new QgsMessageBarItem( msgLabel, QgsMessageBar::WARNING );
+        messageBar()->pushItem( item );
+    }
+}
+
+void qgis_dev::newMemoryLayer()
+{
+    QgsVectorLayer* newLayer = QgsNewMemoryLayerDialog::runAndCreateLayer( this );
+    if ( newLayer )
+    {
+        //then add the layer to the view
+        QList< QgsMapLayer* > layers;
+        layers << newLayer;
+
+        QgsMapLayerRegistry::instance()->addMapLayers( layers );
+        newLayer->startEditing();
+    }
+}
+
+void qgis_dev::on_actionAddFeature_triggered()
+{
+    // QgsMapTool* addFeatureTool = new QgsMapToolAddFeature( m_mapCanvas );
+
+
+}
+
+
+
+
+
+
+
+
+
+
 
 
 

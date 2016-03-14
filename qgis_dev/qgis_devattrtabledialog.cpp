@@ -11,12 +11,19 @@
 #include <qgsattributeeditorcontext.h>
 #include <qgsvectordataprovider.h>
 
-
 #include <qgsfeaturelistview.h>
 #include <qgsattributetableview.h>
 #include <qgsattributetablemodel.h>
 #include <qgsfeaturelistmodel.h>
 #include <qgsvectorlayercache.h>
+
+#include <qgsexpressionbuilderdialog.h>
+#include <qgsexpressionselectiondialog.h>
+
+#include <qgscontexthelp.h>
+#include <qgsproject.h>
+
+
 //! 这里定义一个DockWidget，将属性表窗口装进去， 实现窗口停靠
 class qgis_devAttributeTableDock : public QDockWidget
 {
@@ -54,7 +61,7 @@ qgis_devattrtableDialog::qgis_devattrtableDialog( QgsVectorLayer* theVecLayer, Q
     context.setDistanceArea( *myDa );
     //context.setVectorLayerTools( qgis_dev::instance()->vectorLayerTools );
 
-    //// 属性feature请求
+    // 属性feature请求
     QgsFeatureRequest r;
     if ( mLayer->geometryType() != QGis::NoGeometry
             //&& settings.value( "/qgis/attributeTableBehaviour", QgsAttributeTableFilterModel::ShowAll ).toInt() == QgsAttributeTableFilterModel::ShowVisible
@@ -121,7 +128,8 @@ qgis_devattrtableDialog::qgis_devattrtableDialog( QgsVectorLayer* theVecLayer, Q
     mDock->setAllowedAreas( Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea );
     mDock->setWidget( this );
     connect( this, SIGNAL( destroyed() ), mDock, SLOT( close ) );
-    qgis_dev::instance()->addDockWidget( Qt::BottomDockWidgetArea, mDock );
+    mDock->show();
+    //qgis_dev::instance()->addDockWidget( Qt::BottomDockWidgetArea, mDock );
 
     columnBoxInit();
     updateTitle();
@@ -189,20 +197,20 @@ qgis_devattrtableDialog::~qgis_devattrtableDialog()
 
 void qgis_devattrtableDialog::filterExpressionBuilder()
 {
-    //// Show expression builder
-    //QgsExpressionBuilderDialog dlg( mLayer, mFilterQuery->text(), this );
-    //dlg.setWindowTitle( tr( "Expression based filter" ) );
+    // Show expression builder
+    QgsExpressionBuilderDialog dlg( mLayer, mFilterQuery->text(), this );
+    dlg.setWindowTitle( tr( "Expression based filter" ) );
 
-    //QgsDistanceArea myDa;
-    //myDa.setSourceCrs( mLayer->crs().srsid() );
-    //myDa.setEllipsoidalMode( QgisApp::instance()->mapCanvas()->mapSettings().hasCrsTransformEnabled() );
+    QgsDistanceArea myDa;
+    myDa.setSourceCrs( mLayer->crs().srsid() );
+    myDa.setEllipsoidalMode( qgis_dev::instance()->mapCanvas()->mapSettings().hasCrsTransformEnabled() );
     //myDa.setEllipsoid( QgsProject::instance()->readEntry( "Measure", "/Ellipsoid", GEO_NONE ) );
-    //dlg.setGeomCalculator( myDa );
+    dlg.setGeomCalculator( myDa );
 
-    //if ( dlg.exec() == QDialog::Accepted )
-    //{
-    //    setFilterExpression( dlg.expressionText() );
-    //}
+    if ( dlg.exec() == QDialog::Accepted )
+    {
+        setFilterExpression( dlg.expressionText() );
+    }
 }
 
 void qgis_devattrtableDialog::filterShowAll()
@@ -280,9 +288,11 @@ void qgis_devattrtableDialog::filterQueryChanged( const QString& query )
             return;
         }
 
+        // 判断属性字段是否为数字
         QVariant::Type fldType = flds[fldIndex].type();
         bool numeric = ( fldType == QVariant::Int || fldType == QVariant::Double || fldType == QVariant::LongLong );
 
+        // 如果属性是字符串，判断应该用“ILIKE”或者“LIKE”
         QString sensString = "ILIKE";
         if ( mCbxCaseSensitive->isChecked() )
         {
@@ -308,8 +318,9 @@ void qgis_devattrtableDialog::filterQueryChanged( const QString& query )
         }
     }
 
+    // 以上为解析字符串， str才是最后的查询字符串
     setFilterExpression( str );
-    updateTitle();
+    updateTitle(); // 更新属性窗口标题
 }
 
 void qgis_devattrtableDialog::filterColumnChanged( QObject* filterAction )
@@ -492,72 +503,184 @@ void qgis_devattrtableDialog::updateButtonStatus( QString fieldName, bool isVali
 
 void qgis_devattrtableDialog::setFilterExpression( QString filterString )
 {
-    //mFilterQuery->setText( filterString );
-    //mFilterButton->setDefaultAction( mActionAdvancedFilter );
-    //mFilterButton->setPopupMode( QToolButton::MenuButtonPopup );
-    //mCbxCaseSensitive->setVisible( false );
-    //mFilterQuery->setVisible( true );
-    //mApplyFilterButton->setVisible( true );
-    //mMainView->setFilterMode( QgsAttributeTableFilterModel::ShowFilteredList );
+    mFilterQuery->setText( filterString );
+    mFilterButton->setDefaultAction( mActionAdvancedFilter );
+    mFilterButton->setPopupMode( QToolButton::MenuButtonPopup );
+    mCbxCaseSensitive->setVisible( false );
+    mFilterQuery->setVisible( true );
+    mApplyFilterButton->setVisible( true );
+    mMainView->setFilterMode( QgsAttributeTableFilterModel::ShowFilteredList );
 
-    //QgsFeatureIds filteredFeatures;
-    //QgsDistanceArea myDa;
+    QgsFeatureIds filteredFeatures;
+    QgsDistanceArea myDa;
 
-    //myDa.setSourceCrs( mLayer->crs().srsid() );
-    //myDa.setEllipsoidalMode( QgisApp::instance()->mapCanvas()->mapSettings().hasCrsTransformEnabled() );
-    //myDa.setEllipsoid( QgsProject::instance()->readEntry( "Measure", "/Ellipsoid", GEO_NONE ) );
+    myDa.setSourceCrs( mLayer->crs().srsid() );
+    myDa.setEllipsoidalMode( qgis_dev::instance()->mapCanvas()->mapSettings().hasCrsTransformEnabled() );
+    myDa.setEllipsoid( QgsProject::instance()->readEntry( "Measure", "/Ellipsoid", GEO_NONE ) );
 
-    //// parse search string and build parsed tree
-    //QgsExpression filterExpression( filterString );
-    //if ( filterExpression.hasParserError() )
+    // parse search string and build parsed tree
+    QgsExpression filterExpression( filterString );
+    if ( filterExpression.hasParserError() )
+    {
+        qgis_dev::instance()->messageBar()->pushMessage( tr( "Parsing error" ), filterExpression.parserErrorString(), QgsMessageBar::WARNING, qgis_dev::instance()->messageTimeout() );
+        return;
+    }
+
+    if ( ! filterExpression.prepare( mLayer->pendingFields() ) )
+    {
+        qgis_dev::instance()->messageBar()->pushMessage( tr( "Evaluation error" ), filterExpression.evalErrorString(), QgsMessageBar::WARNING, qgis_dev::instance()->messageTimeout() );
+    }
+
+    bool fetchGeom = filterExpression.needsGeometry();
+
+    QApplication::setOverrideCursor( Qt::WaitCursor );
+
+    filterExpression.setGeomCalculator( myDa );
+    QgsFeatureRequest request( mMainView->masterModel()->request() );
+    request.setSubsetOfAttributes( filterExpression.referencedColumns(), mLayer->pendingFields() );
+    if ( !fetchGeom )
+    {
+        request.setFlags( QgsFeatureRequest::NoGeometry );
+    }
+    QgsFeatureIterator featIt = mLayer->getFeatures( request );
+
+    QgsFeature f;
+
+    while ( featIt.nextFeature( f ) )
+    {
+        if ( filterExpression.evaluate( &f ).toInt() != 0 )
+        {
+            filteredFeatures << f.id();
+        }
+
+        // check if there were errors during evaluating
+        if ( filterExpression.hasEvalError() )
+        {
+            break;
+        }
+    }
+
+    featIt.close();
+
+    mMainView->setFilteredFeatures( filteredFeatures );
+
+    QApplication::restoreOverrideCursor();
+
+    if ( filterExpression.hasEvalError() )
+    {
+        qgis_dev::instance()->messageBar()->pushMessage( tr( "Error filtering" ), filterExpression.evalErrorString(), QgsMessageBar::WARNING, qgis_dev::instance()->messageTimeout() );
+        return;
+    }
+}
+
+void qgis_devattrtableDialog::on_mExpressionSelectButton_clicked()
+{
+    QgsExpressionSelectionDialog* dlg = new QgsExpressionSelectionDialog( mLayer );
+    dlg->setAttribute( Qt::WA_DeleteOnClose );
+    dlg->show();
+}
+
+void qgis_devattrtableDialog::on_mCopySelectedRowsButton_clicked()
+{
+
+}
+
+void qgis_devattrtableDialog::on_mToggleEditingButton_toggled()
+{
+
+}
+
+void qgis_devattrtableDialog::on_mSaveEditsButton_clicked()
+{
+
+}
+
+void qgis_devattrtableDialog::on_mInvertSelectionButton_clicked()
+{
+    mLayer->invertSelection();
+}
+
+void qgis_devattrtableDialog::on_mRemoveSelectionButton_clicked()
+{
+    mLayer->removeSelection();
+}
+
+void qgis_devattrtableDialog::on_mZoomMapToSelectedRowsButton_clicked()
+{
+    qgis_dev::instance()->mapCanvas()->zoomToSelected( mLayer );
+}
+
+void qgis_devattrtableDialog::on_mPanMapToSelectedRowsButton_clicked()
+{
+    qgis_dev::instance()->mapCanvas()->panToSelected( mLayer );
+}
+
+void qgis_devattrtableDialog::on_mSelectedToTopButton_toggled()
+{
+    if ( mSelectedToTopButton->isChecked() )
+    {
+        mMainView->setSelectedOnTop( true );
+    }
+    else
+    {
+        mMainView->setSelectedOnTop( false );
+    }
+
+}
+
+void qgis_devattrtableDialog::on_mAddAttribute_clicked()
+{
+    if ( !mLayer ) {return;}
+
+    // 先获取 model
+    QgsAttributeTableModel* masterModel = mMainView->masterModel();
+    //QgsAddAttrDialog dialog( mLayer, this );
+    //if ( dialog.exec() == QDialog::Accepted )
     //{
-    //    QgisApp::instance()->messageBar()->pushMessage( tr( "Parsing error" ), filterExpression.parserErrorString(), QgsMessageBar::WARNING, QgisApp::instance()->messageTimeout() );
-    //    return;
-    //}
-
-    //if ( ! filterExpression.prepare( mLayer->pendingFields() ) )
-    //{
-    //    QgisApp::instance()->messageBar()->pushMessage( tr( "Evaluation error" ), filterExpression.evalErrorString(), QgsMessageBar::WARNING, QgisApp::instance()->messageTimeout() );
-    //}
-
-    //bool fetchGeom = filterExpression.needsGeometry();
-
-    //QApplication::setOverrideCursor( Qt::WaitCursor );
-
-    //filterExpression.setGeomCalculator( myDa );
-    //QgsFeatureRequest request( mMainView->masterModel()->request() );
-    //request.setSubsetOfAttributes( filterExpression.referencedColumns(), mLayer->pendingFields() );
-    //if ( !fetchGeom )
-    //{
-    //    request.setFlags( QgsFeatureRequest::NoGeometry );
-    //}
-    //QgsFeatureIterator featIt = mLayer->getFeatures( request );
-
-    //QgsFeature f;
-
-    //while ( featIt.nextFeature( f ) )
-    //{
-    //    if ( filterExpression.evaluate( &f ).toInt() != 0 )
+    //    mLayer->beginEditCommand( tr( "Attribute added" ) );
+    //    if ( mLayer->addAttribute( dialog.field() ) )
     //    {
-    //        filteredFeatures << f.id();
+    //        mLayer->endEditCommand();
     //    }
-
-    //    // check if there were errors during evaluating
-    //    if ( filterExpression.hasEvalError() )
+    //    else
     //    {
-    //        break;
+    //        mLayer->destroyEditCommand();
+    //        QMessageBox::critical( this,
+    //                               tr( "Failed to add field" ),
+    //                               tr( "Failed to add field '%1' of type '%2'. Is the field name unique?" ).arg( dialog.field().name() ).arg( dialog.field().typeName() ) );
     //    }
+    //    // 更新model
+    //    masterModel->reload( masterModel->index( 0, 0 ), masterModel->index( masterModel->rowCount() - 1, masterModel->columnCount() - 1 ) );
+    //    columnBoxInit();
     //}
+}
 
-    //featIt.close();
+void qgis_devattrtableDialog::on_mRemoveAttribute_clicked()
+{
 
-    //mMainView->setFilteredFeatures( filteredFeatures );
+}
 
-    //QApplication::restoreOverrideCursor();
+void qgis_devattrtableDialog::on_mOpenFieldCalculator_clicked()
+{
 
-    //if ( filterExpression.hasEvalError() )
-    //{
-    //    QgisApp::instance()->messageBar()->pushMessage( tr( "Error filtering" ), filterExpression.evalErrorString(), QgsMessageBar::WARNING, QgisApp::instance()->messageTimeout() );
-    //    return;
-    //}
+}
+
+void qgis_devattrtableDialog::on_mDeleteSelectedButton_clicked()
+{
+
+}
+
+void qgis_devattrtableDialog::on_mMainView_currentChanged( int )
+{
+
+}
+
+void qgis_devattrtableDialog::on_mAddFeature_clicked()
+{
+
+}
+
+void qgis_devattrtableDialog::on_mHelpButton_clicked()
+{
+    QgsContextHelp::run( metaObject()->className() );
 }

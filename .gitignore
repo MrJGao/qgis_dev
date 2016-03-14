@@ -283,3 +283,13 @@ _Pvt_Extensions
 Network Trash Folder
 Temporary Items
 .apdisk
+
+*.suo
+
+*.suo
+
+*.exe
+
+*.ilk
+
+*.pdb
