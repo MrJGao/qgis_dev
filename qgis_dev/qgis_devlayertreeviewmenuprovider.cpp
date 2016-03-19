@@ -76,6 +76,9 @@ QMenu* qgis_devLayerTreeViewMenuProvider::createContextMenu()
             }
 
             menu->addAction( qgis_dev::getThemeIcon( "mActionRemoveLayer.svg" ), tr( "&Remove" ), qgis_dev::instance(), SLOT( removeLayer() ) );
+
+            // ÑùÊ½±í
+            menu->addAction( qgis_dev::getThemeIcon( "mActionRemoveLayer.svg" ), tr( "&Property" ), qgis_dev::instance(), SLOT( showProperty() ) );
         }
     }
 

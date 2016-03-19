@@ -100,6 +100,9 @@ public slots:
     //! 编辑工具触发事件
     void on_actionAddFeature_triggered();
 
+    //! 打开图层属性对话框
+    void showProperty();
+
 private slots:
     //! 显示鼠标位置地理坐标
     void showMouseCoordinate( const QgsPoint & );

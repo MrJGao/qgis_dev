@@ -3,6 +3,7 @@
 #include "qgis_devlayertreeviewmenuprovider.h"
 #include "qgis_devattrtabledialog.h"
 #include "qgis_devmaptoolidentifyaction.h"
+#include "qgis_dev_layerPropDialog.h"
 
 #include <QDialog>
 #include <QFileDialog>
@@ -1070,6 +1071,15 @@ void qgis_dev::on_actionAddFeature_triggered()
 
 
 }
+
+void qgis_dev::showProperty()
+{
+    QgsVectorLayer* layer = qobject_cast<QgsVectorLayer*>( activeLayer() );
+    if ( !layer ) { return; }
+    qgis_dev_layerPropDialog* propDialog = new qgis_dev_layerPropDialog( this, layer, m_mapCanvas );
+    propDialog->exec();
+}
+
 
 
 
