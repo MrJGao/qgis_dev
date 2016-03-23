@@ -170,7 +170,7 @@
    <addaction name="actionAdd_Feature"/>
    <addaction name="actionMove_Feature"/>
    <addaction name="actionNode_Tool"/>
-   <addaction name="actionDelet_Selected"/>
+   <addaction name="actionDelete_Selected"/>
    <addaction name="actionCut_Features"/>
    <addaction name="actionCopy_Features"/>
    <addaction name="actionPaste_Features"/>
@@ -472,7 +472,7 @@
   <action name="actionAdd_Feature">
    <property name="icon">
     <iconset resource="Resources/images/images.qrc">
-     <normaloff>:/images/themes/default/mActionCapturePolygon.png</normaloff>:/images/themes/default/mActionCapturePolygon.png</iconset>
+     <normaloff>:/images/themes/default/mActionCapturePoint.png</normaloff>:/images/themes/default/mActionCapturePoint.png</iconset>
    </property>
    <property name="text">
     <string>Add Feature</string>
@@ -496,7 +496,7 @@
     <string>Node Tool</string>
    </property>
   </action>
-  <action name="actionDelet_Selected">
+  <action name="actionDelete_Selected">
    <property name="icon">
     <iconset resource="Resources/images/images.qrc">
      <normaloff>:/images/themes/default/mActionDeleteSelected.svg</normaloff>:/images/themes/default/mActionDeleteSelected.svg</iconset>

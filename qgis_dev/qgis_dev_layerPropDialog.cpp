@@ -25,7 +25,7 @@ void qgis_dev_layerPropDialog::enableLable()
 {
     m_layer->label()->setLabelField( QgsLabel::Text, 1 );
     m_layer->label()->labelAttributes()->setColor( Qt::black );
-    m_layer->label()->labelAttributes()->setFamily( "comic,15" );
+    m_layer->label()->labelAttributes()->setFamily( "Times" );
     m_layer->enableLabels( true );
 }
 

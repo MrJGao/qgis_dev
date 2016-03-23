@@ -75,6 +75,8 @@
 // for open source map
 #include <qgsowssourceselect.h>
 #include "qgis_dev_owssourceselector.h"
+#include "qgis_dev_addfeaturetool.h"
+#include "qgsmessagebar.h"
 
 qgis_dev* qgis_dev::sm_instance = 0;
 
@@ -177,13 +179,7 @@ void qgis_dev::addVectorLayers()
         return;
     }
 
-    QgsMapLayerRegistry::instance()->addMapLayer( vecLayer );
-    mapCanvasLayerSet.append( vecLayer );
-    m_mapCanvas->setExtent( vecLayer->extent() );
-    m_mapCanvas->setLayerSet( mapCanvasLayerSet );
-    m_mapCanvas->setVisible( true );
-    m_mapCanvas->freeze( false );
-    m_mapCanvas->refresh();
+    addVectorLayer( filename, basename, "ogr" );
 }
 
 void qgis_dev::addVectorLayer( QString vecLayerPath, QString basename, QString providerKey )
@@ -202,6 +198,7 @@ void qgis_dev::addVectorLayer( QString vecLayerPath, QString basename, QString p
     m_mapCanvas->setVisible( true );
     m_mapCanvas->freeze( false );
     m_mapCanvas->refresh();
+    m_mapCanvas->setCurrentLayer( vecLayer );
 }
 
 void qgis_dev::addRasterLayers()
@@ -301,6 +298,7 @@ void qgis_dev::initLayerTreeView()
              m_layerTreeCanvasBridge, SLOT( writeProject( QDomDocument& ) ) );
     connect( QgsProject::instance(), SIGNAL( readProject( QDomDocument ) ),
              m_layerTreeCanvasBridge, SLOT( readProject( QDomDocument ) ) );
+    connect( m_layerTreeView, SIGNAL( currentLayerChanged( QgsMapLayer* ) ), this, SLOT( activeLayerChanged( QgsMapLayer* ) ) );
 
 
 }
@@ -854,7 +852,6 @@ void qgis_dev::createMapTools()
 
 void qgis_dev::on_actionIdentify_triggered()
 {
-
     m_mapCanvas->setMapTool( m_mapToolIdentify );
     m_mapToolIdentify->activate();
 }
@@ -1065,13 +1062,6 @@ void qgis_dev::newMemoryLayer()
     }
 }
 
-void qgis_dev::on_actionAddFeature_triggered()
-{
-    // QgsMapTool* addFeatureTool = new QgsMapToolAddFeature( m_mapCanvas );
-
-
-}
-
 void qgis_dev::showProperty()
 {
     QgsVectorLayer* layer = qobject_cast<QgsVectorLayer*>( activeLayer() );
@@ -1079,6 +1069,81 @@ void qgis_dev::showProperty()
     qgis_dev_layerPropDialog* propDialog = new qgis_dev_layerPropDialog( this, layer, m_mapCanvas );
     propDialog->exec();
 }
+
+void qgis_dev::activeLayerChanged( QgsMapLayer* layer )
+{
+    if ( m_mapCanvas ) {m_mapCanvas->setCurrentLayer( layer );}
+}
+
+void qgis_dev::showMessage( QString message, QgsMessageBar::MessageLevel level )
+{
+    this->messageBar()->pushMessage( message, level, messageTimeout() );
+}
+
+void qgis_dev::on_actionAdd_Feature_triggered()
+{
+    QgsMapTool* addFeatureTool = new qgis_dev_addFeatureTool( m_mapCanvas );
+    m_mapCanvas->setMapTool( addFeatureTool );
+    connect( addFeatureTool, SIGNAL( messageEmitted( QString, QgsMessageBar::MessageLevel ) ), this, SLOT( showMessage( QString, QgsMessageBar::MessageLevel ) ) );
+}
+
+void qgis_dev::on_actionToggle_Editing_triggered()
+{
+    if ( ui.actionToggle_Editing->isChecked() == true )
+    {
+        // start editing
+    }
+    else
+    {
+        // stop editing
+    }
+
+}
+
+void qgis_dev::on_actionSaveLayer_Edits_triggered()
+{
+
+}
+
+void qgis_dev::on_actionMove_Feature_triggered()
+{
+
+}
+
+void qgis_dev::on_actionNode_Tool_triggered()
+{
+
+}
+
+void qgis_dev::on_actionDelete_Selected_triggered()
+{
+
+}
+
+void qgis_dev::on_actionCut_Features_triggered()
+{
+
+}
+
+void qgis_dev::on_actionCopy_Features_triggered()
+{
+
+}
+
+void qgis_dev::on_actionPaste_Features_triggered()
+{
+
+}
+
+
+
+
+
+
+
+
+
+
 
 
 

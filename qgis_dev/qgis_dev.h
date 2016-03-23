@@ -40,15 +40,19 @@ public:
     qgis_dev( QWidget *parent = 0, Qt::WindowFlags flags = Qt::Window );
     ~qgis_dev();
 
+    //! 添加dock widget
     void addDockWidget( Qt::DockWidgetArea area, QDockWidget* dockwidget );
 
     //! 保持单一实例
     static qgis_dev* instance() { return sm_instance; }
 
+    //! 根据名称获取主题图标
     static QIcon getThemeIcon( const QString &theName );
 
+    //! 获取当前 map canvas
     QgsMapCanvas* mapCanvas() {return m_mapCanvas; }
 
+    //! 获取当前信息展示栏
     QgsMessageBar* messageBar() {return m_infoBar;}
 
     //! 控制信息显示条显示的时间
@@ -97,11 +101,14 @@ public slots:
     void on_actionPan_triggered();
     void on_actionIdentify_triggered();
 
-    //! 编辑工具触发事件
-    void on_actionAddFeature_triggered();
+    //! 活动图层改变触发
+    void activeLayerChanged( QgsMapLayer* layer );
 
     //! 打开图层属性对话框
     void showProperty();
+
+    //! 信息栏显示信息
+    void showMessage( QString message, QgsMessageBar::MessageLevel level = QgsMessageBar::INFO );
 
 private slots:
     //! 显示鼠标位置地理坐标
@@ -123,11 +130,36 @@ private slots:
     //! 晕眩效果
     void dizzy(); // 这个效果是qgis程序员隐藏的娱乐方式吧，just for fun
 
+    //! 添加网络栅格图层功能
     void addOpenSourceRasterLayer( const QString& url, const QString& basename, const QString& providerKey );
-
+    //! 添加 WFS 图层
     void addWFSLayer( const QString& url, const QString& typeName );
 
-/// 显示栅格图像的一些功能
+    #pragma region edit tool bar comand
+
+    //! 开启\关闭编辑模式
+    void on_actionToggle_Editing_triggered();
+    //! 编辑工具触发事件
+    void on_actionAdd_Feature_triggered();
+    //! 保存编辑
+    void on_actionSaveLayer_Edits_triggered();
+    //! 移动要素
+    void on_actionMove_Feature_triggered();
+    //! 节点工具
+    void on_actionNode_Tool_triggered();
+    //! 删除所选要素
+    void on_actionDelete_Selected_triggered();
+    //! 剪切当前要素
+    void on_actionCut_Features_triggered();
+    //! 复制当前要素
+    void on_actionCopy_Features_triggered();
+    //! 粘贴当前要素
+    void on_actionPaste_Features_triggered();
+
+    #pragma endregion
+
+    #pragma region 显示栅格图像的一些功能
+
     //! 局部拉伸显示
     void localHistogramStretch();
     //! 全局拉伸显示
@@ -145,7 +177,7 @@ private slots:
     //! 减少显示对比度
     void decreaseContrast();
 
-
+    #pragma endregion
 
 private:
     Ui::qgis_devClass ui; // 主程序UI
@@ -162,13 +194,9 @@ private:
     QComboBox* pageViewComboBox;
 
     QgsMapCanvas* m_mapCanvas; // 地图画布
-
-    //! 文件浏览面板
-    qgis_dev_browserDockWidget* m_browserDockWight;
-
-    //! 图层管理
-    QgsLayerTreeView* m_layerTreeView;
-    QgsLayerTreeMapCanvasBridge *m_layerTreeCanvasBridge;
+    qgis_dev_browserDockWidget* m_browserDockWight; // 文件浏览面板
+    QgsLayerTreeView* m_layerTreeView;// 图层管理器
+    QgsLayerTreeMapCanvasBridge *m_layerTreeCanvasBridge; // 连接图层管理器和地图画布的桥梁
 
     QDockWidget *m_layerTreeDock; // 装图层管理器
     QDockWidget *m_layerOrderDock;

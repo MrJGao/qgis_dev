@@ -16,21 +16,45 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QTabWidget" name="prop_tabWidget">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="contextMenuPolicy">
+      <enum>Qt::DefaultContextMenu</enum>
+     </property>
      <property name="layoutDirection">
       <enum>Qt::LeftToRight</enum>
+     </property>
+     <property name="autoFillBackground">
+      <bool>false</bool>
      </property>
      <property name="tabPosition">
       <enum>QTabWidget::West</enum>
      </property>
-     <property name="currentIndex">
-      <number>2</number>
+     <property name="tabShape">
+      <enum>QTabWidget::Rounded</enum>
      </property>
-     <widget class="QWidget" name="metaData_tab">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <property name="elideMode">
+      <enum>Qt::ElideNone</enum>
+     </property>
+     <property name="documentMode">
+      <bool>false</bool>
+     </property>
+     <property name="tabsClosable">
+      <bool>false</bool>
+     </property>
+     <property name="movable">
+      <bool>false</bool>
+     </property>
+     <widget class="QWidget" name="tab">
       <attribute name="title">
-       <string>MetaData</string>
-      </attribute>
-      <attribute name="toolTip">
-       <string>display meta data of current layer data</string>
+       <string>Generic</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="style_tab">
@@ -87,6 +111,19 @@
         <string>select field to display</string>
        </property>
       </widget>
+     </widget>
+     <widget class="QWidget" name="field_tab">
+      <attribute name="title">
+       <string>Field</string>
+      </attribute>
+     </widget>
+     <widget class="QWidget" name="metaData_tab">
+      <attribute name="title">
+       <string>MetaData</string>
+      </attribute>
+      <attribute name="toolTip">
+       <string>display meta data of current layer data</string>
+      </attribute>
      </widget>
     </widget>
    </item>
