@@ -40,6 +40,9 @@ public:
     qgis_dev( QWidget *parent = 0, Qt::WindowFlags flags = Qt::Window );
     ~qgis_dev();
 
+    // test diagram
+    void testDiagram();
+
     //! Ìí¼Ódock widget
     void addDockWidget( Qt::DockWidgetArea area, QDockWidget* dockwidget );
 
