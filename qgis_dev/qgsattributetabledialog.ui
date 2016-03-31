@@ -46,7 +46,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="../../images/images.qrc">
+        <iconset resource="../../QGIS/images/images.qrc">
          <normaloff>:/images/themes/default/mActionToggleEditing.svg</normaloff>:/images/themes/default/mActionToggleEditing.svg</iconset>
        </property>
        <property name="iconSize">
@@ -78,7 +78,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="../../images/images.qrc">
+        <iconset resource="../../QGIS/images/images.qrc">
          <normaloff>:/images/themes/default/mActionSaveEdits.svg</normaloff>:/images/themes/default/mActionSaveEdits.svg</iconset>
        </property>
        <property name="iconSize">
@@ -136,7 +136,7 @@
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset resource="../../images/images.qrc">
+        <iconset resource="../../QGIS/images/images.qrc">
          <normaloff>:/images/themes/default/mActionDeleteSelected.svg</normaloff>:/images/themes/default/mActionDeleteSelected.svg</iconset>
        </property>
        <property name="iconSize">
@@ -166,7 +166,7 @@
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset resource="../../images/images.qrc">
+        <iconset resource="../../QGIS/images/images.qrc">
          <normaloff>:/images/themes/default/mIconExpressionSelect.svg</normaloff>:/images/themes/default/mIconExpressionSelect.svg</iconset>
        </property>
        <property name="iconSize">
@@ -189,7 +189,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="../../images/images.qrc">
+        <iconset resource="../../QGIS/images/images.qrc">
          <normaloff>:/images/themes/default/mActionUnselectAttributes.png</normaloff>:/images/themes/default/mActionUnselectAttributes.png</iconset>
        </property>
        <property name="iconSize">
@@ -215,7 +215,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="../../images/images.qrc">
+        <iconset resource="../../QGIS/images/images.qrc">
          <normaloff>:/images/themes/default/mActionSelectedToTop.png</normaloff>:/images/themes/default/mActionSelectedToTop.png</iconset>
        </property>
        <property name="iconSize">
@@ -244,7 +244,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="../../images/images.qrc">
+        <iconset resource="../../QGIS/images/images.qrc">
          <normaloff>:/images/themes/default/mActionInvertSelection.png</normaloff>:/images/themes/default/mActionInvertSelection.png</iconset>
        </property>
        <property name="iconSize">
@@ -273,7 +273,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="../../images/images.qrc">
+        <iconset resource="../../QGIS/images/images.qrc">
          <normaloff>:/images/themes/default/mActionPanToSelected.svg</normaloff>:/images/themes/default/mActionPanToSelected.svg</iconset>
        </property>
        <property name="iconSize">
@@ -302,7 +302,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="../../images/images.qrc">
+        <iconset resource="../../QGIS/images/images.qrc">
          <normaloff>:/images/themes/default/mActionZoomToSelected.svg</normaloff>:/images/themes/default/mActionZoomToSelected.svg</iconset>
        </property>
        <property name="iconSize">
@@ -331,7 +331,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="../../images/images.qrc">
+        <iconset resource="../../QGIS/images/images.qrc">
          <normaloff>:/images/themes/default/mActionEditCopy.png</normaloff>:/images/themes/default/mActionEditCopy.png</iconset>
        </property>
        <property name="iconSize">
@@ -364,7 +364,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="../../images/images.qrc">
+        <iconset resource="../../QGIS/images/images.qrc">
          <normaloff>:/images/themes/default/mActionDeleteAttribute.png</normaloff>:/images/themes/default/mActionDeleteAttribute.png</iconset>
        </property>
        <property name="iconSize">
@@ -390,7 +390,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="../../images/images.qrc">
+        <iconset resource="../../QGIS/images/images.qrc">
          <normaloff>:/images/themes/default/mActionNewAttribute.png</normaloff>:/images/themes/default/mActionNewAttribute.png</iconset>
        </property>
        <property name="iconSize">
@@ -416,7 +416,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="../../images/images.qrc">
+        <iconset resource="../../QGIS/images/images.qrc">
          <normaloff>:/images/themes/default/mActionCalculateField.png</normaloff>:/images/themes/default/mActionCalculateField.png</iconset>
        </property>
        <property name="iconSize">
@@ -500,7 +500,7 @@
         <string>Filter</string>
        </property>
        <property name="icon">
-        <iconset resource="../../images/images.qrc">
+        <iconset resource="../../QGIS/images/images.qrc">
          <normaloff>:/images/themes/default/mActionFilter.png</normaloff>:/images/themes/default/mActionFilter.png</iconset>
        </property>
        <property name="popupMode">
@@ -554,7 +554,7 @@
           <string>Form View</string>
          </property>
          <property name="icon">
-          <iconset resource="../../images/images.qrc">
+          <iconset resource="../../QGIS/images/images.qrc">
            <normaloff>:/images/themes/default/mActionPropertyItem.png</normaloff>:/images/themes/default/mActionPropertyItem.png</iconset>
          </property>
          <property name="checkable">
@@ -574,7 +574,7 @@
           <string>Table View</string>
          </property>
          <property name="icon">
-          <iconset resource="../../images/images.qrc">
+          <iconset resource="../../QGIS/images/images.qrc">
            <normaloff>:/images/themes/default/mActionOpenTable.png</normaloff>:/images/themes/default/mActionOpenTable.png</iconset>
          </property>
          <property name="checkable">
@@ -656,7 +656,7 @@
   </layout>
   <action name="mActionAdvancedFilter">
    <property name="icon">
-    <iconset resource="../../images/images.qrc">
+    <iconset resource="../../QGIS/images/images.qrc">
      <normaloff>:/images/themes/default/mActionFilter.png</normaloff>:/images/themes/default/mActionFilter.png</iconset>
    </property>
    <property name="text">
@@ -671,7 +671,7 @@
   </action>
   <action name="mActionShowAllFilter">
    <property name="icon">
-    <iconset resource="../../images/images.qrc">
+    <iconset resource="../../QGIS/images/images.qrc">
      <normaloff>:/images/themes/default/mActionFilter.png</normaloff>:/images/themes/default/mActionFilter.png</iconset>
    </property>
    <property name="text">
@@ -680,7 +680,7 @@
   </action>
   <action name="mActionSelectedFilter">
    <property name="icon">
-    <iconset resource="../../images/images.qrc">
+    <iconset resource="../../QGIS/images/images.qrc">
      <normaloff>:/images/themes/default/mActionFilter.png</normaloff>:/images/themes/default/mActionFilter.png</iconset>
    </property>
    <property name="text">
@@ -689,7 +689,7 @@
   </action>
   <action name="mActionVisibleFilter">
    <property name="icon">
-    <iconset resource="../../images/images.qrc">
+    <iconset resource="../../QGIS/images/images.qrc">
      <normaloff>:/images/themes/default/mActionFilter.png</normaloff>:/images/themes/default/mActionFilter.png</iconset>
    </property>
    <property name="text">
@@ -703,7 +703,7 @@
   </action>
   <action name="mActionEditedFilter">
    <property name="icon">
-    <iconset resource="../../images/images.qrc">
+    <iconset resource="../../QGIS/images/images.qrc">
      <normaloff>:/images/themes/default/mActionFilter.png</normaloff>:/images/themes/default/mActionFilter.png</iconset>
    </property>
    <property name="text">
@@ -746,7 +746,7 @@
   <tabstop>mOpenFieldCalculator</tabstop>
  </tabstops>
  <resources>
-  <include location="../../images/images.qrc"/>
+  <include location="../../QGIS/images/images.qrc"/>
  </resources>
  <connections>
   <connection>

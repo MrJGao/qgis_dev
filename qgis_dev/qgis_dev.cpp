@@ -416,23 +416,23 @@ void qgis_dev::openAttributeTableDialog()
 {
     QgsVectorLayer* mylayer = qobject_cast<QgsVectorLayer*>( activeLayer() );
     if ( !mylayer ) { return; }
-    qgis_devattrtableDialog* d = new qgis_devattrtableDialog( mylayer, this );
+    /*qgis_devattrtableDialog* d = new qgis_devattrtableDialog( mylayer, this );
 
-    d->show();
+    d->show();*/
 
 
 
-    /* QgsVectorLayerCache * lc = new QgsVectorLayerCache( mylayer, mylayer->featureCount() );
-     QgsAttributeTableView* tv = new QgsAttributeTableView();
+    QgsVectorLayerCache * lc = new QgsVectorLayerCache( mylayer, mylayer->featureCount() );
+    QgsAttributeTableView* tv = new QgsAttributeTableView();
 
-     QgsAttributeTableModel* tm = new QgsAttributeTableModel( lc, this );
+    QgsAttributeTableModel* tm = new QgsAttributeTableModel( lc, this );
 
-     QgsAttributeTableFilterModel* tfm = new QgsAttributeTableFilterModel( m_mapCanvas, tm, tm );
+    QgsAttributeTableFilterModel* tfm = new QgsAttributeTableFilterModel( m_mapCanvas, tm, tm );
 
-     tfm->setFilterMode( QgsAttributeTableFilterModel::ShowAll );
-     tm->loadLayer();
-     tv->setModel( tfm );
-     tv->show();*/
+    tfm->setFilterMode( QgsAttributeTableFilterModel::ShowAll );
+    tm->loadLayer();
+    tv->setModel( tfm );
+    tv->show();
 }
 
 QgsMapLayer* qgis_dev::activeLayer()
