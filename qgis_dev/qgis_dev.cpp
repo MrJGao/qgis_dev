@@ -77,6 +77,7 @@
 #include "qgis_dev_owssourceselector.h"
 #include "qgis_dev_addfeaturetool.h"
 #include "qgsmessagebar.h"
+#include <qgsdiagramrendererv2.h>
 
 qgis_dev* qgis_dev::sm_instance = 0;
 
@@ -1132,8 +1133,17 @@ void qgis_dev::on_actionCopy_Features_triggered()
 
 void qgis_dev::on_actionPaste_Features_triggered()
 {
-
+    testDiagram();
 }
+
+void qgis_dev::testDiagram()
+{
+    addVectorLayers();
+    QgsVectorLayer *layer = qobject_cast<QgsVectorLayer*>activeLayer();
+    layer->setDiagramRenderer( new QgsDiagramRendererV2() );
+    m_mapCanvas->refresh();
+}
+
 
 
 

@@ -293,3 +293,15 @@ Temporary Items
 *.ilk
 
 *.pdb
+
+*.pdb
+
+Win32/Release/qgis_dev.pdb
+
+Win32/Release/qgis_dev.ilk
+
+*.exe
+
+*.vcxproj
+
+*.suo
