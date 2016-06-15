@@ -29,7 +29,7 @@
 #include <qgsmessagebar.h>
 #include <qgsbrowsertreeview.h>
 
-
+class qgis_dev_layerPropDialog;
 class QgsMapTool;
 
 class qgis_dev : public QMainWindow
@@ -39,9 +39,6 @@ class qgis_dev : public QMainWindow
 public:
     qgis_dev( QWidget *parent = 0, Qt::WindowFlags flags = Qt::Window );
     ~qgis_dev();
-
-    // test diagram
-    void testDiagram();
 
     //! 添加dock widget
     void addDockWidget( Qt::DockWidgetArea area, QDockWidget* dockwidget );
@@ -64,6 +61,10 @@ public:
     QString crsAndFormatAdjustedLayerUri( const QString& uri, const QStringList& supportedCrs, const QStringList& supportedFormats );
 
 public slots:
+
+    //! test显示不同样式
+    void testCatergorySymbol();
+
     //! 添加矢量图层
     void addVectorLayers();
     void addVectorLayer( QString vecLayerPath, QString basename, QString providerKey );
@@ -200,6 +201,7 @@ private:
     qgis_dev_browserDockWidget* m_browserDockWight; // 文件浏览面板
     QgsLayerTreeView* m_layerTreeView;// 图层管理器
     QgsLayerTreeMapCanvasBridge *m_layerTreeCanvasBridge; // 连接图层管理器和地图画布的桥梁
+    qgis_dev_layerPropDialog* m_layerPropDialog;
 
     QDockWidget *m_layerTreeDock; // 装图层管理器
     QDockWidget *m_layerOrderDock;

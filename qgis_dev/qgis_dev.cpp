@@ -5,7 +5,9 @@
 #include "qgis_devmaptoolidentifyaction.h"
 #include "qgis_dev_layerPropDialog.h"
 
+#include <QSizeF>
 #include <QDialog>
+#include <QList>
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QString>
@@ -65,6 +67,7 @@
 #include <qgssymbollayerv2.h>
 #include <qgsmapcanvas.h>
 #include <qgsmapoverviewcanvas.h>
+#include <qgscategorizedsymbolrendererv2.h>
 
 // for map tools
 #include <qgsmaptool.h>
@@ -77,7 +80,12 @@
 #include "qgis_dev_owssourceselector.h"
 #include "qgis_dev_addfeaturetool.h"
 #include "qgsmessagebar.h"
+
+// for diagrams
+#include <qgshistogramdiagram.h>
 #include <qgsdiagramrendererv2.h>
+#include <qgsvectordataprovider.h>
+#include <qgsvectorsimplifymethod.h>
 
 qgis_dev* qgis_dev::sm_instance = 0;
 
@@ -99,6 +107,8 @@ qgis_dev::qgis_dev( QWidget *parent, Qt::WindowFlags flags )
 
     //! 初始化map canvas
     m_mapCanvas = new QgsMapCanvas();
+    // 设置鼠标滚轮缩放，不改变原有地图中心
+    m_mapCanvas->setWheelAction( QgsMapCanvas::WheelZoomToMouseCursor );
     m_mapCanvas->enableAntiAliasing( true );
     m_mapCanvas->setCanvasColor( QColor( 255, 255, 255 ) );
 
@@ -120,6 +130,9 @@ qgis_dev::qgis_dev( QWidget *parent, Qt::WindowFlags flags )
     //! 初始化信息显示条
     m_infoBar = new QgsMessageBar( this );
     m_infoBar->setSizePolicy( QSizePolicy::Minimum, QSizePolicy::Fixed );
+
+    //! 初始化图层属性窗口
+    m_layerPropDialog = 0;
 
     //! 布局
     QWidget* centralWidget = this->centralWidget();
@@ -1067,8 +1080,11 @@ void qgis_dev::showProperty()
 {
     QgsVectorLayer* layer = qobject_cast<QgsVectorLayer*>( activeLayer() );
     if ( !layer ) { return; }
-    qgis_dev_layerPropDialog* propDialog = new qgis_dev_layerPropDialog( this, layer, m_mapCanvas );
-    propDialog->exec();
+    if( m_layerPropDialog == 0 )
+    {
+        m_layerPropDialog = new qgis_dev_layerPropDialog( this, layer, m_mapCanvas );
+    }
+    m_layerPropDialog->exec();
 }
 
 void qgis_dev::activeLayerChanged( QgsMapLayer* layer )
@@ -1133,16 +1149,48 @@ void qgis_dev::on_actionCopy_Features_triggered()
 
 void qgis_dev::on_actionPaste_Features_triggered()
 {
-    testDiagram();
+    testCatergorySymbol();
 }
 
-void qgis_dev::testDiagram()
+void qgis_dev::testCatergorySymbol()
 {
-    addVectorLayers();
-    QgsVectorLayer *layer = qobject_cast<QgsVectorLayer*>activeLayer();
-    layer->setDiagramRenderer( new QgsDiagramRendererV2() );
-    m_mapCanvas->refresh();
+    QgsVectorLayer* layer = qobject_cast<QgsVectorLayer*>( activeLayer() );
+    if ( !layer->isValid() ) { return; }
+
+    // 创建 svgMarkerSymbolLayer
+    QgsMarkerSymbolLayerV2* symMarker1 = new QgsSvgMarkerSymbolLayerV2( "money/money_bank2.svg" );
+    QgsSvgMarkerSymbolLayerV2* symMarker2 = new QgsSvgMarkerSymbolLayerV2( "money/money_atm.svg" );
+
+    QgsSymbolLayerV2List symList1;
+    symList1.append( symMarker1 );
+
+    QgsSymbolLayerV2List symList2;
+    symList2.append( symMarker2 );
+
+    QgsMarkerSymbolV2* sym1 = new QgsMarkerSymbolV2( symList1 );
+    QgsMarkerSymbolV2* sym2 = new QgsMarkerSymbolV2( symList2 );
+    // 第一个图标
+    int value1 = 1;
+    QString symbolName1 = "symbol1";
+    bool render1 = true;
+    QgsRendererCategoryV2* renCate1 = new QgsRendererCategoryV2( value1, sym1, symbolName1, render1 );
+
+    int value2 = 2;
+    QString symbolName2 = "symbol2";
+    QString label2 = "label2";
+    bool render2 = true;
+    QgsRendererCategoryV2* renCate2 = new QgsRendererCategoryV2( value2, sym2, symbolName2, render2 );
+
+    QgsCategoryList cateList;
+    cateList.append( *renCate1 );
+    cateList.append( *renCate2 );
+
+    QgsCategorizedSymbolRendererV2* cateSymRenderer = new QgsCategorizedSymbolRendererV2( "ID", cateList );
+
+    layer->setRendererV2( cateSymRenderer );
 }
+
+
 
 
 
