@@ -430,13 +430,8 @@ void qgis_dev::openAttributeTableDialog()
 {
     QgsVectorLayer* mylayer = qobject_cast<QgsVectorLayer*>( activeLayer() );
     if ( !mylayer ) { return; }
-    /*qgis_devattrtableDialog* d = new qgis_devattrtableDialog( mylayer, this );
 
-    d->show();*/
-
-
-
-    QgsVectorLayerCache * lc = new QgsVectorLayerCache( mylayer, mylayer->featureCount() );
+    /*QgsVectorLayerCache * lc = new QgsVectorLayerCache( mylayer, mylayer->featureCount() );
     QgsAttributeTableView* tv = new QgsAttributeTableView();
 
     QgsAttributeTableModel* tm = new QgsAttributeTableModel( lc, this );
@@ -446,7 +441,10 @@ void qgis_dev::openAttributeTableDialog()
     tfm->setFilterMode( QgsAttributeTableFilterModel::ShowAll );
     tm->loadLayer();
     tv->setModel( tfm );
-    tv->show();
+    tv->show();*/
+
+    qgis_devattrtableDialog* d = new qgis_devattrtableDialog( mylayer, this );
+    d->show();
 }
 
 QgsMapLayer* qgis_dev::activeLayer()
