@@ -58,12 +58,20 @@ public:
     //! 控制信息显示条显示的时间
     int messageTimeout();
 
+    //! 表示当前工程中设置有改变，需要更新
+    void markDirty();
+
     QString crsAndFormatAdjustedLayerUri( const QString& uri, const QStringList& supportedCrs, const QStringList& supportedFormats );
 
 public slots:
 
     //! test显示不同样式
     void testCatergorySymbol();
+
+    //! 矢量图层标注功能
+    void testVecLayerLabel();
+    //! 直接调用标注的配置面板
+    void testUseLabelConfigDialog();
 
     //! 添加矢量图层
     void addVectorLayers();
@@ -104,6 +112,7 @@ public slots:
     void on_actionZoomOut_triggered();
     void on_actionPan_triggered();
     void on_actionIdentify_triggered();
+    void on_actionActionNullMapTool_triggered(); // 设置当前地图工具为空
 
     //! 活动图层改变触发
     void activeLayerChanged( QgsMapLayer* layer );
@@ -229,6 +238,7 @@ private:
     QgsMessageBar* m_infoBar; // 在地图窗口上显示信息
 
 //=== Private Member Functions ===
+    #pragma region private member functions
 
     //! 初始化图层管理器
     void initLayerTreeView();
@@ -252,6 +262,13 @@ private:
     //! 对比度调整, updateBrightness用来控制调整对比度时是否需要同时调整亮度
     void adjustBrightnessContrast( int delta, bool updateBrightness = true );
 
+    //! 开关栅格图层操作
+    void enableRasterTools( bool val );
+
+    //! 开关矢量图层操作
+    void enableVectorTools( bool val );
+
+    #pragma endregion private member functions
 };
 
 #endif // QGIS_DEV_H

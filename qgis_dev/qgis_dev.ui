@@ -72,6 +72,15 @@
     <addaction name="actionAdd_Raster"/>
     <addaction name="actionAddWMSlayer"/>
     <addaction name="actionAdd_WCF_Layer"/>
+    <addaction name="separator"/>
+    <addaction name="actionLocalHistogramStretch"/>
+    <addaction name="actionFullHistogramStretch"/>
+    <addaction name="actionLocalCumulativeCutStretch"/>
+    <addaction name="actionFullCumulativeCutStretch"/>
+    <addaction name="actionIncreaseContrast"/>
+    <addaction name="actionDecreaseContrast"/>
+    <addaction name="actionIncreaseBrightness"/>
+    <addaction name="actionDecreaseBrightness"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -135,6 +144,7 @@
    <addaction name="actionZoomIn"/>
    <addaction name="actionZoomOut"/>
    <addaction name="actionIdentify"/>
+   <addaction name="actionActionNullMapTool"/>
   </widget>
   <widget class="QToolBar" name="m_addData_toolBar">
    <property name="windowTitle">
@@ -530,6 +540,15 @@
    </property>
    <property name="text">
     <string>Paste Features</string>
+   </property>
+  </action>
+  <action name="actionActionNullMapTool">
+   <property name="icon">
+    <iconset resource="Resources/images/images.qrc">
+     <normaloff>:/images/themes/default/mAction.svg</normaloff>:/images/themes/default/mAction.svg</iconset>
+   </property>
+   <property name="text">
+    <string>actionNullMapTool</string>
    </property>
   </action>
  </widget>

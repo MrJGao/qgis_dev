@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QDialog>
 #include <ui_qgis_dev_layerPropDialog.h>
+#include <qgis_dev_labelinggui.h>
 
 class QgsVectorLayer;
 class QgsMapCanvas;
@@ -20,6 +21,7 @@ public:
 
     //! 添加一个属性到选择列表中，并附上一个随机的颜色
     void addAttribute( QTreeWidgetItem* item );
+
 public slots:
     void apply();
 
@@ -56,17 +58,20 @@ private slots:
 
     void diagramChanged( int index );
 
+    //! 选择图表背景颜色
     void on_mBackgroundColorButton_clicked();
+    //! 选择图表线颜色
     void on_mDiagramPenColorButton_clicked();
+
 private:
     //! 当前图层指针
     QgsVectorLayer* m_layer;
     //! 地图画布指针
     QgsMapCanvas* m_mapCanvas;
 
+    qgis_dev_labelingGui* labelingGui;
+
     int m_availableAttributeCount;
-
-
 
     //! 初始化柱状图设置UI
     void setupBarUI();

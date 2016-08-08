@@ -29,6 +29,9 @@
 #include <QBitmap>
 #include <QMap>
 #include <QRegExp>
+#include <QDialog>
+#include <QDialogButtonBox>
+#include <QVBoxLayout>
 
 // QGis include
 #include <qgsvectorlayer.h>
@@ -87,6 +90,10 @@
 #include <qgsvectordataprovider.h>
 #include <qgsvectorsimplifymethod.h>
 
+#include <qgsoptionsdialogbase.h>
+
+#include <qgslabel.h>
+
 qgis_dev* qgis_dev::sm_instance = 0;
 
 qgis_dev::qgis_dev( QWidget *parent, Qt::WindowFlags flags )
@@ -99,7 +106,6 @@ qgis_dev::qgis_dev( QWidget *parent, Qt::WindowFlags flags )
             this,
             tr( "Multiple Instances of QgisApp" ),
             tr( "Multiple instances of QGIS application object detected.\nPlease contact the developers.\n" ) );
-        // abort();
     }
     sm_instance = this;
 
@@ -107,6 +113,10 @@ qgis_dev::qgis_dev( QWidget *parent, Qt::WindowFlags flags )
 
     //! 初始化map canvas
     m_mapCanvas = new QgsMapCanvas();
+    // 给一个默认的地图范围
+    QgsRectangle* defaultExtent = new QgsRectangle( -1, -1, 1, 1 );
+    m_mapCanvas->setExtent( *defaultExtent );
+
     // 设置鼠标滚轮缩放，不改变原有地图中心
     m_mapCanvas->setWheelAction( QgsMapCanvas::WheelZoomToMouseCursor );
     m_mapCanvas->enableAntiAliasing( true );
@@ -143,8 +153,6 @@ qgis_dev::qgis_dev( QWidget *parent, Qt::WindowFlags flags )
     m_stackedWidget->addWidget( m_mapCanvas );
     m_stackedWidget->addWidget( m_composer );
 
-
-
     centralLayout->addWidget( m_stackedWidget, 0, 0, 1, 1 );
     centralLayout->addWidget( m_infoBar, 1, 0, 1, 1 );
 
@@ -164,6 +172,7 @@ qgis_dev::qgis_dev( QWidget *parent, Qt::WindowFlags flags )
     connect( ui.actionToggle_Overview, SIGNAL( triggered() ), this, SLOT( createOverview() ) );
     connect( m_mapCanvas, SIGNAL( scaleChanged( double ) ), this, SLOT( showScale( double ) ) );
 
+    //! 栅格显示的几个工具
     connect( ui.actionLocalHistogramStretch, SIGNAL( triggered() ), this, SLOT( localHistogramStretch() ) );
     connect( ui.actionFullHistogramStretch, SIGNAL( triggered() ), this, SLOT( fullHistogramStretch() ) );
     connect( ui.actionLocalCumulativeCutStretch, SIGNAL( triggered() ), this, SLOT( localCumulativeCutStretch() ) );
@@ -219,7 +228,7 @@ void qgis_dev::addRasterLayers()
 {
     QString filename = QFileDialog::getOpenFileName( this, tr( "open vector" ), "",
                        "image(*.jpg *.png *.bmp);;remote sensing image(*.tif)" );
-
+    if ( filename == "" ) { return; }
     QFileInfo fi( filename );
     QString basename = fi.baseName();
     QgsRasterLayer* rasterLayer = new QgsRasterLayer( filename, basename, "gdal", false );
@@ -1087,7 +1096,19 @@ void qgis_dev::showProperty()
 
 void qgis_dev::activeLayerChanged( QgsMapLayer* layer )
 {
+    if ( !layer ) { return; }
     if ( m_mapCanvas ) {m_mapCanvas->setCurrentLayer( layer );}
+
+    if ( layer->type() == QgsMapLayer::VectorLayer )
+    {
+        enableRasterTools( false );
+        enableVectorTools( true );
+    }
+    else if ( layer->type() == QgsMapLayer::RasterLayer )
+    {
+        enableVectorTools( false );
+        enableRasterTools( true );
+    }
 }
 
 void qgis_dev::showMessage( QString message, QgsMessageBar::MessageLevel level )
@@ -1147,7 +1168,14 @@ void qgis_dev::on_actionCopy_Features_triggered()
 
 void qgis_dev::on_actionPaste_Features_triggered()
 {
-    testCatergorySymbol();
+    //testCatergorySymbol();
+    //QgsOptionsDialogBase* d = new QgsOptionsDialogBase( "ProjectProperties" );
+    //d->show();
+
+    // label function
+    //testVecLayerLabel();
+
+    testUseLabelConfigDialog();
 }
 
 void qgis_dev::testCatergorySymbol()
@@ -1186,7 +1214,100 @@ void qgis_dev::testCatergorySymbol()
     QgsCategorizedSymbolRendererV2* cateSymRenderer = new QgsCategorizedSymbolRendererV2( "ID", cateList );
 
     layer->setRendererV2( cateSymRenderer );
+
+    refreshMapCanvas();
 }
+
+void qgis_dev::on_actionActionNullMapTool_triggered()
+{
+    QgsMapTool *lastMapTool = m_mapCanvas->mapTool();
+    m_mapCanvas->unsetMapTool( lastMapTool );
+}
+
+void qgis_dev::enableRasterTools( bool val )
+{
+    ui.actionLocalHistogramStretch->setEnabled( val );
+    ui.actionFullHistogramStretch->setEnabled( val );
+    ui.actionLocalCumulativeCutStretch->setEnabled( val );
+    ui.actionFullCumulativeCutStretch->setEnabled( val );
+    ui.actionIncreaseBrightness->setEnabled( val );
+    ui.actionDecreaseBrightness->setEnabled( val );
+    ui.actionIncreaseContrast->setEnabled( val );
+    ui.actionDecreaseContrast->setEnabled( val );
+}
+
+void qgis_dev::enableVectorTools( bool val )
+{
+
+}
+
+void qgis_dev::markDirty()
+{
+    QgsProject::instance()->dirty( true );
+}
+
+void qgis_dev::testVecLayerLabel()
+{
+    QgsVectorLayer* layer = ( QgsVectorLayer* )this->activeLayer();
+    if ( layer == NULL || layer->isValid() == false ) { return; }
+
+    // 首先是定义一个 QgsPalLayerSettings 变量，并启用他的属性设置
+    QgsPalLayerSettings layerSettings;
+    layerSettings.enabled = true;
+
+    // 然后就可以开始根据API文档中的属性，进行自定义配置了
+    layerSettings.fieldName = layer->pendingFields()[3].name(); // 设置Label图层
+    layerSettings.centroidWhole = true; // 设置位置参考的中心点
+
+    // Label 字体设置
+    layerSettings.textColor = QColor( 0, 0, 0 ); // 设置字体颜色
+    layerSettings.textFont = QFont( "Times", 12 ); // 设置字体和大小
+
+    // Label 轮廓buffer设置
+    layerSettings.bufferDraw = true;
+    layerSettings.bufferColor = QColor( 255, 0, 0 ); // 轮廓buffer的颜色
+    layerSettings.bufferSize = 1; // 轮廓buffer大小
+    layerSettings.bufferTransp = 0.5; // 轮廓buffer的透明度
+
+    // Label 阴影绘制
+    layerSettings.shadowDraw = true;
+    layerSettings.shadowOffsetAngle = 135; // 阴影的角度
+    layerSettings.shadowOffsetDist = 1; // 阴影与Label的距离
+
+    layerSettings.fieldName = layer->pendingFields()[3].name(); // 设置Label图层
+    layerSettings.setDataDefinedProperty( layerSettings.Size, true, false, NULL, "size" );
+    layerSettings.setDataDefinedProperty( layerSettings.Color, true, false, NULL, "color" );
+    layerSettings.setDataDefinedProperty( layerSettings.Family, true, false, NULL, "font" );
+
+    layerSettings.writeToLayer( layer ); // 将配置写入图层
+    m_mapCanvas->refresh();
+}
+
+void qgis_dev::testUseLabelConfigDialog()
+{
+    QgsVectorLayer* layer = ( QgsVectorLayer* )this->activeLayer();
+    if ( layer == NULL || layer->isValid() == false ) { return; }
+
+    QDialog *dialog = new QDialog( this );
+    QDialogButtonBox* btnBox = new QDialogButtonBox( QDialogButtonBox::Ok | QDialogButtonBox::Cancel );
+    QVBoxLayout* hlayout = new QVBoxLayout( dialog );
+
+    qgis_dev_labelingGui * d = new qgis_dev_labelingGui( layer, m_mapCanvas, dialog );
+    d->init();
+
+    hlayout->addWidget( d );
+    hlayout->addWidget( btnBox );
+    connect( btnBox, SIGNAL( accepted() ), d, SLOT( apply() ) );
+    connect( btnBox, SIGNAL( rejected() ), dialog, SLOT( close() ) );
+    dialog->show();
+}
+
+
+
+
+
+
+
 
 
 

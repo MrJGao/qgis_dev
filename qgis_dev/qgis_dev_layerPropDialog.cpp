@@ -18,22 +18,30 @@
 #include <qgsvectordataprovider.h>
 #include <qgsvectorsimplifymethod.h>
 
+#include "qgis_dev_labelinggui.h"
+
 qgis_dev_layerPropDialog::qgis_dev_layerPropDialog( QWidget *parent, QgsVectorLayer* layer, QgsMapCanvas* mapCanvas )
     : QDialog( parent ), m_layer( layer ), m_mapCanvas( mapCanvas ), m_availableAttributeCount( 0 )
 {
     if( !m_layer ) {return;}
     setupUi( this );
 
-    // 设置diagram页面
-    enableDiagram();
-    connect( diagramType_comboBox, SIGNAL( currentIndexChanged( int ) ), this, SLOT( diagramChanged( int ) ) );
-    connect( this->okButton, SIGNAL( clicked() ), this, SLOT( apply() ) );
-    /*this->diagram_frame->setEnabled( false );
-    connect( this->disDiag_checkBox, SIGNAL( stateChanged( int ) ), this, SLOT( enableDiagram( int ) ) );
 
-    connect( this->diagSelect_comboBox, SIGNAL( currentIndexChanged( int ) ), this, SLOT( diagramChanged( int ) ) );
-    connect( this->okButton, SIGNAL( clicked() ), this, SLOT( settingsIsOk() ) );
-    connect( this->ifDisLable_checkBox, SIGNAL( stateChanged( int ) ), this, SLOT( ifDisLabel( int ) ) );*/
+    // 初始化 LabelingGui
+    labelingGui = new qgis_dev_labelingGui( layer, mapCanvas, this->m_labelingFrame );
+    m_labelingFrame->setEnabled( false );
+    labelingGui->init();
+    connect( this->m_label_checkBox, SIGNAL( toggled( bool ) ), m_labelingFrame, SLOT( setEnabled( bool )  ) );
+
+    // 设置diagram页面
+    connect( diagramType_comboBox, SIGNAL( currentIndexChanged( int ) ), this, SLOT( diagramChanged( int ) ) );
+
+    this->mDisplayDiagramsGroupBox->setChecked( false );
+    //connect( this->disDiag_checkBox, SIGNAL( stateChanged( int ) ), this, SLOT( enableDiagram( int ) ) );
+    //connect( this->diagSelect_comboBox, SIGNAL( currentIndexChanged( int ) ), this, SLOT( diagramChanged( int ) ) );
+
+    //connect( this->okButton, SIGNAL( clicked() ), this, SLOT( settingsIsOk() ) );
+    connect( this->okButton, SIGNAL( clicked() ), this, SLOT( apply() ) );
 }
 
 
@@ -354,193 +362,202 @@ void qgis_dev_layerPropDialog::setLableProperty()
 
 void qgis_dev_layerPropDialog::apply()
 {
-    QSettings().setValue( "/Windows/VectorLayerProperties/diagram/tab",
-                          mDiagramPropertiesTabWidget->currentIndex() );
-    if ( !mDisplayDiagramsGroupBox->isChecked() ) {m_layer->setDiagramRenderer( 0 ); return;}
 
-    QgsDiagram* diagram = 0;
-    int index = diagramType_comboBox->currentIndex();
-    QString diagramType = diagramType_comboBox->itemData( index ).toString();
+    //#pragma region diagram
 
-    if ( 0 == mDiagramAttributesTreeWidget->topLevelItemCount() )
-    {
-        qgis_dev::instance()->messageBar()->pushMessage(
-            tr( "Diagrams: No attributes added." ),
-            tr( "You did not add any attributes to this diagram layer. Please specify the attributes to visualize on the diagrams or disable diagrams." ),
-            QgsMessageBar::WARNING );
-    }
+    //QSettings().setValue( "/Windows/VectorLayerProperties/diagram/tab",
+    //                      mDiagramPropertiesTabWidget->currentIndex() );
+    //if ( !mDisplayDiagramsGroupBox->isChecked() ) {m_layer->setDiagramRenderer( 0 ); return;}
 
-    bool scaleAttributeValueOk = false;
-    // Check if a (usable) scale attribute value is inserted
-    mValueLineEdit->text().toDouble( &scaleAttributeValueOk );
+    //QgsDiagram* diagram = 0;
+    //int index = diagramType_comboBox->currentIndex();
+    //QString diagramType = diagramType_comboBox->itemData( index ).toString();
 
-    if ( !mFixedSizeCheckBox->isChecked() && !scaleAttributeValueOk )
-    {
-        double maxVal = DBL_MIN;
-        QgsVectorDataProvider* provider = m_layer->dataProvider();
+    //if ( 0 == mDiagramAttributesTreeWidget->topLevelItemCount() )
+    //{
+    //    qgis_dev::instance()->messageBar()->pushMessage(
+    //        tr( "Diagrams: No attributes added." ),
+    //        tr( "You did not add any attributes to this diagram layer. Please specify the attributes to visualize on the diagrams or disable diagrams." ),
+    //        QgsMessageBar::WARNING );
+    //}
 
-        if ( provider )
-        {
-            if ( diagramType == DIAGRAM_NAME_HISTOGRAM )
-            {
-                // Find maximum value
-                for ( int i = 0; i < mDiagramAttributesTreeWidget->topLevelItemCount(); ++i )
-                {
-                    QString fldName = mDiagramAttributesTreeWidget->topLevelItem( i )->data( 0, Qt::UserRole ).toString();
-                    if ( fldName.count() >= 2 && fldName.at( 0 ) == '"' && fldName.at( fldName.count() - 1 ) == '"' )
-                    {
-                        fldName = fldName.mid( 1, fldName.count() - 2 );    // remove enclosing double quotes
-                    }
-                    int fld = provider->fieldNameIndex( fldName );
-                    if ( fld != -1 )
-                    {
-                        bool ok = false;
-                        double val = provider->maximumValue( fld ).toDouble( &ok );
-                        if ( ok )
-                        {
-                            maxVal = qMax( maxVal, val );
-                        }
-                    }
-                }
-            }
-            else
-            {
-                maxVal = provider->maximumValue( mSizeAttributeComboBox->itemData( mSizeAttributeComboBox->currentIndex() ).toInt() ).toDouble();
-            }
-        }
+    //bool scaleAttributeValueOk = false;
+    //// Check if a (usable) scale attribute value is inserted
+    //mValueLineEdit->text().toDouble( &scaleAttributeValueOk );
 
-        if ( maxVal != DBL_MIN )
-        {
-            qgis_dev::instance()->messageBar()->pushMessage(
-                tr( "Interpolation value" ),
-                tr( "You did not specify an interpolation value. A default value of %1 has been set." ).arg( QString::number( maxVal ) ),
-                QgsMessageBar::INFO,
-                5 );
+    //if ( !mFixedSizeCheckBox->isChecked() && !scaleAttributeValueOk )
+    //{
+    //    double maxVal = DBL_MIN;
+    //    QgsVectorDataProvider* provider = m_layer->dataProvider();
 
-            mValueLineEdit->setText( QString::number( maxVal ) );
-        }
-    }
+    //    if ( provider )
+    //    {
+    //        if ( diagramType == DIAGRAM_NAME_HISTOGRAM )
+    //        {
+    //            // Find maximum value
+    //            for ( int i = 0; i < mDiagramAttributesTreeWidget->topLevelItemCount(); ++i )
+    //            {
+    //                QString fldName = mDiagramAttributesTreeWidget->topLevelItem( i )->data( 0, Qt::UserRole ).toString();
+    //                if ( fldName.count() >= 2 && fldName.at( 0 ) == '"' && fldName.at( fldName.count() - 1 ) == '"' )
+    //                {
+    //                    fldName = fldName.mid( 1, fldName.count() - 2 );    // remove enclosing double quotes
+    //                }
+    //                int fld = provider->fieldNameIndex( fldName );
+    //                if ( fld != -1 )
+    //                {
+    //                    bool ok = false;
+    //                    double val = provider->maximumValue( fld ).toDouble( &ok );
+    //                    if ( ok )
+    //                    {
+    //                        maxVal = qMax( maxVal, val );
+    //                    }
+    //                }
+    //            }
+    //        }
+    //        else
+    //        {
+    //            maxVal = provider->maximumValue( mSizeAttributeComboBox->itemData( mSizeAttributeComboBox->currentIndex() ).toInt() ).toDouble();
+    //        }
+    //    }
 
-    if ( diagramType == DIAGRAM_NAME_TEXT )
-    {
-        diagram = new QgsTextDiagram();
-    }
-    else if ( diagramType == DIAGRAM_NAME_PIE )
-    {
-        diagram = new QgsPieDiagram();
-    }
-    else // if ( diagramType == DIAGRAM_NAME_HISTOGRAM )
-    {
-        diagram = new QgsHistogramDiagram();
-    }
+    //    if ( maxVal != DBL_MIN )
+    //    {
+    //        qgis_dev::instance()->messageBar()->pushMessage(
+    //            tr( "Interpolation value" ),
+    //            tr( "You did not specify an interpolation value. A default value of %1 has been set." ).arg( QString::number( maxVal ) ),
+    //            QgsMessageBar::INFO,
+    //            5 );
 
-    QgsDiagramSettings ds;
-    ds.font = font_comboBox->currentFont(); // 字体
-    ds.transparency = mTransparencySlider->value(); // 透明度
+    //        mValueLineEdit->setText( QString::number( maxVal ) );
+    //    }
+    //}
 
-    QList<QColor> categoryColors;
-    QList<QString> categoryAttributes;
-    for ( int i = 0; i < mDiagramAttributesTreeWidget->topLevelItemCount(); ++i )
-    {
-        QColor color = mDiagramAttributesTreeWidget->topLevelItem( i )->background( 1 ).color();
-        color.setAlpha( 255 - ds.transparency );
-        categoryColors.append( color );
-        categoryAttributes.append( mDiagramAttributesTreeWidget->topLevelItem( i )->data( 0, Qt::UserRole ).toString() );
-    }
-    ds.categoryColors = categoryColors;
-    ds.categoryAttributes = categoryAttributes;
-    //ds.size = QSizeF( mDiagramSizeSpinBox->value(), mDiagramSizeSpinBox->value() );
-    ds.size = QSizeF( 50, 50 );
-    //ds.sizeType = static_cast<QgsDiagramSettings::SizeType>( mDiagramUnitComboBox->itemData( mDiagramUnitComboBox->currentIndex() ).toInt() );
-    ds.sizeType = static_cast<QgsDiagramSettings::SizeType>( 0 );
-    ds.labelPlacementMethod = static_cast<QgsDiagramSettings::LabelPlacementMethod>( mLabelPlacementComboBox->itemData( mLabelPlacementComboBox->currentIndex() ).toInt() );
-    //ds.scaleByArea = mScaleDependencyComboBox->itemData( mScaleDependencyComboBox->currentIndex() ).toBool();
-    ds.scaleByArea = false;
+    //if ( diagramType == DIAGRAM_NAME_TEXT )
+    //{
+    //    diagram = new QgsTextDiagram();
+    //}
+    //else if ( diagramType == DIAGRAM_NAME_PIE )
+    //{
+    //    diagram = new QgsPieDiagram();
+    //}
+    //else // if ( diagramType == DIAGRAM_NAME_HISTOGRAM )
+    //{
+    //    diagram = new QgsHistogramDiagram();
+    //}
 
-    if ( mIncreaseSmallDiagramsGroupBox->isChecked() )
-    {
-        ds.minimumSize = mIncreaseMinimumSizeSpinBox->value();
-    }
-    else
-    {
-        ds.minimumSize = 0;
-    }
+    //QgsDiagramSettings ds;
+    //ds.font = font_comboBox->currentFont(); // 字体
+    //ds.transparency = mTransparencySlider->value(); // 透明度
 
-    /*ds.backgroundColor = mBackgroundColorButton->backgroundColor();
-    ds.penColor = mDiagramPenColorButton->backgroundColor();*/
+    //QList<QColor> categoryColors;
+    //QList<QString> categoryAttributes;
+    //for ( int i = 0; i < mDiagramAttributesTreeWidget->topLevelItemCount(); ++i )
+    //{
+    //    QColor color = mDiagramAttributesTreeWidget->topLevelItem( i )->background( 1 ).color();
+    //    color.setAlpha( 255 - ds.transparency );
+    //    categoryColors.append( color );
+    //    categoryAttributes.append( mDiagramAttributesTreeWidget->topLevelItem( i )->data( 0, Qt::UserRole ).toString() );
+    //}
+    //ds.categoryColors = categoryColors;
+    //ds.categoryAttributes = categoryAttributes;
+    ////ds.size = QSizeF( mDiagramSizeSpinBox->value(), mDiagramSizeSpinBox->value() );
+    //ds.size = QSizeF( 50, 50 );
+    ////ds.sizeType = static_cast<QgsDiagramSettings::SizeType>( mDiagramUnitComboBox->itemData( mDiagramUnitComboBox->currentIndex() ).toInt() );
+    //ds.sizeType = static_cast<QgsDiagramSettings::SizeType>( 0 );
+    //ds.labelPlacementMethod = static_cast<QgsDiagramSettings::LabelPlacementMethod>( mLabelPlacementComboBox->itemData( mLabelPlacementComboBox->currentIndex() ).toInt() );
+    ////ds.scaleByArea = mScaleDependencyComboBox->itemData( mScaleDependencyComboBox->currentIndex() ).toBool();
+    //ds.scaleByArea = false;
 
-    ds.backgroundColor = QColor( 255, 0, 0 );
-    ds.penColor = QColor( 255, 255, 0 );
-    ds.penWidth = mPenWidthSpinBox->value();
-    if ( mVisibilityGroupBox->isChecked() )
-    {
-        ds.minScaleDenominator = mMinimumDiagramScaleLineEdit->text().toDouble();
-        ds.maxScaleDenominator = mMaximumDiagramScaleLineEdit->text().toDouble();
-    }
-    else
-    {
-        ds.minScaleDenominator = -1;
-        ds.maxScaleDenominator = -1;
-    }
+    //if ( mIncreaseSmallDiagramsGroupBox->isChecked() )
+    //{
+    //    ds.minimumSize = mIncreaseMinimumSizeSpinBox->value();
+    //}
+    //else
+    //{
+    //    ds.minimumSize = 0;
+    //}
 
-    // Diagram angle offset (pie)
-    ds.angleOffset = mAngleOffsetComboBox->itemData( mAngleOffsetComboBox->currentIndex() ).toInt();
+    ///*ds.backgroundColor = mBackgroundColorButton->backgroundColor();
+    //ds.penColor = mDiagramPenColorButton->backgroundColor();*/
 
-    // Diagram orientation (histogram)
-    //ds.diagramOrientation = static_cast<QgsDiagramSettings::DiagramOrientation>( mOrientationButtonGroup->checkedButton()->property( "direction" ).toInt() );
-    ds.diagramOrientation = static_cast<QgsDiagramSettings::DiagramOrientation>( 0 );
-    ds.barWidth = mBarWidthSpinBox->value();
+    //ds.backgroundColor = QColor( 255, 0, 0 );
+    //ds.penColor = QColor( 255, 255, 0 );
+    //ds.penWidth = mPenWidthSpinBox->value();
+    //if ( mVisibilityGroupBox->isChecked() )
+    //{
+    //    ds.minScaleDenominator = mMinimumDiagramScaleLineEdit->text().toDouble();
+    //    ds.maxScaleDenominator = mMaximumDiagramScaleLineEdit->text().toDouble();
+    //}
+    //else
+    //{
+    //    ds.minScaleDenominator = -1;
+    //    ds.maxScaleDenominator = -1;
+    //}
 
-    if ( mFixedSizeCheckBox->isChecked() )
-    {
-        QgsSingleCategoryDiagramRenderer* dr = new QgsSingleCategoryDiagramRenderer();
-        dr->setDiagram( diagram );
-        dr->setDiagramSettings( ds );
-        m_layer->setDiagramRenderer( dr );
-    }
-    else
-    {
-        QgsLinearlyInterpolatedDiagramRenderer* dr = new QgsLinearlyInterpolatedDiagramRenderer();
-        dr->setLowerValue( 0.0 );
-        dr->setLowerSize( QSizeF( 0.0, 0.0 ) );
-        dr->setUpperValue( mValueLineEdit->text().toDouble() );
-        dr->setUpperSize( QSizeF( mSizeSpinBox->value(), mSizeSpinBox->value() ) );
-        bool isExpression = mSizeAttributeComboBox->currentIndex() >= m_availableAttributeCount;
-        dr->setClassificationAttributeIsExpression( isExpression );
-        if ( isExpression )
-        {
-            dr->setClassificationAttributeExpression( mSizeAttributeComboBox->currentText() );
-        }
-        else
-        {
-            dr->setClassificationAttribute( mSizeAttributeComboBox->itemData( mSizeAttributeComboBox->currentIndex() ).toInt() );
-        }
-        dr->setDiagram( diagram );
-        dr->setDiagramSettings( ds );
-        m_layer->setDiagramRenderer( dr );
-    }
+    //// Diagram angle offset (pie)
+    //ds.angleOffset = mAngleOffsetComboBox->itemData( mAngleOffsetComboBox->currentIndex() ).toInt();
 
-    QgsDiagramLayerSettings dls;
-    dls.dist = mDiagramDistanceSpinBox->value();
-    dls.priority = mPrioritySlider->value();
-    if ( mDataDefinedPositionGroupBox->isChecked() )
-    {
-        //dls.xPosColumn = mDataDefinedXComboBox->itemData( mDataDefinedXComboBox->currentIndex() ).toInt();
-        //dls.yPosColumn = mDataDefinedYComboBox->itemData( mDataDefinedYComboBox->currentIndex() ).toInt();
-        dls.xPosColumn = -1;
-        dls.yPosColumn = -1;
-    }
-    else
-    {
-        dls.xPosColumn = -1;
-        dls.yPosColumn = -1;
-    }
-    dls.placement = ( QgsDiagramLayerSettings::Placement )mPlacementComboBox->itemData( mPlacementComboBox->currentIndex() ).toInt();
-    if ( mLineOptionsComboBox->isEnabled() )
-    {
-        dls.placementFlags = static_cast<QgsDiagramLayerSettings::LinePlacementFlags>( mLineOptionsComboBox->itemData( mLineOptionsComboBox->currentIndex() ).toInt() );
-    }
-    m_layer->setDiagramLayerSettings( dls );
+    //// Diagram orientation (histogram)
+    ////ds.diagramOrientation = static_cast<QgsDiagramSettings::DiagramOrientation>( mOrientationButtonGroup->checkedButton()->property( "direction" ).toInt() );
+    //ds.diagramOrientation = static_cast<QgsDiagramSettings::DiagramOrientation>( 0 );
+    //ds.barWidth = mBarWidthSpinBox->value();
+
+    //if ( mFixedSizeCheckBox->isChecked() )
+    //{
+    //    QgsSingleCategoryDiagramRenderer* dr = new QgsSingleCategoryDiagramRenderer();
+    //    dr->setDiagram( diagram );
+    //    dr->setDiagramSettings( ds );
+    //    m_layer->setDiagramRenderer( dr );
+    //}
+    //else
+    //{
+    //    QgsLinearlyInterpolatedDiagramRenderer* dr = new QgsLinearlyInterpolatedDiagramRenderer();
+    //    dr->setLowerValue( 0.0 );
+    //    dr->setLowerSize( QSizeF( 0.0, 0.0 ) );
+    //    dr->setUpperValue( mValueLineEdit->text().toDouble() );
+    //    dr->setUpperSize( QSizeF( mSizeSpinBox->value(), mSizeSpinBox->value() ) );
+    //    bool isExpression = mSizeAttributeComboBox->currentIndex() >= m_availableAttributeCount;
+    //    dr->setClassificationAttributeIsExpression( isExpression );
+    //    if ( isExpression )
+    //    {
+    //        dr->setClassificationAttributeExpression( mSizeAttributeComboBox->currentText() );
+    //    }
+    //    else
+    //    {
+    //        dr->setClassificationAttribute( mSizeAttributeComboBox->itemData( mSizeAttributeComboBox->currentIndex() ).toInt() );
+    //    }
+    //    dr->setDiagram( diagram );
+    //    dr->setDiagramSettings( ds );
+    //    m_layer->setDiagramRenderer( dr );
+    //}
+
+    //QgsDiagramLayerSettings dls;
+    //dls.dist = mDiagramDistanceSpinBox->value();
+    //dls.priority = mPrioritySlider->value();
+    //if ( mDataDefinedPositionGroupBox->isChecked() )
+    //{
+    //    //dls.xPosColumn = mDataDefinedXComboBox->itemData( mDataDefinedXComboBox->currentIndex() ).toInt();
+    //    //dls.yPosColumn = mDataDefinedYComboBox->itemData( mDataDefinedYComboBox->currentIndex() ).toInt();
+    //    dls.xPosColumn = -1;
+    //    dls.yPosColumn = -1;
+    //}
+    //else
+    //{
+    //    dls.xPosColumn = -1;
+    //    dls.yPosColumn = -1;
+    //}
+    //dls.placement = ( QgsDiagramLayerSettings::Placement )mPlacementComboBox->itemData( mPlacementComboBox->currentIndex() ).toInt();
+    //if ( mLineOptionsComboBox->isEnabled() )
+    //{
+    //    dls.placementFlags = static_cast<QgsDiagramLayerSettings::LinePlacementFlags>( mLineOptionsComboBox->itemData( mLineOptionsComboBox->currentIndex() ).toInt() );
+    //}
+    //m_layer->setDiagramLayerSettings( dls );
+    //#pragma endregion diagram
+
+    labelingGui->apply();
+
+    m_mapCanvas->refresh();
+
 }
 
 void qgis_dev_layerPropDialog::on_mTransparencySlider_valueChanged( int value )
@@ -645,10 +662,7 @@ void qgis_dev_layerPropDialog::on_mBackgroundColorButton_clicked()
     {
         mBackgroundColorButton->setText( color.name() );
         mBackgroundColorButton->setAutoFillBackground( true );
-        QPalette palette = mBackgroundColorButton->palette();
-        palette.setColor( QPalette::Button, color );
-        mBackgroundColorButton->setPalette( palette );
-        //mBackgroundColorButton->update();
+        mBackgroundColorButton->setStyleSheet( "background-color:" + color.name() + ";" );
     }
 }
 
@@ -659,9 +673,8 @@ void qgis_dev_layerPropDialog::on_mDiagramPenColorButton_clicked()
     if ( color.isValid() )
     {
         mDiagramPenColorButton->setText( color.name() );
-        mDiagramPenColorButton->setPalette( QPalette( color ) );
         mDiagramPenColorButton->setAutoFillBackground( true );
-        mDiagramPenColorButton->repaint();
+        mDiagramPenColorButton->setStyleSheet( "background-color:" + color.name() + ";" );
     }
 }
 
