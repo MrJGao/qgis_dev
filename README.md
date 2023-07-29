@@ -1,7 +1,8 @@
 # qgis_dev
-a basic qgis-based standalone application
 
-This repository is mainly for sync with my [bolg papers about QGis development](http://blog.csdn.net/deirjie?viewmode=list). And is mainly focused on the topics of basic GIS functions such as:
+A basic qgis-based standalone application
+
+This repository shows examples of [my blog about QGis C++ development](http://blog.csdn.net/deirjie?viewmode=list). The application contains some basic GIS functions such as:
 
 * displaying GIS dataset(vector and raster).
 * linking the map canvas with layer tree manage view.
